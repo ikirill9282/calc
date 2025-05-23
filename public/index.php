@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Artisan;
 
 define('LARAVEL_START', microtime(true));
 
-Artisan::call('composer install');
-
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
