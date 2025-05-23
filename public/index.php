@@ -3,6 +3,11 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
+echo '<pre>';
+var_dump('ok');
+echo '</pre>';
+exit;
+
 define('LARAVEL_START', microtime(true));
 
 // Determine if the application is in maintenance mode...
