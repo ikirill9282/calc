@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Distributor;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -32,5 +33,12 @@ class DistributorSeeder extends Seeder
             'title' => 'Детский мир',
           ],
         ];
+
+        foreach ($data as $item) {
+          Distributor::firstOrCreate(
+            ['title' => $item['title']],
+            ['title' => $item['title']],
+          );
+        }
     }
 }

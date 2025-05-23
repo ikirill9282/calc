@@ -2,24 +2,24 @@
     $menu = [
         [
             'label' => 'Главная',
-            'route' => route('home'),
+            'route' => 'home',
             'icon' => 'home',
         ],
         [
             'label' => 'История заказов',
-            'route' => route('history'),
+            'route' => 'history',
             'icon' => 'history',
         ],
         [
             'label' => 'Контрагенты',
-            'route' => route('agents'),
+            'route' => 'agents',
             'icon' => 'truck',
         ],
     ];
 @endphp
 
 <aside class="p-3 h-full">
-    <div class="flex flex-col p-3 h-full w-full rounded-lg transition shadow bg-white dark:bg-primary-800">
+    <div class="flex flex-col p-3 h-full w-full rounded-lg transition shadow bg-white dark:bg-primary-900">
         <div class="flex justify-center items-center w-full mb-3 py-3">
             <div class="text-2xl uppercase flex justify-between items-center gap-2">
                 <span class="bg-clip-content">@include('icons.globe', ['width' => 35, 'height' => 35])</span>
@@ -29,15 +29,15 @@
         <nav class="mb-3">
             <ul class="flex flex-col gap-2">
                 @foreach ($menu as $item)
-                    <li class="">
+                    <li class="group {{ request()->route()->getName() === $item['route'] ? 'active' : '' }}">
                         <a 
-                          href="{{ $item['route'] }}"
+                          href="{{ route($item['route']) }}"
                           class="flex group justify-start items-center gap-2 w-full p-2 rounded-lg transition
-                                bg-primary-200/25 hover:bg-primary-200/75
-                                dark:bg-primary-700/25 dark:hover:bg-primary-700
+                                bg-primary-200/25 hover:bg-primary-200/75 group-[.active]:bg-primary-200/75
+                                dark:bg-primary-700/25 dark:hover:bg-primary-700 group-[.active]:dark:bg-primary-700
                                 "
                           >
-                            <span class="p-2 rounded-lg transition bg-primary-200/25 group-hover:bg-secondary-600 group-hover:text-white ">@include("icons.{$item['icon']}", ['width' => 20, 'height' => 20])</span>
+                            <span class="p-2 rounded-lg transition bg-primary-200/25 group-hover:bg-secondary-600 group-hover:text-white group-[.active]:bg-secondary-600 group-[.active]:text-white">@include("icons.{$item['icon']}", ['width' => 20, 'height' => 20])</span>
                             <span class="">{{ $item['label'] }}</span>
                           </a>
                     </li>

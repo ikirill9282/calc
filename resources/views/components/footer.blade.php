@@ -1,5 +1,5 @@
 <footer class="px-10 pb-3">
-    <div class="px-12 w-full rounded-lg shadow bg-white dark:bg-primary-800">
+    <div class="px-12 w-full rounded-lg shadow bg-white dark:bg-primary-900">
         <div class="grid grid-cols-3 gap-12 py-12">
             <div class="flex flex-col gap-4">
                 <span>E-mail:<x-link href="mailto:test@mail.ru">test@mail.ru</x-link></span>

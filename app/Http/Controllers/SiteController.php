@@ -16,7 +16,7 @@ class SiteController extends Controller
       return view('pages.history');
     }
 
-    public function agenst(Request $request)
+    public function agents(Request $request)
     {
       return view('pages.agents');
     }

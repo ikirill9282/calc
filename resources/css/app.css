@@ -49,3 +49,70 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+.dark .air-datepicker {
+  background: var(--color-primary-900);
+  border-color: var(--color-primary-700);
+}
+
+.dark .air-datepicker-cell {
+  color: var(--color-primary-500);
+}
+
+.air-datepicker-cell.-focus- {
+  transition: 0.3s;
+  background: var(--color-secondary-600) !important;
+  color: var(--color-primary-50);
+}
+
+.air-datepicker-cell.-focus-.-current- {
+  transition: 0.3s;
+  background: var(--color-secondary-600) !important;
+  color: var(--color-primary-50) !important;
+}
+
+.air-datepicker-cell.-current- {
+  color: var(--color-secondary-500) !important;
+}
+
+.air-datepicker-cell.-selected- {
+  background: var(--color-secondary-600) !important;
+}
+
+.air-datepicker-cell.-selected-.-current- {
+  color: var(--color-primary-50) !important;
+}
+
+.dark .air-datepicker-cell.-year-.-other-decade-, .air-datepicker-cell.-day-.-other-month- {
+  color: var(--color-primary-700) !important;
+}
+
+.dark .air-datepicker-nav {
+  border-bottom-color: var(--color-primary-700) !important;
+}
+
+.air-datepicker-nav--action {
+  transition: 0.3s;
+}
+
+.air-datepicker-nav--title {
+  transition: 0.3s;
+}
+
+.air-datepicker-nav--action:hover {
+  background-color: var(--color-secondary-500) !important;
+  color: var(--color-primary-50) !important;
+}
+
+.air-datepicker-nav--title:hover {
+  background-color: var(--color-secondary-500) !important;
+  color: var(--color-primary-50) !important;
+}
+
+.air-datepicker-nav--action:hover path {
+  stroke: var(--color-primary-50) !important;
+}
+
+.air-datepicker-nav--title:hover i {
+  color: var(--color-primary-50) !important;
+}
