@@ -3,13 +3,45 @@ import AirDatepicker from 'air-datepicker';
 import 'air-datepicker/air-datepicker.css';
 import $ from "jquery"
 
+const disableDates = ({date, cellType}) => {
+  const today = new Date();
+  const response = {
+    disabled: true,
+    classes: 'disabled-class',
+    attrs: {
+        title: 'Cell is disabled'
+    }
+  };
+  
+  if (cellType === 'day') {
+      if (date.getMonth() < today.getMonth()) {
+        return response;
+      } else if (date.getMonth() === (today.getMonth()) && date.getDate() <= today.getDate()) {
+        return response;
+      }
+  }
+}
+
+
 const datepicker = new AirDatepicker('#datepicker', {
+  onRenderCell: disableDates,
 });
 
 const datepicker2 = new AirDatepicker('#datepicker2', {
+  onSelect: ({date, formattedDate, datepicker}) => {
+    const elem = $(datepicker.$el).closest('.infoblock').find('.cargo-date');
+    elem.find('.date').html(formattedDate);
+
+    if (!elem.hasClass('collapsed')) {
+      elem.slideToggle();
+      elem.addClass('collapsed');
+    }
+  },
+  onRenderCell: disableDates,
 });
 
 const datepicker3 = new AirDatepicker('#datepicker3', {
+  onRenderCell: disableDates,
 });
 
 
@@ -70,6 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
     $(el).on('click', () => {
       const targets = $(el).siblings('input');
       targets.each((key, input) => $(input).val(null));
+
+      $(el).closest('.infoblock').find('.cargo-date').slideToggle();
+      $(el).closest('.infoblock').find('.cargo-date').removeClass('collapsed');
     });
   });
 
@@ -121,5 +156,32 @@ document.addEventListener('DOMContentLoaded', function() {
     radio.on('change', (evt) => clearRelated());
 
     $(el).on('clear', () => setSate(0));
+  });
+
+  $('.distributor-group').each((k, el) => {
+    $(el).find('.distributor-item').each((key, elem) => {
+      $(elem).on('click',function() {
+        const radio = $(this).find('input[type="radio"]');
+        radio.prop('checked', !radio.prop('checked'));
+      })
+    })
+  });
+
+  $('#burger').on('click', () => {
+    $('#menu').addClass('collapsable');
+    $('#menu').toggleClass('!translate-x-0');
+    $('body').toggleClass('h-screen overflow-hidden');
+  });
+
+  $('#close-menu').on('click', () => {
+    $('#menu').toggleClass('!translate-x-0');
+    $('body').toggleClass('h-screen overflow-hidden');
+  });
+
+  $('#menu').on('click', function(evt) {
+    if ($(this).hasClass('collapsable') && evt.target === this) {
+      $('#menu').toggleClass('!translate-x-0');
+      $('body').toggleClass('h-screen overflow-hidden');
+    }
   });
 });

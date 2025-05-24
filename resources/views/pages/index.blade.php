@@ -1,20 +1,23 @@
 @extends('layout.site')
 
 @section('content')
-    <div class="px-10">
+    <div class="px-5 2xl:px-10 mb-5 2xl:mb-10">
         <h1 class="text-4xl font-semibold mb-12 py-6">Рассчитать мою доставку</h1>
-        <div class="grid grid-cols-[1fr_400px] gap-10 mb-10">
+        <div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_350px] 2xl:grid-cols-[1fr_400px] gap-5 2xl:gap-10">
             <div class="flex flex-col justify-start items-stretch gap-10">
 
                 <x-form.fieldset set_title="Шаг 1" set_description="Выбор маршрута">
-                    <div class="flex flex-col gap-8">
+                    <div class="flex flex-col sm:gap-8">
                         <x-form.dropdown id="from" name="from" placeholder="Откуда"
-                            label="Склад отправления {{ config('app.name') }}:" />
+                            label="Склад отправления {{ config('app.name') }}:"
+                            />
                         <x-form.service id="service" name="service" />
                         <x-form.dropdown id="to" name="to" placeholder="Адрес РЦ"
-                            label="РЦ, в который будет доставлен груз" />
+                            label="РЦ, в который будет доставлен груз" 
+                            class="mt-6 sm:mt-0"
+                            />
                         <a
-                            class="flex justify-start items-center gap-2 transition hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
+                            class="mt-4 sm:mt-0 flex justify-start items-center gap-2 transition hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
                             <span>Нет нужного РЦ</span>
                             <span class="rounded-full p-2 bg-primary-600/15 text-secondary-600 dark:text-secondary-400">@include('icons.question')</span>
                         </a>
@@ -37,14 +40,17 @@
                             />
                             <div class="infoblock w-full">
                               <div class="flex flex-col justify-start items-stretch gap-10 p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
-                                <div class="flex gap-2">
+                                <div class="flex flex-col sm:flex-row gap-2">
                                   <span>Адрес:</span>
                                   <span class="text-secondary-600 dark:text-secondary-400">г.Екатеринбург, ул Хлебная дом напротив дома №1</span>
                                 </div>
                                 <x-form.datepicker pickerClass="w-full" inputId="datepicker2" label="Укажите дату отгрузки" labelClass="!bg-primary-50 dark:!bg-primary-950"></x-form.datepicker>
-                                <div class="flex justify-start items-center gap-3 w-full rounded-2xl p-3 text-white bg-sky-600">
-                                  <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
-                                  <span>Дата отгрузки на склад {{ config('app.name') }}: 29 мая с 09:00 до 18:00</span>
+                                
+                                <div class="cargo-date hidden">
+                                  <div class="flex justify-start items-center gap-3 w-full rounded-2xl p-3 text-white bg-sky-600">
+                                    <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
+                                    <span class="">Дата отгрузки на склад {{ config('app.name') }}: <span class="date">01.01.2025</span> с 09:00 до 18:00</span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
