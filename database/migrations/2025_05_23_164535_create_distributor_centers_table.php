@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('slug');
             $table->timestamps();
+
+            $table->foreign('distributor_id')->references('id')->on('distributors')->onDelete('cascade');
         });
     }
 
