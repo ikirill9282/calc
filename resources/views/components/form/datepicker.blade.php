@@ -8,5 +8,6 @@
     label="{{ $label ?? '' }}" 
     class="pl-16 datepicker"
     labelClass="{{ $labelClass ?? '' }}"
+    :attrs="['autocomplete' => 'off', 'aria-autocomplete' => 'off']"
     />
 </div>

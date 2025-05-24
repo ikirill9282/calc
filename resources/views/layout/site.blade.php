@@ -1,5 +1,8 @@
+@php
+  $darkMode = (\Illuminate\Support\Facades\Session::has('darkMode') && \Illuminate\Support\Facades\Session::get('darkMode') ? 'dark' : '');   
+@endphp
 <!DOCTYPE html>
-<html lang="en" class="{{ (\Illuminate\Support\Facades\Session::has('darkMode') && \Illuminate\Support\Facades\Session::get('darkMode') ? 'dark' : '') }}">
+<html lang="en" class="{{ $darkMode }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

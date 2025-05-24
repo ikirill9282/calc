@@ -45,5 +45,31 @@ document.addEventListener('DOMContentLoaded', function() {
       $(el).closest('.group').find('.infoblock').slideToggle();
     })
   });
-  
+
+  $('.checkbox-form-group').each((k, el) => {
+    const target = $(el).find('input[type="checkbox"]');
+
+    $(el).find('label').on('click', evt => evt.preventDefault());
+
+    $(el).on('click', () => {
+      $(target).prop('checked', !$(target).prop('checked'));
+      $(el).closest('.checkbox-group').find('.infoblock').slideToggle();
+    });
+  });
+
+  $('.input-helper-group').each((k, el) => {
+    const target = $(el).find('input');
+    const helpers = $(el).find('.inut-helper-item');
+
+    helpers.on('click', function() {
+      target.val($(this).html());
+    });
+  });
+
+  $('.input-clear').each((k, el) => {
+    $(el).on('click', () => {
+      const targets = $(el).siblings('input');
+      targets.each((key, input) => $(input).val(null));
+    });
+  });
 });
