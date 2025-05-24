@@ -118,6 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
       ((+state - 1) > 0) ? setSate(+state-1) : setSate(state);
     });
 
+    radio.on('change', (evt) => clearRelated());
+
     $(el).on('clear', () => setSate(0));
   });
 });
