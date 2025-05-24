@@ -27,7 +27,7 @@
 
                 <x-form.fieldset set_title="Шаг 3" set_description="Способ передачи груза">
                     <fieldset class="flex flex-col gap-3">
-                        <div class="flex flex-wrap justify-start items-center hover:cursor-pointer group">
+                        <div class="flex flex-wrap justify-start items-center group">
                             <x-form.radio 
                               name="cargo"
                               id="receive"
@@ -50,7 +50,7 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-wrap justify-start items-center hover:cursor-pointer group">
+                        <div class="flex flex-wrap justify-start items-center group">
                             <x-form.radio 
                               name="cargo"
                               id="cargo"
