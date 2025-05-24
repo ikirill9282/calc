@@ -11,6 +11,7 @@
     name="{{ $name ?? '' }}" 
     id="{{ $id ?? '' }}"
     class="w-full py-4 px-4 ring-0 outline-0 rounded-xl border
+          placeholder:text-gray-400
           border-primary-200 dark:border-primary-400/50 {{ $class ?? '' }}"
     rows="{{ $rows ?? 2 }}"
     placeholder="{{ $placeholder ?? '' }}"

@@ -72,4 +72,52 @@ document.addEventListener('DOMContentLoaded', function() {
       targets.each((key, input) => $(input).val(null));
     });
   });
+
+  $('.counter').each((k, el) => {
+    const input = $(el).find('input');
+    const count = $(el).find('.count');
+    const plus = $(el).find('.plus');
+    const minus = $(el).find('.minus');
+    const group = $(el).closest('.group');
+    const radio = group.find('input[type="radio"]');
+
+    let state = input.val();
+    count.html(state);
+
+    const setSate = (val) => {
+      state = val;
+      count.html(state);
+      input.val(state);
+    };
+
+    const hasChecked = () => radio.is(':checked');
+    const clearRelated = () => {
+      const key = group.data('related');
+      if (key) {
+        const related = $(`[data-related="${key}"]`);
+        related.each((k, e) => {
+          e !== group ? $(e).find('.counter').trigger('clear') : null
+        });
+      }
+    }
+
+    plus.on('click', (evt) => {
+      if (!hasChecked()) {
+        radio.prop('checked', true);
+        clearRelated();
+      }
+      setSate(+state + 1)
+    });
+
+    minus.on('click', (evt) => {
+      if (!hasChecked()) {
+        radio.prop('checked', true);
+        clearRelated();
+      }
+
+      ((+state - 1) > 0) ? setSate(+state-1) : setSate(state);
+    });
+
+    $(el).on('clear', () => setSate(0));
+  });
 });

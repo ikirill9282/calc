@@ -12,8 +12,10 @@
 
       <input id="{{ $inputId ?? '' }}" type="text" placeholder="{{ $placeholder ?? '' }}"
           class="w-full h-14 py-2 px-4 ring-0 outline-0 rounded-xl border
-          border-primary-200 dark:border-primary-400/50 {{ $class ?? '' }}"
-          
+          border-primary-200 dark:border-primary-400/50 
+          placeholder:text-gray-400
+          {{ $class ?? '' }}"
+        
           @if(isset($attrs) && !empty($attrs))
             @foreach($attrs as $name => $value)
               {{ $name }}="{{ $value }}"
