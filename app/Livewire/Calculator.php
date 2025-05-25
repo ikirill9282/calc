@@ -23,7 +23,7 @@ class Calculator extends Component
     //   'distributor_id' => 2,
     //   'distributor_center_id' => 22,
     //   'delivery_date' => '31.05.2025',
-    //   'transfer_method' => 'receive',
+    //   'transfer_method' => 'pick',
     //   'transfer_method.receive.date' => '30.05.2025',
     //   'transfer_method.pick.address' => null,
     //   'transfer_method.pick.date' => null,

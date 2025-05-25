@@ -2,8 +2,7 @@
   <div class="flex flex-col justify-start items-stretch gap-10">
       {{-- @dump($this->fields) --}}
 
-      <x-form.fieldset 
-        set_title="Шаг 1" 
+      <x-form.fieldset set_title="Шаг 1" 
         set_description="Выбор маршрута" 
         set_class="{{ $this->isFieldDisabled(1) ? 'disabled' : '' }}"
         :set_loading="true"
@@ -41,8 +40,7 @@
           </div>
       </x-form.fieldset>
 
-      <x-form.fieldset 
-        set_title="Шаг 2" 
+      <x-form.fieldset set_title="Шаг 2" 
         set_description="Доставки на РЦ" 
         set_class="{{ $this->isFieldDisabled(2) ? 'disabled' : '' }}"
         set_loading="true"
@@ -57,8 +55,7 @@
           />
       </x-form.fieldset>
 
-      <x-form.fieldset 
-        set_title="Шаг 3" 
+      <x-form.fieldset set_title="Шаг 3" 
         set_description="Способ передачи груза" 
         set_class="{{ $this->isFieldDisabled(3) ? 'disabled' : '' }}"
         set_loading="true"
@@ -75,7 +72,7 @@
                     :checked="in_array($this->getField('transfer_method'), ['receive']) ? 'checked' : ''"
                   />
                   <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['receive']) ? '' : 'hidden' }}">
-                    <div class="flex flex-col justify-start items-stretch gap-10 p-4 sm:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
+                    <div class="flex flex-col justify-start items-stretch gap-10 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
                       
                       <div class="flex flex-col sm:flex-row gap-2">
                         <span>Адрес:</span>
@@ -114,7 +111,7 @@
                     :checked="in_array($this->getField('transfer_method'), ['pick']) ? 'checked' : ''"
                   />
                   <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['pick']) ? '' : 'hidden' }}">
-                    <div class="flex flex-col justify-start items-stretch gap-6 p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
+                    <div class="flex flex-col justify-start items-stretch gap-6 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
                       <x-form.dropdown
                         id="transfer_method.pick.address" 
                         name="transfer_method.pick.address" 
@@ -123,13 +120,7 @@
                         placeholder="г.Москва ..."
                         :items="$this->getAddresses()"
                       />
-                      {{-- <x-form.input 
-                        id="transfer_method.pick.address" 
-                        name="transfer_method.pick.address" 
-                        placeholder="Адрес отгрузки" 
-                        label="Укажите адрес отгрузки"
-                        labelClass="!bg-primary-50 dark:!bg-primary-950"
-                      /> --}}
+
                       <x-form.datepicker 
                         inputId="transfer_method.pick.date"
                         inputName="transfer_method.pick.date"
@@ -137,6 +128,7 @@
                         labelClass="!bg-primary-50 dark:!bg-primary-950"
                         id="datepicker3"
                       />
+                      
                       <x-form.dropdown
                         id="transfer_method.pick.time" 
                         name="transfer_method.pick.time" 

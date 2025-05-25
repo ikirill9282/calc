@@ -11,7 +11,7 @@
       </div>
 
       <input id="{{ $id ?? ''}}" type="text" placeholder="{{ $placeholder ?? '' }}"
-          class="input w-full h-14 py-2 px-4 ring-0 outline-0 rounded-xl border
+          class="input w-full min-h-14 py-2 ps-4 pe-12 ring-0 outline-0 rounded-xl border
           border-primary-200 dark:border-primary-400/50 
           placeholder:text-gray-400
           {{ $class ?? '' }}"
