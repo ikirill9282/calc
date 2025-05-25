@@ -18,29 +18,31 @@ class Calculator extends Component
       'setField',
     ];
 
+    public array $fields = [
+      'warehouse_id' => 1,
+      'distributor_id' => 2,
+      'distributor_center_id' => 22,
+      'delivery_date' => '31.05.2025',
+      'transfer_method' => 'pick',
+      'transfer_method.receive.date' => '30.05.2025',
+      'transfer_method.pick.address' => null,
+      'transfer_method.pick.date' => null,
+      'transfer_method.pick.time' => null,
+      'user_address_query' => null,
+      'user_focused_dropdown' => null,
+    ];
+
     // public array $fields = [
-    //   'warehouse_id' => 1,
-    //   'distributor_id' => 2,
-    //   'distributor_center_id' => 22,
-    //   'delivery_date' => '31.05.2025',
-    //   'transfer_method' => 'pick',
-    //   'transfer_method.receive.date' => '30.05.2025',
+    //   'warehouse_id' => null,
+    //   'distributor_id' => null,
+    //   'distributor_center_id' => null,
+    //   'delivery_date' => null,
+    //   'transfer_method' => 'receive',
+    //   'transfer_method.receive.date' => null,
     //   'transfer_method.pick.address' => null,
     //   'transfer_method.pick.date' => null,
     //   'transfer_method.pick.time' => null,
     // ];
-
-    public array $fields = [
-      'warehouse_id' => null,
-      'distributor_id' => null,
-      'distributor_center_id' => null,
-      'delivery_date' => null,
-      'transfer_method' => 'receive',
-      'transfer_method.receive.date' => null,
-      'transfer_method.pick.address' => null,
-      'transfer_method.pick.date' => null,
-      'transfer_method.pick.time' => null,
-    ];
 
     protected array $times = [
       ['id' => '9:00-12:00', 'title' => 'c 9:00 до 12:00'],
@@ -82,17 +84,14 @@ class Calculator extends Component
 
     public function getAddresses()
     {
-      $query = (empty($this->fields['transfer_method.pick.address'])) 
-        ? 'г.Москва' 
-        : $this->fields['transfer_method.pick.address'];
-
+      $query = empty($this->fields['user_address_query']) ? 'г Москва' : $this->fields['user_address_query'];
       $client = new DadataClient();
       $addresses = $client->suggest('address', $query);
       $this->addresses = array_column($addresses, 'value');
       $result = [['id' => '', 'title' => '']];
       foreach ($this->addresses as $key => $val) {
         $result[] = [
-          'id' => $key,
+          'id' => $val,
           'title' => $val,
         ];
       }
@@ -158,12 +157,18 @@ class Calculator extends Component
       return array_key_exists($name, $this->fields) ? $this->fields[$name] : null;
     }
 
+    public function clearFocusedAndSetField(string $name, mixed $value):void
+    {
+      $this->fields['user_focused_dropdown'] = null;
+      $this->setField($name, $value);
+    }
+
     public function setField(string $name, mixed $value): void
     {
       
       if (in_array($name, ['transfer_method.pick.address'])) {
         $type = 'dropdown';
-        $value = $this->addresses[$value];
+        // $value = $this->addresses[$value];
       }
       
       $this->fields[$name] = $value;

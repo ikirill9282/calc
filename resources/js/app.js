@@ -104,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function () {
         setThemeClass();
         axios.post("/api/theme", { darkMode: theme_button.checked });
     });
-
     // End Theme Selector
 
     // Toggle cargo inputs
@@ -141,18 +140,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
     // End Input with helper buttons
-
-    // Input clean button
-    // $('.input-clear').each((k, el) => {
-    //   $(el).on('click', () => {
-    //     const targets = $(el).siblings('input');
-    //     targets.each((key, input) => $(input).val(null));
-
-    //     $(el).closest('.infoblock').find('.cargo-date').slideToggle();
-    //     $(el).closest('.infoblock').find('.cargo-date').removeClass('collapsed');
-    //   });
-    // });
-    // End Input clean button
 
     // Counter input
     $(".counter").each((k, el) => {
@@ -267,6 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
         input.on("focus", () => {
           if (dropdown.hasClass('hidden')) {
             // dropdown.removeClass('hidden');
+            dropdown.attr('data-shopen', true);
             dropdown.slideToggle(() => {
               dropdown.removeClass('hidden')
             });
@@ -276,14 +264,27 @@ document.addEventListener("DOMContentLoaded", function () {
           if (!dropdown.hasClass('hidden')) {
             dropdown.slideToggle(() => {
               dropdown.addClass('hidden');
+              dropdown.attr('data-shopen', false);
             });
           }
         });
-        input.on("input", () =>
+
+        if (input.data('filter')) {
+          input.on("input", () =>
             input.val().length
                 ? filterFields(input.val())
                 : appendFields(fields)
-        );
+          );
+        }
+
+        if (input.data('search')) {
+          input.on('input', () => {
+            Livewire.dispatch('setField', { name: 'user_focused_dropdown', value: $(el).data('dropdown') });
+            setTimeout(() => {
+              Livewire.dispatch('setField', { name: 'user_address_query', value: input.val() });
+            }, 300);
+          });
+        }
     });
     // End Dropdown component
 });

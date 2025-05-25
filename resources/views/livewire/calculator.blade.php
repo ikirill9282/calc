@@ -15,6 +15,7 @@
                   label="Склад отправления {{ config('app.name') }}:"
                   :items="$this->getWarehouses()"
                   :value="$this->getField('warehouse_id')"
+                  :filter="true"
                   />
 
               <x-form.service 
@@ -31,6 +32,7 @@
                   class="mt-6 sm:mt-0"
                   :items="$this->getDistributorCenters()"
                   :value="$this->getField('distributor_center_id')"
+                  :filter="true"
                   />
               <a
                   class="mt-4 sm:mt-0 flex justify-start items-center gap-2 transition hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
@@ -92,7 +94,7 @@
                       <div class="cargo-date {{ $this->getField('transfer_method.receive.date') ? '' : 'hidden' }}">
                         <div class="flex justify-start items-center gap-3 w-full rounded-2xl p-3 text-white bg-sky-600">
                           <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
-                          <span class="">Дата отгрузки на склад {{ config('app.name') }}: <span class="date">01.01.2025</span> с 09:00 до 18:00</span>
+                          <span class="">Дата отгрузки на склад {{ config('app.name') }}: <span class="date">{{ $this->getField('transfer_method.receive.date') ?? '01.01.2025' }}</span> с 09:00 до 18:00</span>
                         </div>
                       </div>
 
@@ -119,6 +121,7 @@
                         labelClass="!bg-primary-50 dark:!bg-primary-950"
                         placeholder="г.Москва ..."
                         :items="$this->getAddresses()"
+                        :search="true"
                       />
 
                       <x-form.datepicker 
@@ -240,4 +243,12 @@
       <x-details></x-details>
   </div>
 
+
+  @script
+    <script>
+      const items = document.querySelectorAll('*[data-shopen="true"]');
+      console.log(items);
+      
+    </script>
+  @endscript
 </div>
