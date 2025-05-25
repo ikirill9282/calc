@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .data("name"),
                 value: formattedDate,
             });
+            datepicker.hide();
         },
     });
 
@@ -52,10 +53,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             Livewire.dispatch("setField", {
               name: $(datepicker.$el)
-                  .closest(".datepicker-group")
-                  .data("name"),
+                .closest(".datepicker-group")
+                .data("name"),
               value: formattedDate,
-          });
+            });
+            datepicker.hide();
         },
         onRenderCell: disableDates,
     });
@@ -69,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   .data("name"),
               value: formattedDate,
           });
+          datepicker.hide();
       },
     });
 
