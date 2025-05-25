@@ -18,6 +18,18 @@ class Calculator extends Component
       'setField',
     ];
 
+    // public array $fields = [
+    //   'warehouse_id' => 1,
+    //   'distributor_id' => 2,
+    //   'distributor_center_id' => 22,
+    //   'delivery_date' => '31.05.2025',
+    //   'transfer_method' => 'receive',
+    //   'transfer_method.receive.date' => '30.05.2025',
+    //   'transfer_method.pick.address' => null,
+    //   'transfer_method.pick.date' => null,
+    //   'transfer_method.pick.time' => null,
+    // ];
+
     public array $fields = [
       'warehouse_id' => null,
       'distributor_id' => null,
