@@ -6,7 +6,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>@yield('title', 'Расчет заказа')</title>
+
+  <link rel="icon" href="{{ asset('/favicon.svg') }}" type="image/svg+xml">
+
+  @livewireStyles
 
   @vite(['resources/css/app.css'])
 
@@ -32,6 +36,8 @@
 
     <x-footer></x-footer>
   </div>
+
+  @livewireScripts
 
   @vite(['resources/js/app.js'])
 

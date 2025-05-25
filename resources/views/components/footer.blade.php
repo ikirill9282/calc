@@ -23,13 +23,13 @@
             </div>
         </div>
         <div class="border-b w-full border-primary-600/25"></div>
-        <div class="grid grid-cols-3 gap-12 py-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-12 py-6">
             <div class="">
               {{ env('APP_NAME', '') }} © {{ date('Y', time()) }}
             </div>
-            <div class=""></div>
-            <div class="">
-              {{-- <x-link>Сделано в {{ env('APP_NAME', '') }}</x-link> --}}
+            <div class="hidden"></div>
+            <div class="hidden">
+              <x-link>Сделано в {{ env('APP_NAME', '') }}</x-link>
             </div>
         </div>
     </div>
