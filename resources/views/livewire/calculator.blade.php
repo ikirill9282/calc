@@ -5,7 +5,7 @@
       <x-form.fieldset set_title="Шаг 1" 
         set_description="Выбор маршрута" 
         set_class="{{ $this->isFieldDisabled(1) ? 'disabled' : '' }}"
-        :set_loading="true"
+        {{-- :set_loading="true" --}}
         >
           <div class="flex flex-col sm:gap-8">
               <x-form.dropdown 
@@ -43,7 +43,7 @@
       <x-form.fieldset set_title="Шаг 2" 
         set_description="Доставки на РЦ" 
         set_class="{{ $this->isFieldDisabled(2) ? 'disabled' : '' }}"
-        set_loading="true"
+        {{-- set_loading="true" --}}
         >
           <x-form.datepicker 
             label="Выберите, к какому числу доставить на РЦ" 
@@ -58,7 +58,7 @@
       <x-form.fieldset set_title="Шаг 3" 
         set_description="Способ передачи груза" 
         set_class="{{ $this->isFieldDisabled(3) ? 'disabled' : '' }}"
-        set_loading="true"
+        {{-- set_loading="true" --}}
         >
           <fieldset class="flex flex-col gap-3">
               <div 
