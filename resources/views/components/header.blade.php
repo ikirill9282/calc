@@ -4,8 +4,9 @@
       @include('icons.burger')
     </div>
     <div class="relative flex justify-center items-center gap-2">
-      <span class="">@include('icons.globe')</span>
-      <span class="uppercase text-2xl">{{ config('app.name') }}</span>
+      {{-- <span class="">@include('icons.globe')</span> --}}
+      <span class="w-30"><img class="max-w-full" src="{{ asset('/f.jpg') }}" alt="Logo"></span>
+      {{-- <span class="uppercase text-2xl">{{ config('app.name') }}</span> --}}
     </div>
     <div class="p-2 rounded-full bg-primary-100 dark:bg-primary-800">
       @include('icons.profile', ['width' => 20, 'height' => 20])

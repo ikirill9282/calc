@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'Расчет заказа')</title>
 
-  <link rel="icon" href="{{ asset('/favicon.svg') }}" type="image/svg+xml">
+  {{-- <link rel="icon" href="{{ asset('/favicon.svg') }}" type="image/svg+xml"> --}}
+  <link rel="icon" type="image/png" href="{{ asset('/favicon.png') }}">
 
   @livewireStyles
 

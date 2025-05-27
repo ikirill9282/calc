@@ -25,8 +25,9 @@
         </div>
         <div class="flex justify-center items-center w-full mb-3 py-3">
             <div class="text-2xl uppercase flex justify-between items-center gap-2">
-                <span class="bg-clip-content">@include('icons.globe', ['width' => 35, 'height' => 35])</span>
-                <span>{{ env('APP_NAME', '') }}</span>
+                <img class="max-w-full" src="{{ asset('/f.jpg') }}" alt="Logo">
+                {{-- <span class="bg-clip-content">@include('icons.globe', ['width' => 35, 'height' => 35])</span> --}}
+                {{-- <span>{{ env('APP_NAME', '') }}</span> --}}
             </div>
         </div>
         <nav class="mb-3">
