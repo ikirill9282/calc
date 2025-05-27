@@ -5,7 +5,7 @@
     </div>
     <div class="relative flex justify-center items-center gap-2">
       {{-- <span class="">@include('icons.globe')</span> --}}
-      <span class="w-30"><img class="max-w-full" src="{{ asset('/img/logo.jpg') }}" alt="Logo"></span>
+      <a href="{{ route('home') }}" class="w-30"><img class="max-w-full" src="{{ asset('/img/logo.jpg') }}" alt="Logo"></a>
       {{-- <span class="uppercase text-2xl">{{ config('app.name') }}</span> --}}
     </div>
     <div class="p-2 rounded-full bg-primary-100 dark:bg-primary-800">
