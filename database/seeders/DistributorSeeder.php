@@ -16,28 +16,33 @@ class DistributorSeeder extends Seeder
         $data = [
           [
             'title' => 'Wildberries',
+            'logo' => 'wb',
           ],
           [
             'title' => 'Ozon',
+            'logo' => 'ozon',
           ],
           [
             'title' => 'ЯндексМаркет',
+            'logo' => 'ymarket',
           ],
           [
             'title' => 'Магнит Маркет',
+            'logo' => 'mm',
           ],
-          [
-            'title' => 'КазаньЭкспресс',
-          ],
+          // [
+          //   'title' => 'КазаньЭкспресс',
+          // ],
           [
             'title' => 'Детский мир',
+            'logo' => 'mir',
           ],
         ];
 
         foreach ($data as $item) {
           Distributor::firstOrCreate(
             ['title' => $item['title']],
-            ['title' => $item['title']],
+            $item,
           );
         }
     }
