@@ -20,12 +20,14 @@
 
 <aside class="lg:p-3 h-full">
     <div class="relative flex flex-col p-3 h-full w-full lg:rounded-lg transition shadow bg-white dark:bg-primary-900">
-        <div class="absolute top-2 right-2 rotate-45 lg:hidden" id="close-menu">
-          @include('icons.plus')
+        <div class="flex justify-end items-center lg:hidden" id="close-menu">
+          <span class="block rotate-45">
+            @include('icons.plus')
+          </span>
         </div>
         <div class="flex justify-center items-center w-full mb-3 py-3">
             <div class="text-2xl uppercase flex justify-between items-center gap-2">
-                <img class="max-w-full" src="{{ asset('/f.jpg') }}" alt="Logo">
+                <img class="max-w-full" src="{{ asset('/img/logo.jpg') }}" alt="Logo">
                 {{-- <span class="bg-clip-content">@include('icons.globe', ['width' => 35, 'height' => 35])</span> --}}
                 {{-- <span>{{ env('APP_NAME', '') }}</span> --}}
             </div>
