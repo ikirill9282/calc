@@ -59,9 +59,9 @@ class DistributorCenterSeeder extends Seeder
           ['title' => 'Софьино (Яндекс)', 'distributor_id' => 3],
           ['title' => 'СПБ Парголово', 'distributor_id' => 3],
           
-          ['title' => 'Казань (МагнитМаркет) Зеленодольск', 'distributor_id' => 4],
+          // ['title' => 'Казань (МагнитМаркет) Зеленодольск', 'distributor_id' => 4],
           
-          ['title' => 'Казань, Зеленодольск (Казань Экспресс)', 'distributor_id' => 5],
+          ['title' => 'Казань, Зеленодольск (Казань Экспресс)', 'distributor_id' => 4],
         ];
 
         foreach ($data as $item) {
