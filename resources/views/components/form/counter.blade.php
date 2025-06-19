@@ -5,7 +5,7 @@
                 ">
       @include('icons.minus', ['width' => 15, 'height' => 15])
     </span>
-    <span class="count px-2 sm:px-4 select-none min-w-14 text-center">1</span>
+    <span class="count px-2 sm:px-4 select-none min-w-14 text-center">{{ $value ?? 0 }}</span>
     <span class="plus p-2 sm:p-3 select-none hover:cursor-pointer transition hover:text-secondary-600 
                dark:hover:text-secondary-400  
                 ">

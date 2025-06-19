@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\DistributorCenter;
+use App\Services\DadataClient;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Faker\Provider\Address;
+
 
 class DistributorCenterSeeder extends Seeder
 {
@@ -59,15 +62,22 @@ class DistributorCenterSeeder extends Seeder
           ['title' => 'Софьино (Яндекс)', 'distributor_id' => 3],
           ['title' => 'СПБ Парголово', 'distributor_id' => 3],
           
-          ['title' => 'Казань (МагнитМаркет) Зеленодольск', 'distributor_id' => 4],
+          // ['title' => 'Казань (МагнитМаркет) Зеленодольск', 'distributor_id' => 4],
           
           // ['title' => 'Казань, Зеленодольск (Казань Экспресс)', 'distributor_id' => 4],
         ];
 
+        $faker = \Faker\Factory::create('ru_RU');
         foreach ($data as $item) {
+          $client = new DadataClient();
+
           DistributorCenter::firstOrCreate(
             ['title' => $item['title']],
-            ['distributor_id' => $item['distributor_id']]
+            [
+              'distributor_id' => $item['distributor_id'], 
+              'manager_id' => random_int(1, 5),
+              'address' => $faker->address(),
+            ],
           );
         }
     }

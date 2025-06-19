@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('slug');
             $table->string('logo')->nullable();
+            $table->tinyInteger('disabled')->default(0);
             $table->timestamps();
         });
     }

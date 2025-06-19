@@ -13,6 +13,7 @@ class WarehouseSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = \Faker\Factory::create('ru_RU');
         $data = [
           ['title' => 'Склад Екатеринбург', 'address' => 'г.Екатеринбург, ул Хлебная дом напротив дома №1'],
           ['title' => 'Склад Иваново', 'address' => '153031, Ивановская обл, г Иваново, линия 25-я, д. 3'],
@@ -26,7 +27,7 @@ class WarehouseSeeder extends Seeder
         foreach ($data as $item) {
           Warehouse::firstOrCreate(
             ['title' => $item['title']],
-            ['address' => $item['address']],
+            ['address' => $item['address'], 'phone' => $faker->phoneNumber()],
           );
         }
     }

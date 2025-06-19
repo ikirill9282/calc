@@ -14,7 +14,9 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@alpinejs/mask": "^3.14.9",
         "air-datepicker": "^3.6.0",
+        "alpinejs": "^3.14.9",
         "jquery": "^3.7.1"
     }
 }

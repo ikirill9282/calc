@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\Slug;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Warehouse extends Model
 {
@@ -24,5 +25,13 @@ class Warehouse extends Model
         }
         return $model;
       });
+    }
+
+
+    public function phone(): Attribute
+    {
+      return Attribute::make(
+        set: fn($val) => preg_replace('/[^0-9]+/is', '', $val),
+      );
     }
 }

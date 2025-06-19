@@ -26,17 +26,17 @@ class DistributorSeeder extends Seeder
             'title' => 'ЯндексМаркет',
             'logo' => 'ymarket',
           ],
-          [
-            'title' => 'Магнит Маркет',
-            'logo' => 'mm',
-          ],
           // [
-          //   'title' => 'КазаньЭкспресс',
+          //   'title' => 'Магнит Маркет',
+          //   'logo' => 'mm',
           // ],
-          [
-            'title' => 'Детский мир',
-            'logo' => 'mir',
-          ],
+          // // [
+          // //   'title' => 'КазаньЭкспресс',
+          // // ],
+          // [
+          //   'title' => 'Детский мир',
+          //   'logo' => 'mir',
+          // ],
         ];
 
         foreach ($data as $item) {

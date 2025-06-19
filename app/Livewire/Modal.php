@@ -1,0 +1,157 @@
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\ValidationException;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
+class Modal extends Component
+{
+    public ?string $view;
+
+    public array|null $manager = null;
+
+    public $active = false;
+    public $isOpen = false;
+
+    public $phone = null;
+    
+    public array $credentials = [
+      'email' => null,
+      'password' => null,
+    ];
+
+    public array $register = [
+      'name' => null,
+      'email' => null,
+      'phone' => null,
+      'password' => null,
+      'password_confirm' => null,
+    ];
+
+    public function mount(?string $view = 'auth')
+    {
+      $this->view = $view;
+    }
+
+    #[On('openManagerModal')]
+    public function openManagerModal(mixed $manager = null)
+    {
+        $this->manager = $manager;
+        $this->view = 'manager';
+        $this->open();
+    }
+
+    #[On('openAuthModal')]
+    public function openAuthModal()
+    {
+        $this->view = 'auth';
+        $this->open();
+    }
+
+    #[On('openPasswordReset')]
+    public function openPasswordReset()
+    {
+        $this->view = 'password-reset';
+        $this->open();
+    }
+
+    #[On('openRegister')]
+    public function openRegister()
+    {
+        $this->view = 'register';
+        $this->open();
+    }
+
+    #[On('modalOpen')]
+    public function open()
+    {
+        $this->isOpen = true;
+    }
+
+    #[On('modalClose')]
+    public function close()
+    {
+        $this->isOpen = false;
+    }
+
+    public function auth(string $fallback_url = '/')
+    {
+      if (Auth::attempt($this->credentials, true)) {
+        return redirect($fallback_url);
+      }
+      $this->addError('email', 'Не верный логин или пароль');
+      return ;
+    }
+    
+    public function reg()
+    {
+      $validator = Validator::make($this->register, [
+          'name' => 'required|string',
+          'email' => 'required|string|email',
+          'phone' => 'sometimes|nullable|string|min:16',
+          'password' => 'required|string',
+          'password_confirm' => 'required|string',
+      ]);
+      
+      if ($validator->fails()) {
+        $exception = new ValidationException($validator);
+        // $exception->redirectTo($fallback_url);
+        throw $exception;
+      }
+
+      $valid = $validator->validated();
+
+      if (User::where('email', $valid['email'])->exists()) {
+        $this->addError('email', 'Адрес электронной почты уже используется.');
+        return ;
+      }
+
+      if (!User::validatePassword($valid['password'])) {
+        $this->addError('password', __('validation.password_simple'));
+        return ;
+      }
+
+      if ($valid['password'] !== $valid['password_confirm']) {
+        $this->addError('password', __('validation.password_confirm'));
+        $this->addError('password_confirm', __('validation.password_confirm'));
+        return ;
+      }
+
+      try {
+        $user_data = $this->register;
+        unset($user_data['password_confirm']);
+
+        $user = User::create($user_data);
+        $user->sendEmailVerification();
+
+        Auth::login($user);
+
+        return redirect('/');
+        
+      } catch (\Exception $e) {
+        Log::error('Register user error', [
+          'data' => $this->register,
+          'error' => $e,
+        ]);
+        $this->addError('modal', 'Что то пошло не так...');
+        return ;
+      }
+    }
+
+    public function render()
+    {
+      if (request()->has('modal')) {
+        $this->view = request()->get('modal');
+        $this->open();
+      }
+      return view('livewire.modal');
+    }
+}

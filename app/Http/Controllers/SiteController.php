@@ -20,4 +20,19 @@ class SiteController extends Controller
     {
       return view('pages.agents');
     }
+
+    public function cteateAgent(Request $request)
+    {
+      $valid = $request->validate([
+        'title' => 'required|string',
+        'inn' => 'required|integer',
+        'ogrn' => 'required|integer',
+        'address' => 'required|string',
+        'name' => 'required|strong',
+        'phone' => 'required|string',
+        'email' => 'required|string',
+      ]);
+
+      dd($valid);
+    }
 }

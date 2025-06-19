@@ -5,6 +5,10 @@
             'route' => 'home',
             'icon' => 'home',
         ],
+    ];
+
+    if (auth()->check()) {
+      $menu = array_merge($menu, [
         [
             'label' => 'История заказов',
             'route' => 'history',
@@ -15,11 +19,12 @@
             'route' => 'agents',
             'icon' => 'truck',
         ],
-    ];
+      ]);
+    }
 @endphp
 
 <aside class="lg:p-3 h-full">
-    <div class="relative flex flex-col p-3 h-full w-full lg:rounded-lg transition shadow bg-white dark:bg-primary-900">
+    <div class="relative flex flex-col p-3 h-full w-full overflow-scroll lg:rounded-lg transition shadow bg-white dark:bg-primary-900">
         <div class="flex justify-end items-center lg:hidden" id="close-menu">
           <span class="block rotate-45">
             @include('icons.plus')
@@ -32,6 +37,13 @@
                 {{-- <span>{{ env('APP_NAME', '') }}</span> --}}
             </a>
         </div>
+        @if(auth()->check())
+          <div class="user-info flex flex-col justify-start items-stretch mb-6">
+            <p class="font-bold text-lg">{{ ucfirst(auth()->user()->name) }}</p>
+            <p class="text-sm text-primary-400">{{ auth()->user()->email }}</p>
+            <p class="text-sm text-primary-400">{{ auth()->user()?->phone }}</p>
+          </div>
+        @endif
         <nav class="mb-3">
             <ul class="flex flex-col gap-2">
                 @foreach ($menu as $item)
@@ -51,12 +63,16 @@
             </ul>
         </nav>
 
-        <x-button>
-          Войти в личный кабинет
-        </x-button>
+        @if(!auth()->check())
+          <x-button class="open_auth">
+            Войти в личный кабинет
+          </x-button>
+        @else
+          <x-button onclick="window.location = '/auth/logout'" outlined>Выход</x-button>
+        @endif
 
         <div class="mt-auto">
-          <label for="theme-button" class="relative inline-flex items-center cursor-pointer">
+          <label for="theme-button" class="relative inline-flex items-center cursor-pointer mt-4">
             <input type="checkbox" id="theme-button" class="sr-only peer" />
             <div class="w-14 h-6 bg-primary-600 rounded-full peer-checked:bg-primary-100 transition-colors duration-300"></div>
             <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md flex items-center justify-center peer-checked:text-primary-100 peer-checked:translate-x-8 peer-checked:bg-primary-800 transition-all duration-300">

@@ -1,5 +1,5 @@
 <header class="py-3 sticky top-0 z-80 lg:static bg-primary-50 dark:bg-primary-950">
-  <div class="flex justify-between items-center px-5 lx:px-10 2xl:px-18 lg:hidden">
+  <div class="flex justify-between items-center px-2 sm:px-5 lx:px-10 2xl:px-18 lg:hidden">
     <div id="burger" class="">
       @include('icons.burger')
     </div>

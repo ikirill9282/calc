@@ -19,9 +19,9 @@
 </head>
 <body class="transition grid grid-cols-[1fr] lg:grid-cols-[300px_1fr] text-primary-900 bg-primary-50 dark:bg-primary-950 dark:text-primary-50">
   
-  <div class="h-dvh fixed z-90 w-full transition duration-300
+  <div class="fixed z-90 w-full h-full transition duration-300
               bg-black/75 lg:bg-transparent
-              lg:col-span-1 translate-x-[-100%] lg:translate-x-0 lg:sticky lg:top-0 lg:left-0"
+              lg:col-span-1 translate-x-[-100%] lg:translate-x-0 lg:sticky lg:top-0 lg:left-0 lg:h-auto"
       id="menu"
     >
     <div class="max-w-[300px] h-full lg:w-full">
@@ -31,16 +31,19 @@
   <div class="col-span-1">
     <x-header></x-header>
 
-    <main class="min-h-screen">
+    <main class="">
       @yield('content')
+      
+      @livewire('modal')
     </main>
 
     <x-footer></x-footer>
   </div>
 
-  @livewireScripts
 
   @vite(['resources/js/app.js'])
+
+  @livewireScripts
 
   @stack('js')
   

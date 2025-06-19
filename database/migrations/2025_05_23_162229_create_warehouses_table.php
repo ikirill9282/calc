@@ -14,8 +14,21 @@ return new class extends Migration
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
+            $table->string('phone')->nullable();
+            $table->integer('delivery_date')->default(1);
+            $table->tinyInteger('delivery_weekend')->default(0);
+            $table->integer('pick_date')->default(1);
+            $table->tinyInteger('pick_weekend')->default(0);
+            
+            $table->decimal('tariff_pick');
+
+            $table->decimal('tariff_delivery');
+
+            $table->text('address')->nullable();
             $table->string('slug');
-            $table->text('address');
+
+            $table->tinyInteger('disabled')->default(0);
+
             $table->timestamps();
         });
     }
