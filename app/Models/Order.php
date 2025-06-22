@@ -50,7 +50,7 @@ class Order extends Model
 
     $int = ($this->id - 100500 + 2);
 
-    $sheet->range("A1")->append(array_keys($item));
+    $sheet->range("A1")->append([array_keys($item)]);
     dd('ok');
     if (!$this->print()->exists()) {
       $sheet->range("A$int")->append($data);
