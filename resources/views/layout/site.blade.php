@@ -21,7 +21,7 @@
   
   <div class="fixed z-90 w-full h-full transition duration-300
               bg-black/75 lg:bg-transparent
-              lg:col-span-1 translate-x-[-100%] lg:translate-x-0 lg:sticky lg:top-0 lg:left-0 lg:h-auto"
+              lg:col-span-1 translate-x-[-100%] lg:translate-x-0 lg:sticky lg:top-0 lg:left-0 lg:h-screen"
       id="menu"
     >
     <div class="max-w-[300px] h-full lg:w-full">

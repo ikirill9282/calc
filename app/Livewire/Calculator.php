@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Arr;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session;
 
 class Calculator extends Component
 {
@@ -25,71 +29,77 @@ class Calculator extends Component
       'setField',
     ];
 
+    // public array $fields = [
+    //   'agent_id' => null,
+    //   'warehouse_id' => 'Ростов-на-Дону Ростовская область, г Ростов-на-Дону, пр. 40-летия Победы, 85/4А1',
+    //   'distributor_id' => 'Wildberries',
+    //   'distributor_center_id' => 'Подольск 2 (WB) ',
+    //   'delivery_date' => '21.06.2025',
+    //   'transfer_method' => 'pick',
+    //   'transfer_method_receive' => [
+    //     'date' => '19.06.2025',
+    //   ],
+    //   'transfer_method_pick' => [
+    //     'address' => 'г Москва, г Щербинка ',
+    //     'date' => '19.06.2025',
+    //   ],
+    //   'user_address_query' => null,
+    //   'user_focused_dropdown' => null,
+    //   'boxes' => true,
+    //   'boxes_data' => [
+    //     'count' => 2,
+    //     'volume' => 2,
+    //     'weight' => 1234,
+    //   ],
+    //   'pallets' => true,
+    //   'pallets_data' => [
+    //     'count' => 2,
+    //     'weight' => 32,
+    //   ],
+    //   'cargo_comment' => null,
+    //   'cargo_type' => null,
+    //   'palletizing' => 0,
+    //   'palletizing_pallet' => 0,
+    // ];
+
     public array $fields = [
-      'warehouse_id' => 'Ростов-на-Дону Ростовская область, г Ростов-на-Дону, пр. 40-летия Победы, 85/4А1',
-      'distributor_id' => 'Wildberries',
-      'distributor_center_id' => 'Подольск 2 (WB) ',
-      'delivery_date' => '21.06.2025',
-      'transfer_method' => 'pick',
+      'warehouse_id' => null,
+      'distributor_id' => null,
+      'distributor_center_id' => null,
+      'delivery_date' => null,
+      'post_date' => null,
+      'transfer_method' => null,
       'transfer_method_receive' => [
-        'date' => '19.06.2025',
+         'date' => null,
+      ],
+      'transfer_method_receive' => [
+        'date' => null,
       ],
       'transfer_method_pick' => [
-        'address' => 'г Москва, г Щербинка ',
-        'date' => '19.06.2025',
+        'address' => null,
+        'date' => null,
       ],
-      // 'transfer_method.receive.date' => null,
-      // 'transfer_method.pick.address' => 'г. Москва',
-      // 'transfer_method.pick.date' => '19.06.2025',
-      'user_address_query' => null,
-      'user_focused_dropdown' => null,
-      'boxes' => true,
+      'boxes' => false,
       'boxes_data' => [
-        'count' => 2,
-        'volume' => 2,
-        'weight' => 1234,
+        'count' => null,
+        'volume' => null,
+        'weight' => null,
       ],
-      'pallets' => true,
+      'pallets' => false,
       'pallets_data' => [
-        'count' => 2,
+        'count' => null,
         'weight' => null,
       ],
       'cargo_comment' => null,
       'cargo_type' => null,
       'palletizing' => 0,
       'palletizing_pallet' => 0,
-    ];
+      'agent_id' => null,
+      'payment_method' => null,
 
-    // public array $fields = [
-    //   'warehouse_id' => null,
-    //   'distributor_id' => null,
-    //   'distributor_center_id' => null,
-    //   'delivery_date' => null,
-    //   'transfer_method' => null,
-    //   'transfrt_method_receive' => [
-    //      'date' => null,
-    //   ]
-    //   'transfer_method.receive.date' => null,
-    //   'transfer_method.pick.address' => null,
-    //   'transfer_method.pick.date' => null,
-    //   'user_address_query' => null,
-    //   'user_focused_dropdown' => null,
-    //   'boxes' => false,
-    //   'boxes_data' => [
-    //     'count' => null,
-    //     'volume' => null,
-    //     'weight' => null,
-    //   ],
-    //   'pallets' => false,
-    //   'pallets_data' => [
-    //     'count' => null,
-    //     'weight' => null,
-    //   ],
-    //   'cargo_comment' => null,
-    //   'cargo_type' => null,
-    //   'palletizing' => null,
-    //   'palletizing_pallet' => null,
-    // ];
+      'user_address_query' => null,
+      'user_focused_dropdown' => null,
+    ];
 
     protected array $times = [
       ['id' => '9:00-12:00', 'title' => 'c 9:00 до 12:00'],
@@ -99,6 +109,8 @@ class Calculator extends Component
 
     public array $addresses = [];
 
+    public bool $checkout = false;
+
     // public function setWarehouse($value): void
     // {
     //   $this->warehouse = $value;
@@ -106,7 +118,40 @@ class Calculator extends Component
 
     public function mount()
     {
-      // dd($this->getDistributors());
+      // Session::forget('calc');
+      if (Session::exists('calc')) {
+        $this->fields = array_merge($this->fields, json_decode(Session::get('calc'), true));
+      }
+
+      if (request()->has('reply')) {
+        try {
+          $id = Crypt::decrypt(request()->get('reply'));
+          $order = Order::find($id);
+          $clear_fields = ['delivery_date', 'transfer_method_receive_date', 'transfer_method_pick_date'];
+          if ($order) {
+            foreach ($order->toArray() as $key => $val) {
+              if ($key == 'post_date') continue;
+
+              if ($key == 'transfer_method_pick_address') {
+                $this->fields['transfer_method_pick']['address'] = $val;
+                continue;
+              }
+
+              if (in_array($key, ['boxes_count', 'boxes_volume', 'boxes_weight', 'pallets_count', 'pallets_weight'])) {
+                $parts = explode('_', $key);
+                $this->fields["{$parts[0]}_data"][$parts[1]] = $val;
+                continue;
+              }
+
+              if (array_key_exists($key, $this->fields) && !in_array($key, $clear_fields)) {
+                $this->fields[$key] = $val;
+              }
+            }
+          }
+        } catch (\Exception $e) {
+
+        }
+      }
     }
 
 
@@ -117,6 +162,7 @@ class Calculator extends Component
         $this->dispatch('deliveryDates', $this->getDeliveryDates());
       }
 
+      // dd($this->isFieldDisabled(3));
       if (!$this->isFieldDisabled(3)) {
         $this->dispatch('deliveryPickDates', $this->getDeliveryPickDates());
         $this->dispatch('pickDates', $this->getPickDates());
@@ -130,10 +176,12 @@ class Calculator extends Component
         'pick' => $this->getPickAmount(),
         default => 0,
       };
-
       $additional = $this->getAdditionalAmount();
       $delivery = $this->getDeliveryAmount();
 
+      // dump($this->getField('transfer_method'));
+      // dump($pick_amount, $additional, $delivery);
+      // dump($pick_amount + $additional + $delivery);
       return $pick_amount + $additional + $delivery;
     }
 
@@ -190,6 +238,7 @@ class Calculator extends Component
     public function getPickAmount(): int
     {
       $result = 0;
+
       if (!$this->isFieldDisabled(4)) {
           $min = SheetData::query()
             ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
@@ -399,8 +448,10 @@ class Calculator extends Component
 
     public function clearFocusedAndSetField(string $name, mixed $value):void
     {
+      
       $this->fields['user_focused_dropdown'] = null;
       $this->setField($name, $value);
+      // $this->fields[$name] = $value;
     }
 
     public function getField(string $name): mixed
@@ -443,20 +494,25 @@ class Calculator extends Component
           $value = null;
         }
       }
-
+      
       $this->fields[$name] = $value;
 
-      if ($name == 'distributor_id') {
-        $this->clearField('distributor_center_id');
-      }
+      // if ($name == 'distributor_id') {
+      //   $this->clearField('distributor_center_id');
+      // }
 
-      if (in_array($name, ['warehouse_id', 'distributor_id', 'distributor_center_id'])) {
-        $className = str_ireplace('_id', '', $name);
-        $className = implode("", array_map(fn($elem) => ucfirst($elem), explode('_', $className)));
-        $className = '\App\Models\\'. $className;
 
-        $value = $className::find($value)?->title ?? $value;
-        $type = 'dropdown';
+      // if (in_array($name, ['warehouse_id', 'distributor_id', 'distributor_center_id'])) {
+      //   $className = str_ireplace('_id', '', $name);
+      //   $className = implode("", array_map(fn($elem) => ucfirst($elem), explode('_', $className)));
+      //   $className = '\App\Models\\'. $className;
+
+      //   $value = $className::find($value)?->title ?? $value;
+      //   $type = 'dropdown';
+      // }
+
+      if ($name == 'delivery_date') {
+        $this->fields['post_date'] = $this->getDeliveryDiff();
       }
 
       if (in_array($name, ['transfer_method_pick.time'])) {
@@ -472,9 +528,10 @@ class Calculator extends Component
         $this->clearField('palletizing');
       }
 
-      $this->dispatch('initDatepickers');
-      $this->dispatch('fieldUpdated', ['name' => $name, 'value' => $value, 'type' => $type ?? '']);
-      $this->clearRelated($name);
+      $this->onInitDatepickers();
+      // $this->clearRelated($name);
+      // $this->dispatch('initDatepickers');
+      // $this->dispatch('fieldUpdated', ['name' => $name, 'value' => $value, 'type' => $type ?? '']);
     }
 
     #[On('clearField')]
@@ -494,12 +551,16 @@ class Calculator extends Component
         // $this->fields['pallets_data'][str_ireplace('pallets_data.', '', $name)] = null;
         Arr::set($this->fields, $name, null);
         $this->dispatch('fieldClean', ['name' => $name, 'type' => null]);
-        $this->clearRelated($name);
+        // $this->clearRelated($name);
 
         return ;
       }
 
-      $this->fields[$name] = null;
+      if ($name == 'palletizing_pallet' || $name == 'palletizing') {
+        $this->fields[$name] = 0;
+      } else {
+        $this->fields[$name] = null;
+      }
       $type = null;
 
       if (in_array($name, [
@@ -527,7 +588,7 @@ class Calculator extends Component
       }
       $this->dispatch('fieldClean', ['name' => $name, 'type' => $type]);
 
-      $this->clearRelated($name);
+      // $this->clearRelated($name);
     }
 
     #[On('setAddtionioal')]
@@ -575,6 +636,25 @@ class Calculator extends Component
       return empty($this->fields['warehouse_id']) ? null : Warehouse::find($this->fields['warehouse_id'])?->phone;
     }
 
+    public function getDeliveryDiff(): ?string
+    {
+      if (!$this->isFieldDisabled(3)) {
+        return SheetData::query()
+          ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
+          ->where('distributor', $this->getField('distributor_id'))
+          ->where('distributor_center', $this->getField('distributor_center_id'))
+          ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+          ->select('delivery_diff')
+          ->orderByDesc('delivery_diff')
+          ->first()
+          ?->delivery_diff
+        ;
+      }
+
+      return null;
+    }
+
+
     public function getDeliveryDates(): array
     {
       if (!$this->isFieldDisabled(2)) {
@@ -605,7 +685,8 @@ class Calculator extends Component
         $result = $data->toArray();
         $result = $weekend ? $result : array_values(array_filter($result, fn($date) => !Carbon::parse($date)->isWeekend()));
 
-        return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        // return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        return $result;
       }
       return [];
     }
@@ -613,16 +694,8 @@ class Calculator extends Component
     public function getDeliveryPickDates(): array
     {
       if (!$this->isFieldDisabled(3)) {
-        $date = SheetData::query()
-          ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
-          ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
-          ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
-          ->select('delivery_diff')
-          ->orderByDesc('delivery_diff')
-          ->first()
-        ;
-        $point_date = Carbon::parse($date?->delivery_diff);
+        $date = $this->getDeliveryDiff();
+        $point_date = Carbon::parse($date);
 
         $weekend = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
@@ -647,7 +720,8 @@ class Calculator extends Component
         array_push($result, $point_date->format('Y-m-d'));
         sort($result, SORT_DESC);
 
-        return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        // return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        return $result;
       }
       return [];
     }
@@ -689,112 +763,157 @@ class Calculator extends Component
         sort($result, SORT_DESC);
 
         // dd(Carbon::today());
-        return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        // return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        return $result;
       }
       return [];
     }
 
-    public function clearRelated(string $name)
+    // public function clearRelated(string $name)
+    // {
+    //   if ($name == 'warehouse_id') {
+    //     $this->fields['distributor_id'] = null;
+    //     $this->fields['distributor_center_id'] = null;
+    //     $this->fields['delivery_date'] = null;
+    //     Arr::set($this->fields, 'transfer_method_receive.date', null);
+    //     Arr::set($this->fields, 'transfer_method_pick.date', null);
+        
+    //     $this->dispatch('fieldClean', ['name' => 'distributor_id']);
+    //     $this->dispatch('fieldClean', ['name' => 'distributor_center_id']);
+    //     $this->dispatch('fieldClean', ['name' => 'delivery_date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
+    //   }
+      
+    //   if ($name == 'distributor_id') {
+    //     $this->fields['distributor_center_id'] = null;
+    //     $this->fields['delivery_date'] = null;
+    //     Arr::set($this->fields, 'transfer_method_receive.date', null);
+    //     Arr::set($this->fields, 'transfer_method_pick.date', null);
+        
+    //     $this->dispatch('fieldClean', ['name' => 'distributor_center_id']);
+    //     $this->dispatch('fieldClean', ['name' => 'delivery_date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
+    //   }
+      
+    //   if ($name == 'distributor_center_id') {
+    //     $this->fields['delivery_date'] = null;
+    //     Arr::set($this->fields, 'transfer_method_receive.date', null);
+    //     Arr::set($this->fields, 'transfer_method_pick.date', null);
+        
+    //     $this->dispatch('fieldClean', ['name' => 'delivery_date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
+    //   }
+      
+    //   if ($name == 'delivery_date') {
+    //     Arr::set($this->fields, 'transfer_method_receive.date', null);
+    //     Arr::set($this->fields, 'transfer_method_pick.date', null);
+        
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
+    //     $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
+    //   }
+
+      
+    //   if ($this->isFieldDisabled(5)) {
+    //     $this->fields['palletizing'] = 0;
+    //     $this->fields['palletizing_pallet'] = 0;
+
+    //     $this->dispatch('fieldClean', ['name' => 'palletizing']);
+    //     $this->dispatch('fieldClean', ['name' => 'palletizing_pallet']);
+    //   }
+    // }
+
+    public function validateFields(): bool
     {
-      if ($name == 'warehouse_id') {
-        $this->fields['distributor_id'] = null;
-        $this->fields['distributor_center_id'] = null;
-        $this->fields['delivery_date'] = null;
-        Arr::set($this->fields, 'transfer_method_receive.date', null);
-        Arr::set($this->fields, 'transfer_method_pick.date', null);
-        
-        $this->dispatch('fieldClean', ['name' => 'distributor_id']);
-        $this->dispatch('fieldClean', ['name' => 'distributor_center_id']);
-        $this->dispatch('fieldClean', ['name' => 'delivery_date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
-      }
-      
-      if ($name == 'distributor_id') {
-        $this->fields['distributor_center_id'] = null;
-        $this->fields['delivery_date'] = null;
-        Arr::set($this->fields, 'transfer_method_receive.date', null);
-        Arr::set($this->fields, 'transfer_method_pick.date', null);
-        
-        $this->dispatch('fieldClean', ['name' => 'distributor_center_id']);
-        $this->dispatch('fieldClean', ['name' => 'delivery_date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
-      }
-      
-      if ($name == 'distributor_center_id') {
-        $this->fields['delivery_date'] = null;
-        Arr::set($this->fields, 'transfer_method_receive.date', null);
-        Arr::set($this->fields, 'transfer_method_pick.date', null);
-        
-        $this->dispatch('fieldClean', ['name' => 'delivery_date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
-      }
-      
-      if ($name == 'delivery_date') {
-        Arr::set($this->fields, 'transfer_method_receive.date', null);
-        Arr::set($this->fields, 'transfer_method_pick.date', null);
-        
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_receive.date']);
-        $this->dispatch('fieldClean', ['name' => 'transfer_method_pick.date']);
-      }
-
-      
-      if ($this->isFieldDisabled(5)) {
-        $this->fields['palletizing'] = 0;
-        $this->fields['palletizing_pallet'] = 0;
-
-        $this->dispatch('fieldClean', ['name' => 'palletizing']);
-        $this->dispatch('fieldClean', ['name' => 'palletizing_pallet']);
-      }
-    }
-
-
-    public function submit()
-    {
-      // dd($this->fields);
-      $validator = Validator::make($this->fields, [
-        "warehouse_id" => "required|string",
-        "distributor_id" => "required|string",
-        "distributor_center_id" => "required|string",
-        "delivery_date" => "required|string",
-        "transfer_method" => "required|string",
-        "transfer_method_receive.date" => 'required_if:transfer_method,=,receive|string',
-        "transfer_method_pick.address" => "required_if:transfer_method,=,pick|string",
-        "transfer_method_pick.date" => "required_if:transfer_method,=,pick|string",
-        "boxes" => 'required_if:pallets,false|boolean',
-        'boxes_data.count' => 'required_if:boxes,true|integer',
-        'boxes_data.volume' => 'required_if:boxes,true|numeric',
-        'boxes_data.weight' => 'required_if:boxes,true|numeric',
-        "pallets" => 'required_if:boxes,false|boolean',
-        'pallets_data.count' => 'required_if:pallets,true|integer',
-        'pallets_data.weight' => 'required_if:pallets,true|numeric',
-        "cargo_comment" => 'sometimes|nullable|string',
-        "cargo_type" => 'sometimes|nullable|string',
-        "palletizing" => 'sometimes|integer',
-        "palletizing_pallet" => 'sometimes|integer',
-      ],
-      [
-        'boxes_data.count.required_if' => 'Необходимо заоплнить поле',
-        'boxes_data.volume.required_if' => 'Необходимо заоплнить поле',
-        'boxes_data.weight.required_if' => 'Необходимо заоплнить поле',
-        'pallets_data.count.required_if' => 'Необходимо заоплнить поле',
-        'pallets_data.weight.required_if' => 'Необходимо заоплнить поле',
-        'transfer_method_receive.date.required_if' => 'Необходимо заоплнить поле',
-        'transfer_method_pick.address.required_if' => 'Необходимо заоплнить поле',
-        'transfer_method_pick.date.required_if' => 'Необходимо заоплнить поле',
-        'palletizing.integer' => 'Введите целое число',
-        'palletizing_pallet.integer' => 'Введите целое число',
-      ]
-    );
-
+        $validator = Validator::make($this->fields, [
+          "warehouse_id" => "required|string",
+          "distributor_id" => "required|string",
+          "distributor_center_id" => "required|string",
+          "delivery_date" => "required|string",
+          "post_date" => "required|string",
+          "transfer_method" => "required|string",
+          "transfer_method_receive.date" => 'required_if:transfer_method,=,receive|nullable|string',
+          "transfer_method_pick.address" => "required_if:transfer_method,=,pick|nullable|string",
+          "transfer_method_pick.date" => "required_if:transfer_method,=,pick|nullable|string",
+          "boxes" => 'required:boolean',
+          'boxes_data.count' => 'required_if:boxes,true|nullable|integer',
+          'boxes_data.volume' => 'required_if:boxes,true|nullable|numeric',
+          'boxes_data.weight' => 'required_if:boxes,true|nullable|numeric',
+          "pallets" => 'required:boolean',
+          'pallets_data.count' => 'required_if:pallets,true|nullable|integer',
+          'pallets_data.weight' => 'required_if:pallets,true|nullable|numeric',
+          "cargo_comment" => 'sometimes|nullable|string',
+          "cargo_type" => 'sometimes|nullable|string',
+          "palletizing" => 'sometimes|integer',
+          "palletizing_pallet" => 'sometimes|integer',
+        ],
+        [
+          'boxes_data.count.required_if' => 'Необходимо заоплнить поле',
+          'boxes_data.volume.required_if' => 'Необходимо заоплнить поле',
+          'boxes_data.weight.required_if' => 'Необходимо заоплнить поле',
+          'pallets_data.count.required_if' => 'Необходимо заоплнить поле',
+          'pallets_data.weight.required_if' => 'Необходимо заоплнить поле',
+          'transfer_method_receive.date.required_if' => 'Необходимо заоплнить поле',
+          'transfer_method_pick.address.required_if' => 'Необходимо заоплнить поле',
+          'transfer_method_pick.date.required_if' => 'Необходимо заоплнить поле',
+          'palletizing.integer' => 'Введите целое число',
+          'palletizing_pallet.integer' => 'Введите целое число',
+        ]
+      );
       if ($validator->fails()) {
-        // dd($validator->errors(), $this->fields);
+        dd($validator->errors(), $this->fields);
         throw new ValidationException($validator);
       }
 
-      
+      return true;
+    }
+
+    public function prepareOrder()
+    {
+      $fields = $this->fields;
+      unset($fields['user_focused_dropdown'], $fields['user_address_query']);
+
+      $order = new Order();
+      $order->fillFields($fields);
+      $order->user_id = Auth::user()->id;
+      $order->pick = $this->getPickAmount();
+      $order->delivery = $this->getDeliveryAmount();
+      $order->additional = $this->getAdditionalAmount();
+      $order->total = $this->getAmount();
+
+      return $order;
+    }
+
+    public function submit()
+    {
+      if ($this->validateFields()) {
+
+        if ($this->checkout) {
+          $validator = Validator::make($this->fields, [
+            'agent_id' => 'required|integer',
+            'payment_method' => 'required|string',
+          ]);
+          if ($validator->fails()) {
+            throw new ValidationException($validator);
+          }
+          $order = $this->prepareOrder();
+          // dd($order);
+          $order->save();
+
+          Session::forget('calc');
+          return redirect('/success/?order='.Crypt::encrypt($order->id));
+        } else {
+          Session::put('calc', json_encode($this->fields));
+          $this->checkout = true;
+        }
+      }
+    }
+
+    public function goToAgents()
+    {
+      return redirect('/agents');
     }
 
     public function render()

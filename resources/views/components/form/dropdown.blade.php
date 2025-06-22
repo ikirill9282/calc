@@ -10,8 +10,13 @@
   'id',
   'filter' => false,
   'search' => false,
+  'wire' => false,
+  'model' => '',
 ])
+
+
 <div class="dropdown-group relative {{ $class ?? '' }}" data-dropdown="{{ $name ?? '' }}">
+
   <x-form.input 
     placeholder="{{ $placeholder ?? '' }}"
     inputName="{{ $name ?? '' }}"
@@ -19,9 +24,20 @@
     labelClass="{{ $labelClass ?? '' }}"
     value="{{ $this->getField($name) }}"
     :text="$this->getField($name)"
-    :attrs="['data-filter' => $filter, 'data-search' => $search, 'data-name' => $name]"
+    :wire="$wire"
+    :attrs="[
+      'data-filter' => $filter, 
+      'data-search' => $search, 
+      'data-name' => $name, 
+      'autocomplete' => 'off',
+      // 'wire:model' => $model,
+    ]"
+    {{-- {{ isset($attributes['wire:model']) ? 'wire:model='.$attributes['wire:model'] : '' }} --}}
   />
-  <div class="dropdown {{ (($this->fields['user_focused_dropdown'] ?? null) == $name) ? '' : 'hidden' }} absolute z-40 w-full left-0 bottom-0 translate-y-[100%] rounded-2xl shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}">
+  <div class="dropdown absolute z-40 w-full left-0 bottom-0 translate-y-[100%] 
+              rounded-2xl shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}
+              {{ (($this->fields['user_focused_dropdown'] ?? null) == $name) ? '' : 'hidden' }}
+            ">
     <div class="dropdown-wrap py-4 flex flex-col justify-start items-stretch">
       @if($items->isEmpty())
         <span class="px-4 py-1">Нет доступных адресов</span>

@@ -1,6 +1,13 @@
-<div class="radio-group flex justify-start items-center hover:cursor-pointer">
-    <input type="radio" id="{{ $id ?? '' }}" name="{{ $name ?? '' }}" value="{{ $value ?? '' }}" class="peer w-0"
-        {{ $checked ?? '' }} />
+<div class="radio-group flex justify-start items-center hover:cursor-pointer {{ $groupClass ?? '' }}">
+    <input 
+      type="radio" 
+      id="{{ $id ?? '' }}" 
+      name="{{ $name ?? '' }}" 
+      value="{{ $value ?? '' }}" 
+      class="peer w-0"
+      {{ $checked ?? '' }} 
+      {{ isset($attributes['wire:model']) ? 'wire:model='.$attributes['wire:model'] : '' }}
+      />
     <div
         class="w-3 min-w-3 h-3 min-h-3 mr-3 rounded-full transition
         ring-1 ring-offset-3 dark:ring-offset-primary-900

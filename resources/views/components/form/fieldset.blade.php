@@ -17,7 +17,9 @@
         <span class="px-4 py-1.5 rounded-full 
                     bg-primary-900 text-primary-50 dark:bg-primary-100 dark:text-primary-900
                     group-[.disabled]/card:bg-primary-200 group-[.disabled]/card:text-primary-500
-                    dark:group-[.disabled]/card:bg-primary-800 dark:group-[.disabled]/card:text-primary-500 dark:group-[.disabled]/card:shadow dark:group-[.disabled]/card:shadow-primary-950/50">{{ $set_title ?? '' }}</span>
+                    dark:group-[.disabled]/card:bg-primary-800 dark:group-[.disabled]/card:text-primary-500 dark:group-[.disabled]/card:shadow dark:group-[.disabled]/card:shadow-primary-950/50">
+          {{ $set_title ?? '' }}
+        </span>
       @endif
       <span class="px-4 py-1.5">{{ $set_description ?? '' }}</span>
     </div>

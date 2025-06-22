@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->unique();
-            $table->string('inn')->unique();
-            $table->string('ogrn')->unique();
+            $table->bigInteger('user_id')->unsigned();
+            $table->string('title');
+            $table->string('inn');
+            $table->string('ogrn');
             $table->string('address');
             $table->string('name');
             $table->string('phone');
             $table->string('email');
             $table->timestamps();
+
+            $table->unique(['user_id', 'title', 'inn', 'ogrn']);
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

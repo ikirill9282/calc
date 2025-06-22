@@ -2,8 +2,8 @@
     <div class="px-6 2xlpx-12 w-full rounded-lg shadow bg-white dark:bg-primary-900">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-12 py-6 lg:py-12">
             <div class="flex flex-col gap-4">
-                <span>E-mail:<x-link href="mailto:test@mail.ru">test@mail.ru</x-link></span>
-                <span>Адрес: г. Иваново, ул. Смирнова д 4, 2 этаж</span>
+                <span>E-mail:<x-link href="mailto:{{ env('MAIL_FROM_ADDRESS') }}">{{ env('MAIL_FROM_ADDRESS') }}</x-link></span>
+                <span>Адрес: {{ env('ADDRESS') }}</span>
             </div>
             <div class="">
                 <nav>

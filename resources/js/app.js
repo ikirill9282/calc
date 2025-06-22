@@ -122,8 +122,40 @@ function discoverItems() {
         $(this).closest(".relative").find("input").val(null);
     });
 
-    // console.log(available_delivery_dates, 'deivery');
-    // console.log(available_pick_dates, 'pick');
+    $('#agents-table').find('.agents-block').find('.title').each((k, el) => {
+      $(el).off('click');
+      $(el).on('click', function() {
+        $(this).closest('.agents-block').find('.agents-toggle').slideToggle();
+        $(this).closest('.agents-block').find('.icon').toggleClass('rotate-180');
+      });
+    });
+
+    $('.time-message').each((k, el) => {
+      setTimeout(() => {
+        $(el).slideToggle(() => {
+          $(el).detach();
+          Livewire.dispatch('clearMessages');
+        });
+      }, 5000);
+    });
+
+
+    $('.order-details-toggle').each((k, el) => {
+      $(el).off('click', () => null);
+      $(el).on('click', function() {
+        $(this).closest('.order-details').find('.order-details-view').slideToggle();
+
+        if (!$(this).data('open')) {
+          $(this).data('open', true);
+          $(this).addClass('!opacity-100');
+          $(this).find('.icon').addClass('rotate-180');
+        } else {
+          $(this).data('open', false);
+          $(this).removeClass('!opacity-100');
+          $(this).find('.icon').removeClass('rotate-180');
+        }
+      });
+    })
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -137,8 +169,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     Livewire.on("deliveryDates", (data) => {
         // available_delivery_dates = data[0];
-
-        console.log(data);
 
         let el1 = document.getElementById("datepicker");
         let clone1 = el1.cloneNode(true);
@@ -241,7 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     Livewire.on("pickDates", (data) => {
-        console.log(data);
         
         let el3 = document.getElementById("datepicker3");
         let clone3 = el3.cloneNode(true);
@@ -364,7 +393,6 @@ document.addEventListener("DOMContentLoaded", function () {
         helpers.on("click", function () {
             target.val($(this).html());
             const sibl = target.siblings('input[type="hidden"]');
-            console.log({ name: sibl.attr("name"), value: sibl.val() });
 
             Livewire.dispatch("setField", {
                 name: sibl.attr("name"),
@@ -386,6 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 $(elem).on("click", function () {
                     const radio = $(this).find('input[type="radio"]');
                     radio.prop("checked", !radio.prop("checked"));
+                    Livewire.dispatch('setField', {name: 'distributor_id', value: radio.val()})
                 });
             });
     });
@@ -478,11 +507,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     // End Dropdown component
+    
+    $('.input-off').on('beforeinput', function(evt) {
+      evt.preventDefault();
+    });
 });
 
 window.addEventListener("fieldClean", (event) => {
     const params = event.detail[0];
-
+    console.log(params);
+    
     if (
         Object.keys(params).includes("type") &&
         params["type"] === "datepicker"
@@ -507,6 +541,7 @@ window.addEventListener("fieldClean", (event) => {
 
 window.addEventListener("fieldUpdated", (event) => {
     const params = event.detail[0];
+    
     if (Object.keys(params).includes("type") && params["type"] === "dropdown") {
         const elem = $(`[data-dropdown="${params["name"]}"]`).find(".input");
         elem.val(params["value"]);

@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderSuccess;
 use Illuminate\Http\Request;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
 
 class SiteController extends Controller
 {
@@ -13,7 +18,8 @@ class SiteController extends Controller
 
     public function history(Request $request)
     {
-      return view('pages.history');
+      $orders = Order::where('user_id', Auth::user()->id)->orderByDesc('created_at')->get();
+      return view('pages.history', ['orders' => $orders]);
     }
 
     public function agents(Request $request)
@@ -21,18 +27,24 @@ class SiteController extends Controller
       return view('pages.agents');
     }
 
-    public function cteateAgent(Request $request)
+    public function success(Request $request)
     {
-      $valid = $request->validate([
-        'title' => 'required|string',
-        'inn' => 'required|integer',
-        'ogrn' => 'required|integer',
-        'address' => 'required|string',
-        'name' => 'required|strong',
-        'phone' => 'required|string',
-        'email' => 'required|string',
-      ]);
+      if ($request->has('order')) {
+        try {
+          $id = Crypt::decrypt($request->get('order'));
+          $order = Order::find($id);
+          
+          Mail::to(Auth::user()->email)->send(new OrderSuccess($order));
+          $order->writeSheet();
 
-      dd($valid);
+        } catch (\Exception $e) {
+          throw $e;
+          return redirect('/history');
+        }
+
+        return view('pages.success', ['order' => $order]);
+      }
+
+      return redirect('/history');
     }
 }

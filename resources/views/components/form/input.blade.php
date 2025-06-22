@@ -1,5 +1,10 @@
   <div class="relative w-full h-full group/input">
-      <input {{ isset($inputId) && $inputId ? "id='$inputId'" : '' }} type="hidden" name="{{ ($wire ?? true) ? ($inputName ?? '') : '' }}" value="{{ $value ?? '' }}">
+      <input 
+        {{ isset($inputId) && $inputId ? "id='$inputId'" : '' }} 
+        type="hidden" 
+        name="{{ ($wire ?? true) ? ($inputName ?? '') : '' }}" 
+        value="{{ $value ?? '' }}"
+      >
 
       <div
           class="text-[11px] rounded sm:text-xs md:text-sm absolute top-0 left-4 px-2 translate-y-[-50%] text-primary-400 transition
@@ -13,6 +18,7 @@
           {{ $label ?? '' }}
       </div>
       
+      {{-- @dump($text ?? 'not') --}}
       <input {{ isset($attributes['x-mask']) ? "x-mask={$attributes['x-mask']}" : '' }} {{ isset($id) && $id ? "id='$id'" : '' }} type="{{ $type ?? 'text' }}" placeholder="{{ $placeholder ?? '' }}"
           class="input w-full h-14 py-2 ps-4 pe-12 ring-0 outline-0 rounded-xl border transition
           border-primary-200 dark:border-primary-400/50 
@@ -21,7 +27,8 @@
           focus:border-secondary-600 dark:focus:border-secondary-400
           {{ $class ?? '' }}"
           value="{{ $text ?? '' }}"
-          name="{{ ($wire ?? true) ? '' : ($inputName ?? '') }}"
+          name="{{ ($wire ?? true) ? 'unknown' : ($inputName ?? 'unknown') }}"
+          {{ isset($attributes['wire:model']) ? "wire:model={$attributes['wire:model']}" : '' }}
           
           @if(isset($attrs) && !empty($attrs))
             @foreach ($attrs as $key => $value)

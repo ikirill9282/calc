@@ -55,7 +55,7 @@
                                 dark:bg-primary-700/25 dark:hover:bg-primary-700 group-[.active]:dark:bg-primary-700
                                 "
                           >
-                            <span class="p-2 rounded-lg transition bg-primary-200/25 group-hover:bg-secondary-600 group-hover:text-white group-[.active]:bg-secondary-600 group-[.active]:text-white">@include("icons.{$item['icon']}", ['width' => 20, 'height' => 20])</span>
+                            <span class="p-2 rounded-lg transition bg-primary-400/25 group-hover:bg-secondary-600 group-hover:text-white group-[.active]:bg-secondary-600 group-[.active]:text-white">@include("icons.{$item['icon']}", ['width' => 20, 'height' => 20])</span>
                             <span class="">{{ $item['label'] }}</span>
                           </a>
                     </li>

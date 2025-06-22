@@ -13,9 +13,11 @@
               $item = $item->toArray();   
             @endphp
 
-            <div wire:click="setField('{{ $name }}', '{{ $item['distributor'] ?? null }}')" class="group flex distributor-item">
+            {{-- <div wire:click="setField('{{ $name }}', '{{ $item['distributor'] ?? null }}')" class="group flex distributor-item"> --}}
+            <div class="group flex distributor-item">
                 <input type="radio" name="{{ $name }}" value="{{ $item['distributor'] ?? '' }}"
                     class="w-0 h-0 leading-0 opacity-0"
+                    {{ $attributes }}
                     @if($this->getField($name) == ($item['distributor'] ?? ''))
                       checked
                     @endif

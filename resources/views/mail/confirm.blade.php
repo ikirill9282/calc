@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Подтверждение почты</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    font-family: inherit;
+  }
+
+  body {
+    font-family: "Roboto", sans-serif;
+  }
+</style>
 </head>
 <body style="background-color:#f3f4f6; margin:0; padding:0;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6; min-height:100vh; padding: 40px 0;">
