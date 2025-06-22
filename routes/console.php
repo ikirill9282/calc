@@ -10,7 +10,7 @@ use App\Models\Agent;
 use Illuminate\Support\Facades\Schedule;
 use Revolution\Google\Sheets\Facades\Sheets;
 
-Schedule::command('app:load-sheet')->everyFiveMinutes();
+Schedule::command('app:load-sheet')->hourly();
 
 Artisan::command('tt', function() {
   Order::find(100500)->writeSheet();
