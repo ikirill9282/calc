@@ -542,8 +542,19 @@ window.addEventListener("fieldClean", (event) => {
 window.addEventListener("fieldUpdated", (event) => {
     const params = event.detail[0];
     
+    console.log(params);
+    
     if (Object.keys(params).includes("type") && params["type"] === "dropdown") {
         const elem = $(`[data-dropdown="${params["name"]}"]`).find(".input");
         elem.val(params["value"]);
+    }
+    
+    if (Object.keys(params).includes("type") && params["type"] === "datepicker") {
+        const elem = $(`[data-dropdown="${params["name"]}"]`).find(".input");
+        let clone = elem.cloneNode(true);
+        clone.val(params["value"]);
+        elem.parentNode.replaceChild(clone, elem);
+        console.log('ok');
+        
     }
 });

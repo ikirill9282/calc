@@ -467,7 +467,6 @@ class Calculator extends Component
 
     public function setField(string $name, mixed $value): void
     {
-      
       // if (str_contains($name, 'boxes_data.')) {
       //   $this->fields['boxes_data'][str_ireplace('boxes_data.', '', $name)] = $value;
       //   $this->dispatch('fieldUpdated', ['name' => $name, 'value' => $value, 'type' => $type ?? '']);
@@ -479,6 +478,9 @@ class Calculator extends Component
         // $this->arrayField($name, $value);
         // $this->fields['pallets_data'][str_ireplace('pallets_data.', '', $name)] = $value;
         Arr::set($this->fields, $name, $value);
+        if (in_array($name, ["transfer_method_pick.address"])) {
+          $type = 'dropdown';
+        }
         $this->dispatch('fieldUpdated', ['name' => $name, 'value' => $value, 'type' => $type ?? '']);
 
         return ;
