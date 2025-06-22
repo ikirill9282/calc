@@ -28,7 +28,7 @@ class Order extends Model
     $agent = Agent::find($this->agent_id);
 
     $user_data = $user->toArray();
-    $user_data['verified'] = empty($user['email_verified_at']) ? 0 : 1;
+    $user_data['verified'] = is_null($user->email_verified_at) ? '0' : '1';
     unset($user_data['id'], $user_data['created_at'], $user_data['updated_at'], $user_data['email_verified_at']);
 
     $order_data = $this->toArray();
