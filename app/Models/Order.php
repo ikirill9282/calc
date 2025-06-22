@@ -37,7 +37,7 @@ class Order extends Model
     unset($order_data['user'], $order_data['id'], $order_data['user_id'], $order_data['agent_id']);
 
     $agent_data = $agent->toArray();
-    unset($agent_data['id'], $agent_data['created_at'], $agent_data['updated_at']);
+    unset($agent_data['id'], $agent_data['user_id'], $agent_data['created_at'], $agent_data['updated_at']);
 
     $item = array_merge($user_data, $order_data, $agent_data);
     $item = array_merge(['order_id' => $this->id], $item);
