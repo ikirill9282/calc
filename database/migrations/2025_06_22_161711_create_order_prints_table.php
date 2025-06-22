@@ -25,3 +25,6 @@ return new class extends Migration
         Schema::dropIfExists('order_prints');
     }
 };
+// * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+
+// root@3432267-cs37647:/home/lk.skif-logistik.ru/public_html/account# /usr/local/lsws/lsphp82/bin/php artisan migrate:refresh
