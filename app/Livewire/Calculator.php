@@ -685,8 +685,8 @@ class Calculator extends Component
         $result = $data->toArray();
         $result = $weekend ? $result : array_values(array_filter($result, fn($date) => !Carbon::parse($date)->isWeekend()));
 
-        // return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
-        return $result;
+        return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        // return $result;
       }
       return [];
     }
@@ -720,8 +720,8 @@ class Calculator extends Component
         array_push($result, $point_date->format('Y-m-d'));
         sort($result, SORT_DESC);
 
-        // return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
-        return $result;
+        return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        // return $result;
       }
       return [];
     }
@@ -763,8 +763,8 @@ class Calculator extends Component
         sort($result, SORT_DESC);
 
         // dd(Carbon::today());
-        // return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
-        return $result;
+        return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
+        // return $result;
       }
       return [];
     }
