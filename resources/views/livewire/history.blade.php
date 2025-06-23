@@ -154,7 +154,7 @@
                   </div>
                 </div>
                 <div class="basis-1/3">
-                  <div class="mb-4 font-bold dark:text-primary-300/50 text-primary-600/50">Отправитель:</div>
+                  <div class="mb-4 font-bold dark:text-primary-300/50 text-primary-600/50">Менеджер:</div>
                   <div class="flex flex-col gap-1">
                     <div class="flex gap-2">
                       <span>Имя:</span>
