@@ -2,12 +2,12 @@
   <div class="flex flex-col gap-10">
     @if($this->orders && $this->orders->isNotEmpty())
       @foreach ($this->orders as $order)
-        <x-form.fieldset :title="false" set_description="Заказ #{{ $order->id }}" set_class="order-details">
-          <div class="flex justify-start items-stretch">
+        <x-form.fieldset :title="false" set_description="Заказ #{{ $order->id }}" set_class="order-details !pb-14 sm:!pb-14">
+          <div class="flex justify-start items-start sm:items-stretch gap-2 flex-col-reverse sm:flex-row">
             <div class="basis-3/4">
               <div class="flex flex-col gap-1 text-2xl font-medium mb-4">
-                <p class="flex gap-2 items-center"> 
-                  <span>@include('icons.box')</span>
+                <p class=""> 
+                  <span class="float-left translate-y-1 mr-2 leading-0">@include('icons.box')</span>
                   <span>Заказ на доставку {{ $order->getCity() }} - {{ $order->distributor_center_id }}</span>
                 </p>
                 <span class="text-sm text-primary-600/50 dark:text-primary-200/50">от: {{ \Illuminate\Support\Carbon::parse($order->created_at)->format('d.m.Y') }}</span>
@@ -23,20 +23,20 @@
             </div>
           </div>
 
-          <div class="order-details-view py-6 mt-6 hidden border-t border-primary-500/50">
-            <div class="flex justify-start items-center gap-2 mb-4">
-              <p class="flex justify-start items-center gap-2">
+          <div class="order-details-view py-6 mt-6 border-t hidden border-primary-500/50">
+            <div class="flex justify-start items-start gap-2 mb-4">
+              <p class="flex justify-start items-center gap-2 min-w-26">
                 <span>@include('icons.point')</span>
                 <span>Откуда:</span>
               </p>
-              <p>{{ $order->warehouse_id }}</p>
+              <p class="">{{ $order->warehouse_id }}</p>
             </div>
-            <div class="flex justify-start items-center gap-2">
-              <p class="flex justify-start items-center gap-2">
+            <div class="flex justify-start items-start gap-2">
+              <p class="flex justify-start items-center gap-2 min-w-26">
                 <span>@include('icons.flag')</span>
                 <span>Куда:</span>
               </p>
-              <p>{{ $order->distributor_id }} {{ $order->distributor_center_id }}</p>
+              <p class="">{{ $order->distributor_id }} {{ $order->distributor_center_id }}</p>
             </div>
             <div class="flex mt-4">
               <x-link 
@@ -50,8 +50,8 @@
               </x-link>
             </div>
             <div class="border-t border-primary-500/50 mt-6 py-6">
-              <div class="text-xl font-bold mb-6">Способ передачи груза</div>
-              <div class="flex justify-start items-stretch gap-20">
+              <div class="text-xl font-bold mb-6">Способ передачи груза:</div>
+              <div class="flex justify-start items-stretch gap-5 flex-col sm:flex-row sm:gap-10 lg:gap-20">
                 <p class="font-medium text-secondary-600 dark:text-secondary-400">
                   {{ 
                     match($order->transfer_method) {
@@ -88,46 +88,66 @@
               </div>
             </div>
             <div class="border-t border-primary-500/50 mt-6 py-6">
-              <div class="text-xl font-bold mb-6">Состав груза</div>
+              <div class="text-xl font-bold mb-6">Состав груза:</div>
               @php
                 $table_data = [
                   [
                     'type' => ($order->boxes) ? 'Коробки' : '',
                     'count' => $order->boxes_count,
-                    'weight' => $order->boxes_weight,
                     'volume' => $order->boxes_volume,
                     'cargo' => $order->cargo_type,
                   ],
                   [
                     'type' => ($order->pallets) ? 'Паллеты' : '',
                     'count' => $order->pallets_count,
-                    'weight' => $order->pallets_weight,
+                    'volume' => $order->pallets_volume,
                     'cargo' => $order->cargo_type,
                   ],
                 ];
               @endphp
-              <table>
-                <thead>
-                  <tr>
-                    <th class="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип доставки:</th>
-                    <th class="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Кол-во:</th>
-                    <th class="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Вес:</th>
-                    <th class="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3:</th>
-                    <th class="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип груза:</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($table_data as $row)
+              <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden">
+                <table>
+                  <thead>
                     <tr>
-                      <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
-                      <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
-                      <td class="py-2 px-4">@if(isset($row['weight'])) {{ $row['weight'] }} кг @endif</td>
-                      <td class="py-2 px-4">@if(isset($row['volume'])) {{ $row['volume'] }} м3 @endif</td>
-                      <td class="py-2 px-4">@if(isset($row['cargo']) && (isset($row['count']) || isset($row['weight']) || isset($row['volume']))) {{ $row['cargo'] }} @endif</td>
-                    </tr>                      
-                  @endforeach
-                </tbody>
-              </table>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип доставки:</th>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Кол-во:</th>
+                      {{-- <th cltext-nowrap ass="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Вес:</th> --}}
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3:</th>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип груза:</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($table_data as $row)
+                      <tr>
+                        <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
+                        <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
+                        {{-- <td class="py-2 px-4">@if(isset($row['weight'])) {{ $row['weight'] }} кг @endif</td> --}}
+                        <td class="py-2 px-4">@if(isset($row['volume'])) {{ $row['volume'] }} м3 @endif</td>
+                        <td class="py-2 px-4">@if(isset($row['cargo']) && (isset($row['count']) || isset($row['weight']) || isset($row['volume']))) {{ $row['cargo'] }} @endif</td>
+                      </tr>                      
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+              
+            </div>
+            <div class="border-t border-primary-500/50 mt-6 py-6">
+              <div class="text-xl font-bold mb-6">Услуги склада:</div>
+              @if (!empty($order->palletizing_type) && !empty($order->palletizing_count))
+              <div class="grid grid-cols-[130px_1fr] grid-rows-2">
+                <p class="col-span-1 row-span-1 font-normal dark:text-primary-200/50 text-primary-600/50">
+                  Наименование:
+                </p>
+                <p class="col-span-1 row-span-1">{{ match($order->palletizing_type) {
+                  'single' => 'Палетирование',
+                  'pallet' => 'Поддон и палетирование',
+                } }}</p>
+                <p class="col-span-1 row-span-2 font-normal dark:text-primary-200/50 text-primary-600/50">
+                  Количество:
+                </p>
+                <p class="col-span-1 row-span-2">{{ $order->palletizing_count }}шт.</p>
+              </div>
+              @endif
             </div>
             <div class="border-t border-primary-500/50 mt-6 py-6">
               <div class="text-xl font-bold mb-6">Комментарий к составу груза:</div>
@@ -135,8 +155,8 @@
             </div>
             <div class="border-t border-primary-500/50 mt-6 py-6">
               <div class="text-xl font-bold mb-6">Контактные данные:</div>
-              <div class="flex justify-between items-stretch">
-                <div class="basis-1/3">
+              <div class="flex justify-between items-stretch gap-5 flex-col sm:flex-row">
+                <div class="sm:basis-1/2 lg:basis-1/3">
                   <div class="mb-4 font-bold dark:text-primary-300/50 text-primary-600/50">Отправитель:</div>
                   <div class="flex flex-col gap-1">
                     <div class="flex gap-2">
@@ -153,7 +173,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="basis-1/3">
+                <div class="sm:basis-1/2 lg:basis-1/3">
                   <div class="mb-4 font-bold dark:text-primary-300/50 text-primary-600/50">Менеджер:</div>
                   <div class="flex flex-col gap-1">
                     <div class="flex gap-2">
@@ -170,7 +190,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="basis-1/3">
+                <div class="sm:basis-1/2 lg:basis-1/3">
                   
                 </div>
               </div>
@@ -183,7 +203,7 @@
           </div>
           
           <div class="order-details-toggle w-full text-center text-sm py-1 absolute bottom-0 left-0 transition
-                    opacity-0 group-hover/card:opacity-100
+                    xl:opacity-0 group-hover/card:opacity-100
                     bg-primary-500/25
                     hover:cursor-pointer
                   ">

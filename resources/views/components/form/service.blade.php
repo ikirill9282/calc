@@ -1,28 +1,31 @@
 @props([
-    'items' => [],
-    'label' => 'Куда:',
-    'name' => null,
-    '',
+  'items' => collect([]),
+  'label' => 'Куда:',
 ])
+
+@php
+  // $fieldName = str_ireplace('fields.', '', $attributes->get('wire:model'));
+  $name = $attributes->get('name');
+@endphp
 
 <div class="flex flex-col sm:flex-row sm:gap-4 distributor-group">
     <div class="py-4">{{ $label }}</div>
     <div class="flex flex-wrap justify-start items-start gap-3">
-        @foreach ($this->getDistributors() as $item)
+        @foreach ($items as $item)
             @php
-              $item = $item->toArray();   
+              $item = $item->toArray();
             @endphp
 
             {{-- <div wire:click="setField('{{ $name }}', '{{ $item['distributor'] ?? null }}')" class="group flex distributor-item"> --}}
-            <div class="group flex distributor-item">
-                <input type="radio" name="{{ $name }}" value="{{ $item['distributor'] ?? '' }}"
-                    class="w-0 h-0 leading-0 opacity-0"
-                    {{ $attributes }}
+            <div 
+                wire:click.prevent="setField('{{ $name }}', '{{ $item['distributor'] }}')" 
+                class="group flex distributor-item"
+              >
+                <input type="checkbox" class="w-0 h-0 leading-0 opacity-0"
                     @if($this->getField($name) == ($item['distributor'] ?? ''))
                       checked
                     @endif
-                    {{-- {{ $this->getField($name) == ($item['distributor'] ?? '') ? 'checked' : '' }} --}}
-                    >
+                    />
                     {{-- px-4 py-2 sm:px-1 sm:py-2 --}}
                   <div class="flex justify-center items-center border rounded-xl hover:cursor-pointer transition
                     border-primary-700/10 bg-primary-700/10 hover:bg-secondary-600/10 hover:text-secondary-600 hover:border-secondary-600

@@ -24,7 +24,11 @@ class DadataClient
   public function __call($name, $arguments)
   {
     if (method_exists($this->client, $name)) {
-      return $this->client->$name(...$arguments);
+      try {
+        return $this->client->$name(...$arguments);
+      } catch(\Exception $e) {
+        return [];
+      }
     }
   }
 }

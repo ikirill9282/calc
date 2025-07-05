@@ -85,7 +85,14 @@ class Order extends Model
         }
         continue;
       }
-      $this->setAttribute($field, $value);
+
+      try {
+        $this->setAttribute($field, $value);
+      } catch (\Exception $e) {
+        // dd($fields, $field, $value, $e->getMessage());
+      } catch (\Error $e) {
+        // dd($fields, $field, $value, $e->getMessage());
+      };
     }
   }
 

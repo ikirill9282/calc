@@ -3,16 +3,18 @@
       <div class="{{ $this->checkout ? 'flex' : 'hidden' }} flex-col gap-10">
           {{-- @dump($this->fields) --}}
           <x-form.fieldset :title="false" set_description="Контрагент" :set_loading="true">
-            <div class="flex gap-4 flex-col md:flex-row">
-              <x-form.agents-dropdown 
+            <div class="flex gap-4 flex-col md:flex-row bg-inherit">
+              <x-forms.dropdown 
                 :items="\App\Models\Agent::where('user_id', auth()->user()?->id)->get()"
                 label="Контрагент"
-                class="grow"
+                placeholder="Выберите контрагента..."
                 name="agent_id"
                 id="agent_id"
-                :wire="false"
+                wire:model="fields.agent_id"
+                optionLabel="title"
+                optionValue="id"
               />
-              <x-button wire:click="goToAgents" outlined>
+              <x-button wire:click="goToAgents" outlined class="text-nowrap">
                 Добавить контрагента
               </x-button>
             </div>
@@ -27,69 +29,71 @@
           </x-form.fieldset>
           <x-form.fieldset :title="false" set_description="Способ оплаты" :set_loading="true">
             <div class="flex flex-col gap-4">
-              <x-form.radio wire:model="fields.payment_method" groupClass="group pm-group" name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash" :checked="(($this->getField('payment_method') == 'cash') ? 'checked' : '')" />
-              <x-form.radio wire:model="fields.payment_method" groupClass="group pm-group" name="payment_method" value="bill" label="По счету" id="payment_method_bill" :checked="(($this->getField('payment_method') == 'bill') ? 'checked' : '')" />
+              <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group" name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash" :checked="(($this->getField('payment_method') == 'cash') ? 'checked' : '')" />
+              <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group" name="payment_method" value="bill" label="По счету" id="payment_method_bill" :checked="(($this->getField('payment_method') == 'bill') ? 'checked' : '')" />
             </div>
           </x-form.fieldset>
         </div>
         <div class="{{ $this->checkout ? 'hidden' : 'flex' }} flex-col justify-start items-stretch gap-10">
             
+            {{-- @dump($this->fields) --}}
             {{-- @dump($this->fields, $this->fields['pallets_data'], $this->fields['boxes_data']) --}}
             
             <x-form.fieldset set_title="Шаг 1" set_description="Выбор маршрута"
-                set_class="{{ $this->isFieldDisabled(1) ? 'disabled' : '' }}" {{-- :set_loading="true" --}}>
-                <div class="flex flex-col sm:gap-8">
-                    <x-form.dropdown 
-                        id="warehouse_id" 
-                        name="warehouse_id" 
-                        placeholder="Откуда" 
-                        class="input-off"
-                        label="Склад отправления {{ config('app.name') }}:" 
-                        :items="$this->getWarehouses()" 
-                        :value="$this->getField('warehouse_id')"
-                        :filter="true" 
-                        :wire="false"
-                        {{-- model="fields.warehouse_id" --}}
-                        />
+                {{-- set_loading="false" --}}
+                set_class="{{ $this->isFieldDisabled(1) ? 'disabled' : '' }}"
+                >
+                <div class="flex flex-col sm:gap-8 bg-inherit">
+                    <x-forms.dropdown 
+                      label="Склад отправления {{ config('app.name') }}:"
+                      placeholder="Откуда"
+                      wire:model="fields.warehouse_id"
+                      optionLabel="wh"
+                      optionDescription="wh_address"
+                      :items="$this->getWarehouses()"
+                      :getOptionValueUsing="fn($item) => (($item['wh'] ?? '').' '.($item['wh_address'] ?? ''))"
+                    />
 
-                    <x-form.service name="distributor_id" :items="$this->getDistributors()" wire:model="fields.distributor_id" />
+                    <x-form.service 
+                      name="distributor_id" 
+                      :items="$this->getDistributors()"
+                      wire:model="fields.distributor_id" 
+                    />
 
-                      {{-- @dump($this->getField('distributor_center_id')) --}}
-                    <x-form.dropdown 
-                        id="distributor_center_id" 
-                        name="distributor_center_id"
-                        placeholder="Адрес РЦ"
-                        class="mt-6 sm:mt-0 input-off" 
-                        label="РЦ, в который будет доставлен груз" 
-                        :items="$this->getDistributorCenters()"
-                        :value="$this->getField('distributor_center_id')" 
-                        :filter="true" 
-                        :wire="false"
-                        {{-- wire:model="distributor_center_id" --}}
-                      />
-                    {{-- <a
-                    class="mt-4 sm:mt-0 flex justify-start items-center gap-2 transition hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
-                    <span>Нет нужного РЦ</span>
-                    <span
-                        class="rounded-full p-2 bg-primary-600/15 text-secondary-600 dark:text-secondary-400">@include('icons.question')</span>
-                </a> --}}
+                    <x-forms.dropdown 
+                      label="РЦ, в который будет доставлен груз"
+                      placeholder="Адрес РЦ"
+                      wire:model="fields.distributor_center_id"
+                      :items="$this->getDistributorCenters()"
+                      optionValue="distributor_center"
+                      optionLabel="distributor_center"
+                      optionDescription="distributor_center"
+                    />
                 </div>
             </x-form.fieldset>
 
             <x-form.fieldset set_title="Шаг 2" set_description="Доставки на РЦ"
-                set_class="{{ $this->isFieldDisabled(2) ? 'disabled' : '' }}" {{-- set_loading="true" --}}>
-                <x-form.datepicker label="Выберите, к какому числу доставить на РЦ" inputId="delivery_date"
-                    inputName="delivery_date" id="datepicker" :text="$this->getField('delivery_date')" />
+                set_class="{{ $this->isFieldDisabled(2) ? 'disabled' : '' }}" >
+                <x-form.datepicker
+                  id="datepicker"
+                  name="fields.delivery_date"
+                  label="Выберите, к какому числу доставить на РЦ"
+                  wire:model.live="fields.delivery_date"
+                />
             </x-form.fieldset>
 
             <x-form.fieldset set_title="Шаг 3" set_description="Способ передачи груза"
-                set_class="{{ $this->isFieldDisabled(3) ? 'disabled' : '' }}" {{-- set_loading="true" --}}>
+                set_class="{{ $this->isFieldDisabled(3) ? 'disabled' : '' }}">
                 <fieldset class="flex flex-col gap-3">
-                    <div class="flex flex-wrap justify-start items-center group">
-                        <x-form.radio name="transfer_method" id="transfer_method_receive" value="receive"
-                            label="Самостоятельно привезти груз" :checked="in_array($this->getField('transfer_method'), ['receive']) ? 'checked' : ''" />
-                        <div
-                            class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['receive']) ? '' : 'hidden' }}">
+                    <div class="flex flex-wrap justify-start items-center group/radio radio-box">
+                        <x-form.radio 
+                            name="transfer_method" 
+                            id="transfer_method_receive" 
+                            value="receive"
+                            label="Самостоятельно привезти груз"
+                            wire:model.live="fields.transfer_method"
+                          />
+                        <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['receive']) ? '' : 'hidden' }}">
                             <div
                                 class="flex flex-col justify-start items-stretch gap-10 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
 
@@ -108,13 +112,15 @@
                                     </div>
                                 </div>
 
-                                <x-form.datepicker pickerClass="w-full" inputId="transfer_method_receive.date"
-                                    inputName="transfer_method_receive.date" id="datepicker2"
-                                    label="Укажите дату отгрузки" labelClass="!bg-primary-50 dark:!bg-primary-950"
-                                    :text="$this->getField('transfer_method_receive.date')" />
+                                <x-form.datepicker 
+                                    id="datepicker2"
+                                    name="fields.transfer_method_receive.date"
+                                    label="Укажите дату отгрузки"
+                                    wire:model.live="fields.transfer_method_receive.date"
+                                  />
 
                                 <div
-                                    class="cargo-date {{ $this->getField('transfer_method_receive.date') ? '' : 'hidden' }}">
+                                    class="cargo-date {{ $this->getField('transfer_method_receive.date') ? 'collapsed' : 'hidden' }}">
                                     <div
                                         class="flex justify-start items-center gap-3 w-full rounded-2xl p-3 text-white bg-sky-600">
                                         <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
@@ -128,26 +134,38 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap justify-start items-center group">
-                        <x-form.radio name="transfer_method" id="transfer_method_pick" value="pick"
-                            label="Заберем груз от вас по адресу" :checked="in_array($this->getField('transfer_method'), ['pick']) ? 'checked' : ''" />
-                        <div
-                            class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['pick']) ? '' : 'hidden' }}">
+                    <div class="flex flex-wrap justify-start items-center group/radio radio-box">
+                        <x-form.radio 
+                            name="transfer_method" 
+                            id="transfer_method_pick" 
+                            value="pick"
+                            label="Заберем груз от вас по адресу" 
+                            wire:model.live="fields.transfer_method"
+                          />
+                        <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['pick']) ? '' : 'hidden' }}">
                             <div
                                 class="flex flex-col justify-start items-stretch gap-6 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
-                                <x-form.dropdown id="transfer_method_pick.address" name="transfer_method_pick.address"
+                                {{-- @dump($this->fields['transfer_method_pick']) --}}
+                                {{-- @dump($this->addresses) --}}
+                                <x-forms.dropdown 
+                                    id="transfer_method_pick.address" 
+                                    name="transfer_method_pick.address"
                                     label="Укажите адрес для подачи машины"
-                                    labelClass="!bg-primary-50 dark:!bg-primary-950" placeholder="г.Москва ..."
-                                    :items="$this->getAddresses()" :search="true" model="fields.transfer_method_pick.address" />
+                                    labelClass="!bg-primary-50 dark:!bg-primary-950" 
+                                    :items="$this->addresses" 
+                                    wire:model="fields.transfer_method_pick.address"
+                                    optionLabel="wh"
+                                    optionValue="wh"
+                                    :searchable="true"
+                                    placeholder="г. Москва..."
+                                  />
 
-                                <x-form.datepicker inputId="transfer_method_pick.date"
-                                    inputName="transfer_method_pick.date" label="Укажите дату отгрузки"
-                                    labelClass="!bg-primary-50 dark:!bg-primary-950" id="datepicker3"
-                                    :text="$this->getField('transfer_method_pick.date')" />
-                                {{-- <x-form.dropdown id="transfer_method_pick.time" name="transfer_method_pick.time"
-                                label="Укажите время, когда сможете принять машину"
-                                labelClass="!bg-primary-50 dark:!bg-primary-950" placeholder="Время..."
-                                :items="collect($this->times)" /> --}}
+                                <x-form.datepicker 
+                                    id="datepicker3"
+                                    name="fields.transfer_method_pick.date"
+                                    label="Укажите дату отгрузки"
+                                    wire:model.live="fields.transfer_method_pick.date"
+                                  />
                             </div>
                         </div>
                     </div>
@@ -158,83 +176,32 @@
                 set_class="{{ $this->isFieldDisabled(4) ? 'disabled' : '' }}">
                 <div class="flex flex-col gap-6">
                     <div class="checkbox-group flex flex-col justify-start items-start w-full">
-                        <x-form.checkbox label="Коробки" id="boxes" name="boxes" :checked="$this->getField('boxes') ? 'checked' : ''" />
+                        {{-- <x-form.checkbox label="Коробки" id="boxes" name="boxes" :checked="$this->getField('boxes') ? 'checked' : ''" /> --}}
+                        <x-form.checkbox label="Коробки" id="fields.boxes" value="0" name="fields.boxes" wire:model.live="fields.boxes" />
                         <div
                             class="infoblock boxes-item collapsed w-full {{ $this->getField('boxes') ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
-
-                            {{-- @foreach ($this->getField('boxes_items') as $key => $box) --}}
-                            {{-- <div class="flex justify-between items-center mb-8">
-                                <div class="text-2xl font-bold">Коробка {{ $key + 1 }}</div>
-                                @if ($key > 0)
-                                    <div wire:click="removeBox({{ $key }})"
-                                        class="hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
-                                        @include('icons.trash')
-                                    </div>
-                                @endif
-                            </div> --}}
-                            <div class="flex flex-col gap-6 w-full">
-                                <x-form.input label="Количество" labelClass="!bg-primary-50 dark:!bg-primary-950"
-                                    inputName="boxes_data.count" class="input-numeric" :value="$this->getField('boxes_data.count')"
-                                    :text="$this->getField('boxes_data.count')" />
-                                <x-form.input label="Объем м3" labelClass="!bg-primary-50 dark:!bg-primary-950"
-                                    inputName="boxes_data.volume" class="input-numeric" :value="$this->getField('boxes_data.volume')"
-                                    :text="$this->getField('boxes_data.volume')" />
-                                <x-form.input label="Вес общий, кг" labelClass="!bg-primary-50 dark:!bg-primary-950"
-                                    inputName="boxes_data.weight" class="input-numeric" :value="$this->getField('boxes_data.weight')"
-                                    :text="$this->getField('boxes_data.weight')" />
-                                {{-- <x-form.input inputName="boxes_items.{{ $key }}.count" :value="$box['count']"
-                                    :text="$box['count']" label="Кол-во коробок"
-                                    labelClass="!bg-primary-50 dark:!bg-primary-950" class="input-numeric" />
-                                <x-form.input inputName="boxes_items.{{ $key }}.weight" :value="$box['weight']"
-                                    :text="$box['weight']" label="Вес общий, кг"
-                                    labelClass="!bg-primary-50 dark:!bg-primary-950" class="input-numeric" /> --}}
+                            <div class="flex flex-col gap-6 w-full bg-inherit">
+                                <x-forms.wrap label="Количество" name="fields.boxes_data.count">
+                                  <x-forms.input class="input-numeric" name="fields.boxes_data.count" wire:model.live="fields.boxes_data.count" />
+                                </x-forms.wrap>
+                                <x-forms.wrap label="Объем м3" name="fields.boxes_data.volume">
+                                  <x-forms.input class="input-numeric" name="fields.boxes_data.volume" wire:model.live="fields.boxes_data.volume" />
+                                </x-forms.wrap>
                             </div>
-                            {{-- @endforeach --}}
-
-
-                            {{-- <x-button wire:click="addBox"
-                            class="w-full !bg-primary-200 !text-primary-950 hover:!bg-primary-300 hover:!text-secondary-600 
-                                  dark:!bg-primary-800 dark:hover:!bg-primary-700 dark:!text-primary-50 dark:hover:!text-secondary-400
-                                ">
-                            <p class="flex justify-center items-center gap-2">
-                                <span>@include('icons.plus', ['width' => 20, 'height' => 20])</span>
-                                <span>Добавить другие габариты</span>
-                            </p>
-                        </x-button> --}}
                         </div>
                     </div>
-                    <div class="checkbox-group flex flex-col justify-start items-start w-full">
-                        <x-form.checkbox label="Палеты" id="pallets" name="pallets" :checked="$this->getField('pallets') ? 'checked' : ''" />
+                    <div class="checkbox-group flex flex-col justify-start items-start w-full" >
+                        <x-form.checkbox label="Палеты" name="fields.pallets" id="fields.pallets" wire:model.live="fields.pallets" />
                         <div
                             class="infoblock boxes-item collapsed w-full {{ $this->getField('pallets') ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
-                            <div class="flex flex-col gap-6 w-full ">
-                                {{-- @foreach ($this->getField('pallets_items') as $key => $item) --}}
-                                {{-- <div class="flex justify-between items-center">
-                                    <div class="text-2xl font-bold">Палета {{ $key + 1 }}</div>
-                                    @if ($key > 0)
-                                        <div wire:click="removePallete({{ $key }})"
-                                            class="hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
-                                            @include('icons.trash')
-                                        </div>
-                                    @endif
-                                </div> --}}
-
-                                <x-form.input label="Кол-во" labelClass="!bg-primary-50 dark:!bg-primary-950"
-                                    class="input-numeric" inputName="pallets_data.count" :value="$this->getField('pallets_data.count')"
-                                    :text="$this->getField('pallets_data.count')" />
-                                <x-form.input label="Вес общий, кг" labelClass="!bg-primary-50 dark:!bg-primary-950"
-                                    class="input-numeric" inputName="pallets_data.weight" :value="$this->getField('pallets_data.weight')"
-                                    :text="$this->getField('pallets_data.weight')" />
-                                {{-- @endforeach --}}
+                            <div class="flex flex-col gap-6 w-full bg-inherit">
+                                <x-forms.wrap label="Количество" name="fields.pallets_data.count">
+                                  <x-forms.input class="input-numeric" name="fields.pallets_data.count" wire:model.live="fields.pallets_data.count" />
+                                </x-forms.wrap>
+                                <x-forms.wrap label="Объем м3" name="fields.pallets_data.volume">
+                                  <x-forms.input class="input-numeric" name="fields.pallets_data.volume" wire:model.live="fields.pallets_data.volume" />
+                                </x-forms.wrap>
                             </div>
-
-                            {{-- <x-button wire:click="addPallete"
-                            class="w-full !bg-primary-200 !text-primary-950 hover:!bg-primary-300 hover:!text-secondary-600 dark:hover:!text-secondary-400 dark:!bg-primary-800 dark:hover:!bg-primary-700 dark:!text-primary-50">
-                            <p class="flex justify-center items-center gap-2">
-                                <span>@include('icons.plus', ['width' => 20, 'height' => 20])</span>
-                                <span>Добавить другие габариты</span>
-                            </p>
-                        </x-button> --}}
                         </div>
                     </div>
 
@@ -248,9 +215,16 @@
 
             <x-form.fieldset set_title="Шаг 5" set_description="Характер груза"
                 set_class="{{ $this->isFieldDisabled(5) ? 'disabled' : '' }}">
-                <div class="input-helper-group flex flex-col justify-start items-stretch gap-6">
-                    <x-form.input label="Какой тип груза будете перевозить" id="cargo_type" inputName="cargo_type"
-                        :value="$this->getField('cargo_type')" :text="$this->getField('cargo_type')" />
+                <div class="input-helper-group flex flex-col justify-start items-stretch gap-6 bg-inherit">
+                    <x-forms.wrap label="Какой тип груза будете перевозить">
+                      <x-forms.input 
+                        id="cargo_type" 
+                        name="fields.cargo_type"
+                        wire:model="fields.cargo_type"
+                        aria-autocomplete="off"
+                        autocomplete="off"
+                        />
+                    </x-forms.wrap>
                     <div class="flex justify-start items-center gap-2">
                         <p class="text-primary-400">Например:</p>
                         <p class="flex justify-start items-center gap-2">
@@ -263,43 +237,54 @@
                 </div>
             </x-form.fieldset>
 
-            {{-- <x-form.fieldset set_title="Шаг 6" set_description="Тип доставки"
-                      set_class="{{ $this->isFieldDisabled(6) ? 'disabled' : '' }}">
-                      <div class="flex justify-start items-center gap-4">
-                          <x-form.checkbox label="Монопалета" name="delivery_type.monopalete" :checked="$this->getDeliveryType('monopalete') ? 'checked' : ''" />
-                          <x-form.checkbox label="Короб" name="delivery_type.box" :checked="$this->getDeliveryType('box') ? 'checked' : ''" />
-                          <x-form.checkbox label="QR код" name="delivery_type.qr" :checked="$this->getDeliveryType('qr') ? 'checked' : ''" />
-                      </div>
-            </x-form.fieldset> --}}
-
-            <x-form.fieldset set_description="Дополнительно: складские услуги" :title="false" set_loading="true"
+            <x-form.fieldset set_description="Дополнительно: складские услуги" :title="false"
                 set_class="{{ $this->isFieldDisabled(7) ? 'disabled' : '' }}">
-                @if (empty($this->getField('warehouse_id')))
+                <div class="{{ empty($this->getField('warehouse_id')) ? '' : 'hidden' }}">
                     <p class="my-2">Для получения подробной информации выберите склад, из которого будет доставлен
                         груз.</p>
-                @else
-                    <div class="flex flex-col justify-start items-stretch gap-4">
-                        <div class="flex justify-start items-center group" data-related="additional">
-                            <div
-                                class="flex justify-start items-start flex-col gap-2 sm:gap-0 text-sm sm:text-base sm:flex-row">
-                                <x-form.radio label="Палетирование" id="additional_palletizing" name="additional" />
-                                <div class="sm:ml-8 font-bold">250 ₽ / шт</div>
-                            </div>
-                            <div class="grow"></div>
-                            <x-form.counter name="palletizing" id="palletizing" :value="$this->getField('palletizing')" />
+                </div>
+                <div class="flex flex-col justify-start items-stretch gap-4 additional-box {{ empty($this->getField('warehouse_id')) ? 'hidden' : '' }}">
+                    <div class="flex justify-start items-center group/radio radio-box" data-related="additional">
+                        <div
+                            class="flex justify-start items-start flex-col gap-2 sm:gap-0 text-sm sm:text-base sm:flex-row">
+                            <x-form.radio 
+                              label="Палетирование" 
+                              id="additional_palletizing" 
+                              name="palletizing_type"
+                              value="single"
+                              wire:model="fields.palletizing_type"
+                            />
+                            <div class="sm:ml-8 font-bold">250 ₽ / шт</div>
                         </div>
-                        <div class="flex justify-start items-center group text-md" data-related="additional">
-                            <div
-                                class="flex justify-start items-start flex-col gap-2 sm:gap-0 text-sm sm:text-base sm:flex-row">
-                                <x-form.radio label="Поддон и палетирование" id="additional_pallete_palletizing"
-                                    name="additional" />
-                                <div class="sm:ml-8 font-bold">650 ₽ / шт</div>
-                            </div>
-                            <div class="grow"></div>
-                            <x-form.counter name="palletizing_pallet" id="palletizing_pallet" :value="$this->getField('palletizing_pallet')" />
-                        </div>
+                        <div class="grow"></div>
+                        <x-form.counter 
+                          name="palletizing" 
+                          id="palletizing" 
+                          wire:model="fields.palletizing_count"
+                          :count="($this->getField('palletizing_type') == 'single') ? $this->getField('palletizing_count'): 0" 
+                        />
                     </div>
-                @endif
+                    <div class="flex justify-start items-center group/radio radio-box" data-related="additional">
+                        <div
+                            class="flex justify-start items-start flex-col gap-2 sm:gap-0 text-sm sm:text-base sm:flex-row">
+                            <x-form.radio 
+                                label="Поддон и палетирование" 
+                                id="additional_palletizing_pallet"
+                                name="palletizing_type"
+                                value="pallet"
+                                wire:model="fields.palletizing_type"
+                            />
+                            <div class="sm:ml-8 font-bold">650 ₽ / шт</div>
+                        </div>
+                        <div class="grow"></div>
+                        <x-form.counter 
+                          name="palletizing_pallet" 
+                          id="palletizing_pallet" 
+                          wire:model="fields.palletizing_count"
+                          :count="($this->getField('palletizing_type') == 'pallet') ? $this->getField('palletizing_count'): 0"
+                        />
+                    </div>
+                </div>
             </x-form.fieldset>
         </div>
 

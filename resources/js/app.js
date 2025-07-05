@@ -10,101 +10,49 @@ let datepicker1 = null;
 let datepicker2 = null;
 let datepicker3 = null;
 
+
+const dropdowns = [...document.querySelectorAll('div[id*=-dropdown]')];
+
+dropdowns.forEach((elem) => {
+  const id = elem.getAttribute('id');
+  const field = elem.querySelector('.field');
+  const dropdown = elem.querySelector('.dropdown');
+  const input = elem.querySelector('input[type="text"]');
+  
+  const checkDropdownClose = (evt) => {
+    toggle(evt, false)
+  }
+
+  const toggle = (evt, open = true) => {
+    $(dropdown).data('open', !$(dropdown).data('open'));
+
+    if (!$(dropdown).data('open')) {
+      document.removeEventListener('click', checkDropdownClose);
+      if (evt.target !== input) {
+        $(dropdown).slideUp();
+      } else {
+        $(dropdown).slideDown();
+      }
+    } else {
+      setTimeout(() => document.addEventListener('click', checkDropdownClose), 100);
+      if ($(dropdown).data('searchable')) {
+        $(dropdown).closest('.dropdown-box').find('input[type="text"]').focus();
+      }
+      $(dropdown).slideDown();
+    }
+  };
+  
+  elem.addEventListener('click', toggle);
+});
+
 function discoverItems() {
+
+
     $(".input-numeric").each((k, el) => {
         $(el).on("input", function (evt) {
             $(this).val(evt.target.value.replace(/[^0-9\.]+/g, ""));
             $(this).trigger("change");
         });
-    });
-
-    $(".boxes-item").each((k, el) => {
-        const inputs = $(el)
-            .find(".input")
-            .on("change", function () {
-                Livewire.dispatch("setField", {
-                  name: $(this).siblings('input[type="hidden"]').attr("name"),
-                  value: $(this).val(),
-                });
-            });
-    });
-
-    $(".counter").each((k, el) => {
-        const input = $(el).find("input");
-        const count = $(el).find(".count");
-        const plus = $(el).find(".plus");
-        const minus = $(el).find(".minus");
-        const group = $(el).closest(".group");
-        const radio = group.find('input[type="radio"]');
-
-        let state = input.val();
-        let send = false;
-        let delay = null;
-
-        count.html(state);
-
-        const setSate = (val) => {
-            state = val;
-            count.html(state);
-            input.val(state);
-            Livewire.dispatch("setAddtionioal", {
-                name: input.attr("name"),
-                value: state,
-            });
-            // if (!send) {
-            //     send = true;
-            //     delay = setTimeout(() => {
-            //         Livewire.dispatch("setAddtionioal", {
-            //             name: input.attr("name"),
-            //             value: state,
-            //         });
-            //         clearTimeout(delay);
-            //     }, 500);
-            // } else {
-            //     clearTimeout(delay);
-            //     delay = setTimeout(() => {
-            //         Livewire.dispatch("setAddtionioal", {
-            //             name: input.attr("name"),
-            //             value: state,
-            //         });
-            //         clearTimeout(delay);
-            //     }, 1000);
-            // }
-        };
-
-        const hasChecked = () => radio.is(":checked");
-        // const clearRelated = () => {
-        //     const key = group.data("related");
-        //     if (key) {
-        //         const related = $(`[data-related="${key}"]`);
-        //         related.each((k, e) => {
-        //             e !== group
-        //                 ? $(e).find(".counter").find(".count").html(0)
-        //                 : null;
-        //         });
-        //     }
-        // };
-
-        plus.on("click", (evt) => {
-            if (!hasChecked()) {
-                radio.prop("checked", true);
-                // clearRelated();
-            }
-            setSate((+state + 1));
-        });
-
-        minus.on("click", (evt) => {
-            if (!hasChecked()) {
-                radio.prop("checked", true);
-                // clearRelated();
-            }
-
-            (+state - 1) >= 0 ? setSate((+state - 1)) : setSate(state);
-        });
-
-        radio.on("change", (evt) => clearRelated());
-
-        // $(el).on("clear", () => setSate(0));
     });
 
     $(".open_auth").on("click", function (evt) {
@@ -139,7 +87,6 @@ function discoverItems() {
       }, 5000);
     });
 
-
     $('.order-details-toggle').each((k, el) => {
       $(el).off('click', () => null);
       $(el).on('click', function() {
@@ -169,11 +116,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     Livewire.on("deliveryDates", (data) => {
         // available_delivery_dates = data[0];
-
-        let el1 = document.getElementById("datepicker");
-        let clone1 = el1.cloneNode(true);
-        el1.parentNode.replaceChild(clone1, el1);
-
+        // let el1 = document.getElementById("datepicker");
+        // el1.setAttribute('data-initiated', true);
+        // let clone1 = el1.cloneNode(true);
+        // el1.parentNode.replaceChild(clone1, el1);
+        // if (!el1.getAttribute('data-initiated')) {
         datepicker1 = new AirDatepicker("#datepicker", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
@@ -212,19 +159,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 datepicker.hide();
             },
         });
+        // el1.setAttribute('data-initiated', true);
+        // }
     });
 
     Livewire.on("deliveryPickDates", (data) => {
         // available_delivery_dates = data[0];
-        let el2 = document.getElementById("datepicker2");
-        let clone2 = el2.cloneNode(true);
-        el2.parentNode.replaceChild(clone2, el2);
+        // let el2 = document.getElementById("datepicker2");
+        // let clone2 = el2.cloneNode(true);
+        // el2.parentNode.replaceChild(clone2, el2);
 
         datepicker2 = new AirDatepicker("#datepicker2", {
             onSelect: ({ date, formattedDate, datepicker }) => {
                 const elem = $(datepicker.$el)
                     .closest(".infoblock")
                     .find(".cargo-date");
+
                 elem.find(".date").html(formattedDate);
 
                 if (!elem.hasClass("collapsed")) {
@@ -272,9 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     Livewire.on("pickDates", (data) => {
         
-        let el3 = document.getElementById("datepicker3");
-        let clone3 = el3.cloneNode(true);
-        el3.parentNode.replaceChild(clone3, el3);
+        // let el3 = document.getElementById("datepicker3");
+        // let clone3 = el3.cloneNode(true);
+        // el3.parentNode.replaceChild(clone3, el3);
 
         datepicker3 = new AirDatepicker("#datepicker3", {
             onRenderCell: ({ date, cellType }) => {
@@ -345,80 +295,133 @@ document.addEventListener("DOMContentLoaded", function () {
         setThemeClass();
         axios.post("/api/theme", { darkMode: theme_button.checked });
     });
-    // End Theme Selector
 
     // Toggle cargo inputs
-    let cargo_open = false;
     $('input[name="transfer_method"]').on("change", function () {
-        if (!cargo_open) {
-            $(this).closest(".group").find(".infoblock").slideToggle();
-            cargo_open = true;
-        } else {
-            $('input[name="transfer_method"]').each((k, el) => {
-                $(el).closest(".group").find(".infoblock").slideToggle();
-            });
-        }
-
-        Livewire.dispatch("setField", {
-            name: $(this).attr("name"),
-            value: $(this).val(),
+        $('input[name="transfer_method"]').each((k, el) => {
+            if ($(el).prop('checked')) {
+              $(el).closest(".radio-box").find(".infoblock").slideDown();
+            } else {
+              $(el).closest(".radio-box").find(".infoblock").slideUp();
+            }
         });
-    });
-    // End Toggle cargo inputs
+        // if (!cargo_open) {
+        //     $(this).closest(".group").find(".infoblock").slideToggle();
+        //     cargo_open = true;
+        // } else {
+        //     $('input[name="transfer_method"]').each((k, el) => {
+        //         $(el).closest(".group").find(".infoblock").slideToggle();
+        //     });
+        // }
 
-    // Checkbox
+        // Livewire.dispatch("setField", {
+        //     name: $(this).attr("name"),
+        //     value: $(this).val(),
+        // });
+    });
+
+    // Checkbox Delivery Type
     $(".checkbox-form-group").each((k, el) => {
-        const target = $(el).find('input[type="checkbox"]');
+      const target = $(el).find('input[type="checkbox"]');
+      $(target).on('change', () => {
+        const infoblock = $(el).closest(".checkbox-group").find(".infoblock").slideToggle();
 
-        $(el)
-            .find("label")
-            .on("click", (evt) => evt.preventDefault());
-        $(el).on("click", () => {
-            $(target).prop("checked", !$(target).prop("checked"));
-            $(el).closest(".checkbox-group").find(".infoblock").slideToggle();
+        // if ($(target).prop('checked')) {
+        //   let complete = true;
+        //   infoblock.find("input").each((k, input) => {
+        //     if (!$(input).val().length) {
+        //       complete = false;
+        //     }
+        //   });
+        //   if (complete) {
+        //     Livewire.dispatch('runRefresh');
+        //   }
+        // }
+        
+      });
+
+      // const inputs = $(el).closest('.checkbox-group').find('.infoblock').find('input');
+      
+      // inputs.each((k, input) => {
+      //   $(input).on('change', () => {
+      //     let complete = true;
+      //     inputs.each((k, input) => {
+      //       console.log($(input).val());
             
-            Livewire.dispatch("setField", {
-              name: $(target).attr("name"),
-              value: $(target).prop("checked"),
-            });
-        });
+      //       if (!Number($(input).val()) || !$(input).val().length) {
+      //         complete = false;
+      //       }
+      //     });
+      //     if (complete) {
+      //       Livewire.dispatch('runRefresh');
+      //     }
+      //   });
+      // });
     });
-    // End Checkbox
 
     // Input with helper buttons
     $(".input-helper-group").each((k, el) => {
         const target = $(el).find("input");
         const helpers = $(el).find(".inut-helper-item");
-
-        helpers.on("click", function () {
-            target.val($(this).html());
-            const sibl = target.siblings('input[type="hidden"]');
-
+        
+        helpers.on("click", function () {            
+            target.val($(this).text());
+            
+            console.log({
+                name: target.attr("name"),
+                value: target.val(),
+            });
+            
             Livewire.dispatch("setField", {
-                name: sibl.attr("name"),
-                value: sibl.val(),
+                name: target.attr("name"),
+                value: target.val(),
             });
         });
     });
-    // End Input with helper buttons
+    
+    // Counter
+    $(".counter").each((k, el) => {      
+        const input = $(el).find("input");
+        const plus = $(el).find(".plus");
+        const minus = $(el).find(".minus");
+        const group = $(el).closest(".radio-box");
+        const radio = group.find('input[type="radio"]');
 
-    // Counter input
+        plus.on("click", (evt) => {              
+          Livewire.dispatch("setField", {
+              name: 'palletizing_type',
+              value: radio.val(),
+          });
+          Livewire.dispatch("setField", {
+              name: 'palletizing_count',
+              value: Number(input.attr('data-count')) + 1,
+          });
+        });
 
-    // End Counter input
-
-    // Distributors input
-    $(".distributor-group").each((k, el) => {
-        $(el)
-            .find(".distributor-item")
-            .each((key, elem) => {
-                $(elem).on("click", function () {
-                    const radio = $(this).find('input[type="radio"]');
-                    radio.prop("checked", !radio.prop("checked"));
-                    Livewire.dispatch('setField', {name: 'distributor_id', value: radio.val()})
-                });
+        minus.on("click", (evt) => {
+          const val = Number(input.attr('data-count')) - 1;
+          if (val >= 0) {
+            Livewire.dispatch("setField", {
+              name: 'palletizing_type',
+              value: radio.val(),
             });
+            Livewire.dispatch("setField", {
+              name: 'palletizing_count',
+              value: val,
+            });
+          }
+        });
+        
+        radio.on("change", (evt) => {
+          console.log(radio.prop('checked'));
+          $('.additional-box').find('input[type="radio"]').each((k, el) => {
+            if (!$(el).prop('checked')) {
+              $(el).closest('.radio-box').find('.count').html(0);
+              $(el).closest('.radio-box').find('input').attr('data-count', 0);
+            }
+          });
+        });
     });
-    // End Distributors input
 
     // Burger
     $("#burger").on("click", () => {
@@ -441,71 +444,71 @@ document.addEventListener("DOMContentLoaded", function () {
     // End Burger
 
     // Dropdown component
-    $(".dropdown-group").each((k, el) => {
-        const input = $(el).find(".input");
-        const fields = $(el).find(".dropdown-item");
-        const wrap = $(el).find(".dropdown-wrap");
-        const dropdown = $(el).find(".dropdown");
+    // $(".dropdown-group").each((k, el) => {
+    //     const input = $(el).find(".input");
+    //     const fields = $(el).find(".dropdown-item");
+    //     const wrap = $(el).find(".dropdown-wrap");
+    //     const dropdown = $(el).find(".dropdown");
 
-        const appendFields = (fields) => {
-            const content = fields.length
-                ? fields
-                : '<span class="px-4 py-1">Нет доступных адресов</span>';
-            wrap.empty();
-            wrap.append(content);
-        };
+    //     const appendFields = (fields) => {
+    //         const content = fields.length
+    //             ? fields
+    //             : '<span class="px-4 py-1">Нет доступных адресов</span>';
+    //         wrap.empty();
+    //         wrap.append(content);
+    //     };
 
-        const filterFields = (val) => {
-            const filtered = fields.filter((key, field) =>
-                $(field)
-                    .data("value")
-                    ?.toLowerCase()
-                    .includes(val?.toLowerCase())
-            );
-            appendFields(filtered);
-        };
+    //     const filterFields = (val) => {
+    //         const filtered = fields.filter((key, field) =>
+    //             $(field)
+    //                 .data("value")
+    //                 ?.toLowerCase()
+    //                 .includes(val?.toLowerCase())
+    //         );
+    //         appendFields(filtered);
+    //     };
 
-        input.on("focus", () => {
-            if (dropdown.hasClass("hidden")) {
-                // dropdown.removeClass('hidden');
-                dropdown.attr("data-shopen", true);
-                dropdown.slideToggle(() => {
-                    dropdown.removeClass("hidden");
-                });
-            }
-        });
-        input.on("focusout", () => {
-            if (!dropdown.hasClass("hidden")) {
-                dropdown.slideToggle(() => {
-                    dropdown.addClass("hidden");
-                    dropdown.attr("data-shopen", false);
-                });
-            }
-        });
+    //     input.on("focus", () => {
+    //         if (dropdown.hasClass("hidden")) {
+    //             // dropdown.removeClass('hidden');
+    //             dropdown.attr("data-shopen", true);
+    //             dropdown.slideToggle(() => {
+    //                 dropdown.removeClass("hidden");
+    //             });
+    //         }
+    //     });
+    //     input.on("focusout", () => {
+    //         if (!dropdown.hasClass("hidden")) {
+    //             dropdown.slideToggle(() => {
+    //                 dropdown.addClass("hidden");
+    //                 dropdown.attr("data-shopen", false);
+    //             });
+    //         }
+    //     });
 
-        if (input.data("filter")) {
-            input.on("input", () =>
-                input.val().length
-                    ? filterFields(input.val())
-                    : appendFields(fields)
-            );
-        }
+    //     if (input.data("filter")) {
+    //         input.on("input", () =>
+    //             input.val().length
+    //                 ? filterFields(input.val())
+    //                 : appendFields(fields)
+    //         );
+    //     }
 
-        if (input.data("search")) {
-            input.on("input", () => {
-                Livewire.dispatch("setField", {
-                    name: "user_focused_dropdown",
-                    value: $(el).data("dropdown"),
-                });
-                setTimeout(() => {
-                    Livewire.dispatch("setField", {
-                        name: "user_address_query",
-                        value: input.val(),
-                    });
-                }, 300);
-            });
-        }
-    });
+    //     if (input.data("search")) {
+    //         input.on("input", () => {
+    //             Livewire.dispatch("setField", {
+    //                 name: "user_focused_dropdown",
+    //                 value: $(el).data("dropdown"),
+    //             });
+    //             setTimeout(() => {
+    //                 Livewire.dispatch("setField", {
+    //                     name: "user_address_query",
+    //                     value: input.val(),
+    //                 });
+    //             }, 300);
+    //         });
+    //     }
+    // });
     // End Dropdown component
     
     $('.input-off').on('beforeinput', function(evt) {

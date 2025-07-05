@@ -1,23 +1,23 @@
+@props([
+  'name' => '',
+  'label' => '',
+])
+
 <div 
-  class="datepicker-group relative {{ $pickerClass ?? '' }}"
-  data-name="{{ $inputName ?? '' }}"
+  class="datepicker-group relative bg-inherit {{ $pickerClass ?? '' }}"
+  data-name="{{ $name ?? '' }}"
   >
-  <div class="absolute top-[50%] left-6 translate-y-[-50%] dark:text-primary-500">
+  <div class="absolute top-[50%] left-6 translate-y-[-50%] dark:text-primary-500 z-10">
     @include('icons.calendar')
   </div>
   
-  <x-form.input
-    inputId="{{ $inputId ?? '' }}"
-    inputName="{{ $inputName ?? '' }}"
-    label="{{ $label ?? '' }}"
-    text="{{ $text ?? '' }}"
-    class="pl-16 datepicker"
-    labelClass="{{ $labelClass ?? '' }}"
-    :attrs="[
-      'autocomplete' => 'off', 
-      'aria-autocomplete' => 'off', 
-      'data-datepicker' => ($inputName ?? ''),
-      'id' => $id ?? null,
-    ]"
-    />
+  <x-forms.wrap label="{{ $label }}" name="{{ $name }}">
+    <x-forms.input
+      class="pl-16 datepicker"
+      autocomplete="off"
+      aria-autocomplete="off"
+      data-datepicker="{{ $name }}"
+      {{ $attributes }}
+      />
+  </x-forms.wrap>
 </div>

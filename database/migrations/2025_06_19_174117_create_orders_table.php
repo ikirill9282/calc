@@ -32,14 +32,13 @@ return new class extends Migration
             $table->tinyInteger('boxes')->nullable();
             $table->integer('boxes_count')->nullable();
             $table->integer('boxes_volume')->nullable();
-            $table->integer('boxes_weight')->nullable();
             $table->tinyInteger('pallets')->nullable();
             $table->integer('pallets_count')->nullable();
-            $table->integer('pallets_weight')->nullable();
+            $table->integer('pallets_volume')->nullable();
             $table->text('cargo_comment')->nullable();
             $table->string('cargo_type')->nullable();
-            $table->integer('palletizing')->default(0);
-            $table->integer('palletizing_pallet')->default(0);
+            $table->string('palletizing_type');
+            $table->integer('palletizing_count');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
