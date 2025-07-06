@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_prints', function (Blueprint $table) {
-            $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade')->unique();
+            $table->bigInteger('order_id')->unsigned()->unique();
+
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Revolution\Google\Sheets\Facades\Sheets;
+use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 
 class Order extends Model
 {
@@ -35,25 +36,67 @@ class Order extends Model
     $order_data['transfer_method'] = $this->getTransferMethod();
     $order_data['payment_method'] = $this->getPaymentMethodLabel();
     unset($order_data['user'], $order_data['id'], $order_data['user_id'], $order_data['agent_id']);
+    if ($this->transfer_method == 'pick') {
+      $order_data['transfer_method_receive_date'] = '';
+    } elseif ($this->transfer_method == 'receive') {
+      $order_data['transfer_method_pick_address'] = '';
+      $order_data['transfer_method_pick_date'] = '';
+    }
+
+    if (!empty($order_data['delivery_date'])) {
+      $order_data['delivery_date'] = Carbon::parse($order_data['delivery_date'])->toIso8601String();
+    }
+
+    if (!empty($order_data['post_date'])) {
+      $order_data['post_date'] = Carbon::parse($order_data['post_date'])->toIso8601String();
+    }
+
+    if (!empty($order_data['transfer_method_receive_date'])) {
+      $order_data['transfer_method_receive_date'] = Carbon::parse($order_data['transfer_method_receive_date'])->toIso8601String();
+    }
+
+    if (!empty($order_data['transfer_method_pick_date'])) {
+      $order_data['transfer_method_pick_date'] = Carbon::parse($order_data['transfer_method_pick_date'])->toIso8601String();
+    }
+
+    if (!empty($order_data['created_at'])) {
+      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->toIso8601String();
+    }
+
+    if (!empty($order_data['updated_at'])) {
+      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->toIso8601String();
+    }
+
+    $order_data['palletizing_type'] = match($order_data['palletizing_type']) {
+      'single' => 'Палетирование',
+      'pallet' => 'Поддон и палетирование',
+      default => null,
+    };
 
     $agent_data = $agent->toArray();
     unset($agent_data['id'], $agent_data['user_id'], $agent_data['created_at'], $agent_data['updated_at']);
 
     $item = array_merge($user_data, $order_data, $agent_data);
     $item = array_merge(['order_id' => $this->id], $item);
-    $data = [$item];
-    $data2 = [array_values($item)];
-    
-    // dd($data);
-    $sheet = Sheets::spreadsheet($sid)
-      ->sheet('Лист2');
+    $item = array_map(fn($val) => is_null($val) ? '' : $val, $item);
+
 
     $int = ($this->id - 100500 + 2);
+    $range = "A$int:AI$int";
+    $sheet = Sheets::spreadsheet($sid)
+      ->sheet('Лист2')
+      ->range($range);
+
+    $values = [
+      array_values($item),
+    ];
 
     if (!$this->print()->exists()) {
-      $sheet->range("A$int")->append($data);
-      $this->print()->create();
-    } 
+      $sheet->append($values);
+      $this->print()->firstOrCreate();
+    } else {
+      $sheet->update($values);
+    }
   }
 
   public function getCity()
