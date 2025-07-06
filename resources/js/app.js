@@ -29,7 +29,7 @@ dropdowns.forEach((elem) => {
     if (!$(dropdown).data('open')) {
       document.removeEventListener('click', checkDropdownClose);
       if (evt.target !== input) {
-        $(dropdown).slideUp();
+        $(dropdown).fadeOut();
       } else {
         $(dropdown).slideDown();
       }
