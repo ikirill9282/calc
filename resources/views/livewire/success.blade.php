@@ -2,7 +2,6 @@
   <div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_350px] 2xl:grid-cols-[1fr_400px] gap-5 2xl:gap-10">
     <div class="">
       <x-card class="!p-0">
-        {{-- @dump($order) --}}
         <div class="bg-primary-400/25 p-6 border-b border-primary-500/15">
           <p class="text-2xl font-medium">Ваш заказ №{{ $order->id }} успешно создан</p>
           <p class="font-thin">{{ \Illuminate\Support\Carbon::parse($order->created_at)->format('d.m.Y') }}</p>
@@ -17,29 +16,150 @@
             <p>Спасибо, что выбрали нашу компанию!</p>
           </div>
         </div>
-        <div class="flex flex-col gap-10 p-6">
-          <div class="flex flex-col gap-1.5">
-            <div class="font-bold text-lg">Способ оплаты:</div>
-            <div class="">{{ $order->getPaymentMethodLabel() }}</div>
-          </div>
-          <div class="flex flex-col gap-1.5">
-            <div class="font-bold text-lg">Отправитель:</div>
-            <div class="flex flex-col w-full gap-2">
-              <div class="flex">
-                <div class="">ФИО:</div>
-                <div class="px-2">{{ $order->user->name }}</div>
+        <x-form.fieldset :title="false" :set_description="false" set_class="order-details !pb-14 sm:!pb-14 !border-none">
+          <div class="flex justify-start items-start sm:items-stretch gap-2 flex-col-reverse sm:flex-row">
+            <div class="basis-3/4">
+              <div class="flex flex-col gap-1 text-2xl font-medium mb-4">
+                <p class=""> 
+                  <span class="float-left translate-y-1 mr-2 leading-0">@include('icons.box')</span>
+                  <span>Заказ на доставку {{ $order->getCity() }} - {{ $order->distributor_center_id }}</span>
+                </p>
+                <span class="text-sm text-primary-600/50 dark:text-primary-200/50">от: {{ \Illuminate\Support\Carbon::parse($order->created_at)->format('d.m.Y') }}</span>
               </div>
-              <div class="flex">
-                <div class="">Email:</div>
-                <div class="px-2">{{ $order->user->email }}</div>
-              </div>
-              <div class="flex">
-                <div class="">Телефон:</div>
-                <div class="px-2">{{ $order->user?->phone }}</div>
-              </div>
+              @if($order->transfer_method === 'pick')
+                <div class="mb-1">Заберем груз от вас: {{ \Illuminate\Support\Carbon::parse($order->transfer_method_pick_date)->format('d.m.Y') }}</div>
+              @endif
+              <div class="mb-1">Отправка от {{ env('APP_NAME') }}: {{ \Illuminate\Support\Carbon::parse($order->post_date)->format('d.m.Y') }}</div>
+              <div class="">Прибытие в РЦ {{ $order->distributor_id }}: {{ \Illuminate\Support\Carbon::parse($order->delivery_date)->format('d.m.Y') }}</div>
+            </div>
+            <div class="basis-1/4 text-right text-xl">
+              Цена: {{ \Illuminate\Support\Number::currency($order->total, 'RUB', locale: 'ru') }}
             </div>
           </div>
-        </div>
+
+          <div class="py-6 mt-6 border-t border-primary-500/50">
+            <div class="flex justify-start items-start gap-2 mb-4">
+              <p class="flex justify-start items-center gap-2 min-w-26">
+                <span>@include('icons.point')</span>
+                <span>Откуда:</span>
+              </p>
+              <p class="">{{ $order->warehouse_id }}</p>
+            </div>
+            <div class="flex justify-start items-start gap-2">
+              <p class="flex justify-start items-center gap-2 min-w-26">
+                <span>@include('icons.flag')</span>
+                <span>Куда:</span>
+              </p>
+              <p class="">{{ $order->distributor_id }} {{ $order->distributor_center_id }}</p>
+            </div>
+            <div class="border-t border-primary-500/50 mt-6 py-6">
+              <div class="text-xl font-bold mb-6">Способ передачи груза:</div>
+              <div class="flex justify-start items-stretch gap-5 flex-col sm:flex-row sm:gap-10 lg:gap-20">
+                <p class="font-medium text-secondary-600 dark:text-secondary-400">
+                  {{ 
+                    match($order->transfer_method) {
+                      'receive' => 'Ожидаем груз на складе',
+                      'pick' => 'Заберем груз с вашего склада',
+                    }
+                  }}
+                </p>
+                <p class="flex flex-col">
+                  <span class="dark:text-primary-300/50 text-primary-600/50">Когда:</span>
+                  <span>
+                    {{ 
+                      match($order->transfer_method) {
+                        'receive' => \Illuminate\Support\Carbon::parse($order->transfer_method_receive_date)->format('d.m.Y'),
+                        'pick' => \Illuminate\Support\Carbon::parse($order->transfer_method_pick_date)->format('d.m.Y'),
+                      }
+                    }}
+                  </span>
+                  @if($order->transfer_method == 'pick')
+                    <span>к вам подъедет машина за грузом</span>
+                  @endif
+                </p>
+                <p class="flex flex-col">
+                  <span class="dark:text-primary-200/50 text-primary-600/50">Адрес:</span>
+                  <span>
+                    {{ 
+                      match($order->transfer_method) {
+                        'receive' => $order->warehouse_id,
+                        'pick' => $order->transfer_method_pick_address,
+                      }
+                    }}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div class="border-t border-primary-500/50 mt-6 py-6">
+              <div class="text-xl font-bold mb-6">Состав груза:</div>
+              @php
+                $table_data = [
+                  [
+                    'type' => ($order->boxes) ? 'Коробки' : '',
+                    'count' => $order->boxes_count,
+                    'volume' => $order->boxes_volume,
+                    'cargo' => $order->cargo_type,
+                  ],
+                  [
+                    'type' => ($order->pallets) ? 'Паллеты' : '',
+                    'count' => $order->pallets_count,
+                    'volume' => $order->pallets_volume,
+                    'cargo' => $order->cargo_type,
+                  ],
+                ];
+              @endphp
+              <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden">
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип доставки:</th>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Кол-во:</th>
+                      {{-- <th cltext-nowrap ass="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Вес:</th> --}}
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3:</th>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип груза:</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($table_data as $row)
+                      <tr>
+                        <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
+                        <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
+                        {{-- <td class="py-2 px-4">@if(isset($row['weight'])) {{ $row['weight'] }} кг @endif</td> --}}
+                        <td class="py-2 px-4">@if(isset($row['volume'])) {{ $row['volume'] }} м3 @endif</td>
+                        <td class="py-2 px-4">@if(isset($row['cargo']) && (isset($row['count']) || isset($row['weight']) || isset($row['volume']))) {{ $row['cargo'] }} @endif</td>
+                      </tr>                      
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+              
+            </div>
+            <div class="border-t border-primary-500/50 mt-6 py-6">
+              <div class="text-xl font-bold mb-6">Услуги склада:</div>
+              @if (!empty($order->palletizing_type) && !empty($order->palletizing_count))
+              <div class="grid grid-cols-[130px_1fr] grid-rows-2">
+                <p class="col-span-1 row-span-1 font-normal dark:text-primary-200/50 text-primary-600/50">
+                  Наименование:
+                </p>
+                <p class="col-span-1 row-span-1">{{ match($order->palletizing_type) {
+                  'single' => 'Палетирование',
+                  'pallet' => 'Поддон и палетирование',
+                } }}</p>
+                <p class="col-span-1 row-span-2 font-normal dark:text-primary-200/50 text-primary-600/50">
+                  Количество:
+                </p>
+                <p class="col-span-1 row-span-2">{{ $order->palletizing_count }}шт.</p>
+              </div>
+              @endif
+            </div>
+            @if(!empty($order->cargo_comment))
+              <div class="border-t border-primary-500/50 mt-6 py-6">
+                <div class="text-xl font-bold mb-6">Комментарий к составу груза:</div>
+                <p>{{ $order->cargo_comment }}</p>
+              </div>
+            @endif
+          </div>
+        </x-form.fieldset>
       </x-card>
     </div>
     <div class="">

@@ -8,17 +8,18 @@
   'empty_text' => 'Нет доступных адресов',
   'searchable' => false,
   'name' => '',
+  'rp' => 'fields.'
 ])
 @php
-  $fieldName = str_ireplace('fields.', '', $attributes->get('wire:model'));
+  $fieldName = str_ireplace($rp, '', $attributes->get('wire:model'));
 @endphp
 
-<x-forms.wrap :label="$attributes->get('label')" :name="$attributes->get('wire:model')">
+<x-form.wrap :label="$attributes->get('label')" :name="$name">
   <div
     class="flex justify-start items-center relative w-full h-full hover:cursor-pointer dropdown-box"
     id="{{ $fieldName }}-dropdown"
   >
-    <x-forms.input 
+    <x-form.input 
       type="{{ $searchable ? 'text' : 'hidden' }}"
       class="absolute top-0 left-0 w-full h-full z-10" 
       wire:model.live="{{ $attributes->get('wire:model') }}"
@@ -43,7 +44,7 @@
 
     <div class="dropdown absolute z-40 w-full left-0 bottom-0 translate-y-[100%]
               rounded-2xl shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}
-              @if (!array_key_exists($attributes->get('wire:model'), $this->dropdownOpen)) hidden @endif
+              @if (!array_key_exists($attributes->get('wire:model'), ($this?->dropdownOpen ?? []))) hidden @endif
             "
           @if($searchable) data-searchable="true" @endif
           data-open="false"
@@ -90,4 +91,4 @@
       </div>
     </div>
   </div>
-</x-forms.wrap>
+</x-form.wrap>

@@ -123,12 +123,10 @@ class Calculator extends Component
 
     public function mount()
     {
-      Session::forget('calc');
-      if (Session::exists('calc')) {
-        $this->fields = array_merge($this->fields, json_decode(Session::get('calc'), true));
-      }
+      // Session::forget('calc');
 
       if (request()->has('reply')) {
+        Session::forget('calc');
         try {
           $id = Crypt::decrypt(request()->get('reply'));
           $order = Order::find($id);
@@ -157,10 +155,13 @@ class Calculator extends Component
                 $this->fields[$key] = $val;
               }
             }
+            $this->dispatch('runRefresh');
           }
         } catch (\Exception $e) {
 
         }
+      } else if (Session::exists('calc')) {
+        $this->fields = array_merge($this->fields, json_decode(Session::get('calc'), true));
       }
 
       $this->getAddresses();
@@ -760,6 +761,8 @@ class Calculator extends Component
         $this->fields['delivery_date'] = null;
         $this->fields['transfer_method_pick']['date'] = null;
         $this->fields['transfer_method_receive']['date'] = null;
+        $this->fields['palletizing_type'] = null;
+        $this->fields['palletizing_count'] = null;
       }
       
       if ($name == 'distributor_id') {
@@ -768,6 +771,8 @@ class Calculator extends Component
         $this->fields['delivery_date'] = null;
         $this->fields['transfer_method_pick']['date'] = null;
         $this->fields['transfer_method_receive']['date'] = null;
+        $this->fields['palletizing_type'] = null;
+        $this->fields['palletizing_count'] = null;
       }
       
       if ($name == 'distributor_center_id') {
@@ -775,6 +780,8 @@ class Calculator extends Component
         $this->fields['delivery_date'] = null;
         $this->fields['transfer_method_pick']['date'] = null;
         $this->fields['transfer_method_receive']['date'] = null;
+        $this->fields['palletizing_type'] = null;
+        $this->fields['palletizing_count'] = null;
       }
       
       if ($name == 'delivery_date') {

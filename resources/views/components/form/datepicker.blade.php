@@ -11,13 +11,13 @@
     @include('icons.calendar')
   </div>
   
-  <x-forms.wrap label="{{ $label }}" name="{{ $name }}">
-    <x-forms.input
+  <x-form.wrap label="{{ $label }}" name="{{ $name }}">
+    <x-form.input
       class="pl-16 datepicker"
       autocomplete="off"
       aria-autocomplete="off"
       data-datepicker="{{ $name }}"
       {{ $attributes }}
       />
-  </x-forms.wrap>
+  </x-form.wrap>
 </div>

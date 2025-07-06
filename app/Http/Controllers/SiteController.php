@@ -34,7 +34,7 @@ class SiteController extends Controller
           $id = Crypt::decrypt($request->get('order'));
           $order = Order::find($id);
           
-          Mail::to(Auth::user()->email)->send(new OrderSuccess($order));
+          // Mail::to(Auth::user()->email)->send(new OrderSuccess($order));
           $order->writeSheet();
 
         } catch (\Exception $e) {

@@ -1,15 +1,15 @@
-<div class="">
+<div class="bg-inherit">
   <h3 class="font-bold text-xl mb-4">Восстановление пароля</h3>
   <p class="mb-5">Ссылка для сброса пароля будет отправлена на указанный вами электронный адрес. Просим проверить входящие сообщения, включая папку «Спам», и следовать инструкциям для установки нового пароля.</p>
-  <form action="{{ route('password.reset') }}" method="POST" class="flex flex-col justify-start items-stretch gap-4">
+  <form action="{{ route('password.reset') }}" method="POST" class="flex flex-col justify-start items-stretch gap-4 bg-inherit">
     @csrf
-    <x-form.input
-      label="E-mail"
-      type="email"
-      :attrs="['reuquired' => 'required']"
-      labelClass="dark:!bg-primary-800"
-      :wire="false"
-    />
+    <x-form.wrap label="E-mail">
+      <x-form.input
+        type="email"
+        name="email"
+        required
+      />
+    </x-form.wrap>
 
 
     <div class="flex justify-between items-stretch gap-2">

@@ -1,74 +1,83 @@
-<div class="">
+<div class="bg-inherit">
     <h3 class="font-bold text-xl mb-6">Регистрация</h3>
     {{-- <p class="mb-5">Ссылка для сброса пароля будет отправлена на указанный вами электронный адрес. Просим проверить входящие сообщения, включая папку «Спам», и следовать инструкциям для установки нового пароля.</p> --}}
-    <form wire:submit.prevent="reg" action="{{ route('register') }}" id="register" class="flex flex-col justify-start items-stretch gap-6" method="POST">
+    <form wire:submit.prevent="reg" action="{{ route('register') }}" id="register" class="flex flex-col justify-start items-stretch gap-6 bg-inherit" method="POST">
         @csrf
-        <div class="">
-            <x-form.input label="ФИО" type="text" labelClass="dark:!bg-primary-800" :wire="false"
-                :attrs="[
-                    'required' => 'required',
-                    'name' => 'name',
-                    'id' => 'reg_name',
-                    'wire:model.live' => 'register.name',
-                ]" />
+        <div class="bg-inherit">
+            <x-form.wrap label="ФИО">
+              <x-form.input  
+                type="text"
+                name="name"
+                id="reg_name"
+                wire:model.live="register.name"
+                autocomplete="off"
+                aria-autocomplete="off"
+              />
+            </x-form.wrap>
+
             @error('name')
                 <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
             @enderror
         </div>
-        <div class="">
-            <x-form.input label="E-mail" type="email" labelClass="dark:!bg-primary-800" :wire="false"
-                :attrs="[
-                    'required' => 'required',
-                    'name' => 'email',
-                    'id' => 'reg_email',
-                    'wire:model.live' => 'register.email',
-                  ]" 
-                />
-            @error('email')
-                <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-            @enderror
+        <div class="bg-inherit">
+
+          <x-form.wrap label="E-mail" >
+            <x-form.input 
+                type="email" 
+                name="email"
+                id="reg_email"
+                wire:model.live="register.email"
+              />
+          </x-form.wrap>
+          @error('email')
+              <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
+          @enderror
         </div>
-        <div class="">
-            <x-form.input label="Номер телефона" type="text" :wire="false"
-                labelClass="dark:!bg-primary-800" placeholder="+7..." :attrs="[
-                    'autocomplete' => 'false',
-                    'id' => 'user-phone',
-                    'name' => 'phone',
-                    'autocomplete' => 'new-password',
-                    'wire:model.live' => 'register.phone',
-                ]" x-mask="+7(999)999-99-99" />
+        <div class="bg-inherit">
+            <x-form.wrap label="Номер телефона" >
+              <x-form.input
+                type="text" 
+                placeholder="+7..." 
+                aria-autocomplete="off"
+                autocomplete="off"
+                name="phone"
+                x-mask="+7(999)999-99-99"
+                wire:model.live="register.phone"
+              />
+            </x-form.wrap>
 
             @error('phone')
                 <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
             @enderror
         </div>
-
-        <div class="">
-            <x-form.input label="Пароль" type="password" labelClass="dark:!bg-primary-800" :wire="false"
-                :attrs="[
-                    'type' => 'password',
-                    'required' => 'required',
-                    'name' => 'password',
-                    'id' => 'reg_password',
-                    'autocomplete' => 'new-password',
-                    'wire:model.live' => 'register.password',
-                ]" />
+        <div class="bg-inherit">
+            <x-form.wrap label="Пароль" >
+              <x-form.input 
+                  type="password" 
+                  required
+                  aria-autocomplete="off"
+                  autocomplete="new-password"
+                  wire:model.live="register.password"
+                  name="password"
+                  id="password"
+                />
+            </x-form.wrap>
 
             @error('password')
                 <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
             @enderror
         </div>
-
-        <div class="">
-            <x-form.input label="Повторите пароль" type="password" labelClass="dark:!bg-primary-800" :wire="false"
-                :attrs="[
-                    'type' => 'password',
-                    'required' => 'required',
-                    'name' => 'password_confirm',
-                    'id' => 'reg_password_confirm',
-                    'autocomplete' => 'new-password',
-                    'wire:model.live' => 'register.password_confirm',
-                ]" />
+        <div class="bg-inherit">
+          <x-form.wrap label="Повторите пароль" >
+            <x-form.input 
+                required="required"
+                type="password" 
+                name='password_confirm'
+                id='reg_password_confirm'
+                autocomplete='new-password'
+                wire:model.live='register.password_confirm'
+              />
+          </x-form.wrap>
 
             @error('password_confirm')
                 <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>

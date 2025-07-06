@@ -21,7 +21,9 @@
           {{ $set_title ?? '' }}
         </span>
       @endif
-      <span class="px-4 py-1.5">{{ $set_description ?? '' }}</span>
+      @if ($set_description !== false)
+        <span class="px-4 py-1.5">{{ $set_description ?? '' }}</span>
+      @endif
     </div>
   @endif
 

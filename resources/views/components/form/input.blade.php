@@ -1,0 +1,1 @@
+<input class="outline-0 h-full w-full {{ $attributes->get('class') }}" {{ $attributes }} />

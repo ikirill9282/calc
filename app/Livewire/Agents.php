@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Agent;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Session;
 
 class Agents extends Component
 {
@@ -44,16 +46,33 @@ class Agents extends Component
 
     public $messages = [];
 
+    public $dropdownOpen = [];
+
+    public $addresses = [];
+
     public function mount()
     {
+      $this->getAddresses();
       $this->reloadAgents();
     }
 
+    public function updated($property)
+    {
+      if ($property == 'form.address') {
+        $this->dropdownOpen[$property] = true;
+        $this->getAddresses(Arr::get($this->form, str_ireplace('form.', '', $property)));
+      }
+    }
+
     #[On('clearField')]
+    
     public function clearField(string $name): void
     {
-      if (array_key_exists($name, $this->form)) {
-        $this->form[$name] = null;
+      $key = str_ireplace('form.', '', $name);
+      Arr::set($this->form, $key, null);
+
+      if ($name == 'form.address') {
+        $this->getAddresses();
       }
     }
 
@@ -68,9 +87,9 @@ class Agents extends Component
       $this->agents = Agent::where('user_id', Auth::user()->id)->get();
     }
 
-    public function getAddresses()
+    public function getAddresses(string $query = 'г Москва')
     {
-      $query = empty($this->fields['user_address_query']) ? 'г Москва' : $this->fields['user_address_query'];
+      $query = empty($this->form['address']) ? $query : $this->form['address'];
       $client = new DadataClient();
       $addresses = $client->suggest('address', $query);
       $addresses = array_column($addresses, 'value');
@@ -81,8 +100,8 @@ class Agents extends Component
           'wh' => $val,
         ];
       }
-
-      return collect($result);
+      
+      $this->addresses = collect($result);
     }
 
     public function setAddress(string $val): void
@@ -204,6 +223,23 @@ class Agents extends Component
         ],
         $data
       );
+    }
+
+
+    public function getField(string $name): mixed
+    {
+      return Arr::get($this->form, str_ireplace('form.', '', $name));
+    }
+
+
+    public function setField(string $name, mixed $value): void
+    {
+      Arr::set($this->form, str_ireplace('form.', '', $name), $value);
+      
+      if ($name == 'form.address') {
+        $this->getAddresses();
+        unset($this->dropdownOpen[$name]);
+      }
     }
 
     public function render()

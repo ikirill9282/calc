@@ -4,7 +4,7 @@
           {{-- @dump($this->fields) --}}
           <x-form.fieldset :title="false" set_description="Контрагент" :set_loading="true">
             <div class="flex gap-4 flex-col md:flex-row bg-inherit">
-              <x-forms.dropdown 
+              <x-form.dropdown 
                 :items="\App\Models\Agent::where('user_id', auth()->user()?->id)->get()"
                 label="Контрагент"
                 placeholder="Выберите контрагента..."
@@ -44,8 +44,9 @@
                 set_class="{{ $this->isFieldDisabled(1) ? 'disabled' : '' }}"
                 >
                 <div class="flex flex-col sm:gap-8 bg-inherit">
-                    <x-forms.dropdown 
+                    <x-form.dropdown 
                       label="Склад отправления {{ config('app.name') }}:"
+                      name="warehouse_id"
                       placeholder="Откуда"
                       wire:model="fields.warehouse_id"
                       optionLabel="wh"
@@ -60,8 +61,9 @@
                       wire:model="fields.distributor_id" 
                     />
 
-                    <x-forms.dropdown 
+                    <x-form.dropdown 
                       label="РЦ, в который будет доставлен груз"
+                      name="distributor_center_id"
                       placeholder="Адрес РЦ"
                       wire:model="fields.distributor_center_id"
                       :items="$this->getDistributorCenters()"
@@ -147,7 +149,7 @@
                                 class="flex flex-col justify-start items-stretch gap-6 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
                                 {{-- @dump($this->fields['transfer_method_pick']) --}}
                                 {{-- @dump($this->addresses) --}}
-                                <x-forms.dropdown 
+                                <x-form.dropdown 
                                     id="transfer_method_pick.address" 
                                     name="transfer_method_pick.address"
                                     label="Укажите адрес для подачи машины"
@@ -181,12 +183,12 @@
                         <div
                             class="infoblock boxes-item collapsed w-full {{ $this->getField('boxes') ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
-                                <x-forms.wrap label="Количество" name="fields.boxes_data.count">
-                                  <x-forms.input class="input-numeric" name="fields.boxes_data.count" wire:model.live="fields.boxes_data.count" />
-                                </x-forms.wrap>
-                                <x-forms.wrap label="Объем м3" name="fields.boxes_data.volume">
-                                  <x-forms.input class="input-numeric" name="fields.boxes_data.volume" wire:model.live="fields.boxes_data.volume" />
-                                </x-forms.wrap>
+                                <x-form.wrap label="Количество" name="fields.boxes_data.count">
+                                  <x-form.input class="input-numeric" name="fields.boxes_data.count" wire:model.live="fields.boxes_data.count" />
+                                </x-form.wrap>
+                                <x-form.wrap label="Объем м3" name="fields.boxes_data.volume">
+                                  <x-form.input class="input-numeric" name="fields.boxes_data.volume" wire:model.live="fields.boxes_data.volume" />
+                                </x-form.wrap>
                             </div>
                         </div>
                     </div>
@@ -195,12 +197,12 @@
                         <div
                             class="infoblock boxes-item collapsed w-full {{ $this->getField('pallets') ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
-                                <x-forms.wrap label="Количество" name="fields.pallets_data.count">
-                                  <x-forms.input class="input-numeric" name="fields.pallets_data.count" wire:model.live="fields.pallets_data.count" />
-                                </x-forms.wrap>
-                                <x-forms.wrap label="Объем м3" name="fields.pallets_data.volume">
-                                  <x-forms.input class="input-numeric" name="fields.pallets_data.volume" wire:model.live="fields.pallets_data.volume" />
-                                </x-forms.wrap>
+                                <x-form.wrap label="Количество" name="fields.pallets_data.count">
+                                  <x-form.input class="input-numeric" name="fields.pallets_data.count" wire:model.live="fields.pallets_data.count" />
+                                </x-form.wrap>
+                                <x-form.wrap label="Объем м3" name="fields.pallets_data.volume">
+                                  <x-form.input class="input-numeric" name="fields.pallets_data.volume" wire:model.live="fields.pallets_data.volume" />
+                                </x-form.wrap>
                             </div>
                         </div>
                     </div>
@@ -216,15 +218,15 @@
             <x-form.fieldset set_title="Шаг 5" set_description="Характер груза"
                 set_class="{{ $this->isFieldDisabled(5) ? 'disabled' : '' }}">
                 <div class="input-helper-group flex flex-col justify-start items-stretch gap-6 bg-inherit">
-                    <x-forms.wrap label="Какой тип груза будете перевозить">
-                      <x-forms.input 
+                    <x-form.wrap label="Какой тип груза будете перевозить">
+                      <x-form.input 
                         id="cargo_type" 
                         name="fields.cargo_type"
                         wire:model="fields.cargo_type"
                         aria-autocomplete="off"
                         autocomplete="off"
                         />
-                    </x-forms.wrap>
+                    </x-form.wrap>
                     <div class="flex justify-start items-center gap-2">
                         <p class="text-primary-400">Например:</p>
                         <p class="flex justify-start items-center gap-2">

@@ -1,13 +1,14 @@
 @php
   $name = $attributes->get('name') ?? '';
   $label = $attributes->get('label') ?? $label ?? '';
+  $error_name = preg_replace('/^\w+\.(.*?)$/is', "$1", $name);
 @endphp
 
 <div class="bg-inherit w-full">
   <fieldset
     class="input w-full h-14 py-2 ps-4 pe-12 ring-0 outline-0 rounded-xl border transition group bg-inherit relative
       border-primary-200 dark:border-primary-400/50 
-      placeholder:text-gray-400 @error(str_ireplace('fields.', '', $name)) !border-red-500 @enderror
+      placeholder:text-gray-400 @error($error_name) !border-red-500 @enderror
       hover:border-secondary-600 darkhover:border-secondary-400
       focus:border-secondary-600 dark:focus:border-secondary-400"
     >
@@ -19,7 +20,7 @@
             {{-- dark:bg-primary-900 --}}
             group-hover/input:text-secondary-600 dark:group-hover/input:text-secondary-400
             group-has-focus/input:text-secondary-600 dark:group-has-focus/input:text-secondary-400
-            @error(str_ireplace('fields.', '', $name)) !text-red-500 @enderror
+            @error($error_name) !text-red-500 @enderror
           "
     >
       {{ $label }}
@@ -34,7 +35,7 @@
     </div>
   </fieldset>
 
-  @error(str_ireplace('fields.', '', $name))
+  @error($error_name)
     <div class="mt-3 text-red-500">
       {{ $message }}
     </div>

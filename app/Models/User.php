@@ -35,7 +35,7 @@ class User extends Authenticatable
     public function sendEmailVerification()
     {
       $mail = new Confirm($this);
-      Mail::to($this)->send($mail);
+      // Mail::to($this)->send($mail);
     }
 
     public function getVerificationUrl()

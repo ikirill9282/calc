@@ -20,22 +20,44 @@
       </div>
       <div>
           <x-card>
-              <form wire:submit.prevent="submit" action="{{ url('/agents/create') }}" class="flex flex-col gap-4">
+              <form wire:submit.prevent="submit" action="{{ url('/agents/create') }}" class="flex flex-col gap-4 bg-inherit">
+                  <x-form.wrap label="Название" name="title" >
+                    <x-form.input wire:model="form.title" name="title" />
+                  </x-form.wrap>
 
-                  <x-form.input wire:model="form.title" label="Название" inputName="title" :wire="true" />
-                  <x-form.input wire:model="form.inn" label="ИНН/КПП" inputName="inn" class="input-numeric"
-                      :wire="true" />
-                  <x-form.input wire:model="form.ogrn" label="ОГРН/ОГРНИП" inputName="ogrn" class="input-numeric"
-                      :wire="true" />
+                  <x-form.wrap label="ИНН/КПП" name="inn" >
+                    <x-form.input wire:model="form.inn" name="inn" class="input-numeric" />
+                  </x-form.wrap>
 
-                  <x-form.address-dropdown id="address" name="address" label="Юридический адрес" :items="$this->getAddresses()"
-                      :search="true" :value="$this->form['address']" />
+                  <x-form.wrap label="ОГРН/ОГРНИП" name="ogrn" >
+                    <x-form.input wire:model="form.ogrn" name="ogrn" class="input-numeric" />
+                  </x-form.wrap>
 
-                  <x-form.input wire:model="form.name" label="ФИО" inputName="name" :wire="true" />
-                  <x-form.input wire:model="form.phone" label="Номер телефона" inputName="phone" x-mask="+7(999)999-99-99"
-                      :wire="true" />
-                  <x-form.input wire:model="form.email" label="Email" inputName="email" :wire="true"
-                      type="email" />
+                  <x-form.dropdown 
+                    id="address"
+                    name="address"
+                    label="Юридический адрес"
+                    :items="$this->addresses"
+                    wire:model="form.address"
+                    optionLabel="wh"
+                    optionValue="wh"
+                    :searchable="true"
+                    autocomplete="off"
+                    aria-autocomplete="off"
+                    rp="form."
+                  />
+
+                  <x-form.wrap label="ФИО" name="name" >
+                    <x-form.input wire:model="form.name" name="name" />
+                  </x-form.wrap>
+
+                  <x-form.wrap label="Номер телефона" name="phone">
+                    <x-form.input wire:model="form.phone" name="phone" x-mask="+7(999)999-99-99" />
+                  </x-form.wrap>
+
+                  <x-form.wrap label="Email" name="email">
+                    <x-form.input wire:model="form.email" name="email" />
+                  </x-form.wrap>
 
                   <x-button type="submit">{{ $this->edit_mode ? 'Сохранить' : 'Добавить' }}</x-button>
 
