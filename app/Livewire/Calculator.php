@@ -547,6 +547,7 @@ class Calculator extends Component
 
       Arr::set($this->fields, $key, $value);
       $this->clearRelated($key);
+      Session::put('calc', json_encode($this->fields));
     }
 
     public function showManager()
