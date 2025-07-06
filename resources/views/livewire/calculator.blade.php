@@ -1,7 +1,7 @@
 <div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_350px] 2xl:grid-cols-[1fr_400px] gap-5 2xl:gap-10">   
   
       <div class="{{ $this->checkout ? 'flex' : 'hidden' }} flex-col gap-10">
-          @dump($this->fields)
+          {{-- @dump($this->fields) --}}
           <x-form.fieldset :title="false" set_description="Контрагент" :set_loading="true">
             <div class="flex gap-4 flex-col md:flex-row bg-inherit">
               <x-form.dropdown 
@@ -35,7 +35,7 @@
         </div>
         <div class="{{ $this->checkout ? 'hidden' : 'flex' }} flex-col justify-start items-stretch gap-10">
             
-            @dump($this->fields)
+            {{-- @dump($this->fields) --}}
             {{-- @dump($this->fields, $this->fields['pallets_data'], $this->fields['boxes_data']) --}}
             
             <x-form.fieldset set_title="Шаг 1" set_description="Выбор маршрута"
