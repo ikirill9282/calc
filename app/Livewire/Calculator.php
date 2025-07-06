@@ -515,7 +515,13 @@ class Calculator extends Component
       //   return Arr::get($this->fields, $name);
       // }
       // return array_key_exists($name, $this->fields) ? $this->fields[$name] : null;
-      return Arr::get($this->fields, str_ireplace('fields.', '', $name));
+      $key = str_ireplace('fields.', '', $name);
+      $val = Arr::get($this->fields, $key);
+      if (in_array($key, $this->numeric_fields)) {
+        $val = floatval($val);
+      }
+
+      return $val;
     }
  
     public function setField(string $name, mixed $value)
