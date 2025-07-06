@@ -81,13 +81,13 @@ class Calculator extends Component
       ],
       'boxes' => false,
       'boxes_data' => [
-        'count' => null,
-        'volume' => null,
+        'count' => 0,
+        'volume' => 0,
       ],
       'pallets' => false,
       'pallets_data' => [
-        'count' => null,
-        'volume' => null,
+        'count' => 0,
+        'volume' => 0,
       ],
       'cargo_comment' => null,
       'cargo_type' => null,
