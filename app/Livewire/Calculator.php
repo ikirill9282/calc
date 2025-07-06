@@ -155,6 +155,8 @@ class Calculator extends Component
                 $this->fields[$key] = $val;
               }
             }
+
+            Session::put('calc', json_encode($this->fields));
             $this->dispatch('runRefresh');
           }
         } catch (\Exception $e) {
@@ -762,7 +764,7 @@ class Calculator extends Component
     public function clearRelated(string $name)
     {
       if ($name == 'warehouse_id') {
-        $this->fields['agent_id'] = null;
+        
         $this->fields['distributor_id'] = null;
         $this->fields['distributor_center_id'] = null;
         $this->fields['delivery_date'] = null;
@@ -773,7 +775,7 @@ class Calculator extends Component
       }
       
       if ($name == 'distributor_id') {
-        $this->fields['agent_id'] = null;
+        
         $this->fields['distributor_center_id'] = null;
         $this->fields['delivery_date'] = null;
         $this->fields['transfer_method_pick']['date'] = null;
@@ -783,7 +785,7 @@ class Calculator extends Component
       }
       
       if ($name == 'distributor_center_id') {
-        $this->fields['agent_id'] = null;
+        
         $this->fields['delivery_date'] = null;
         $this->fields['transfer_method_pick']['date'] = null;
         $this->fields['transfer_method_receive']['date'] = null;
@@ -792,7 +794,7 @@ class Calculator extends Component
       }
       
       if ($name == 'delivery_date') {
-        $this->fields['agent_id'] = null;
+        
         $this->fields['transfer_method_pick']['date'] = null;
         $this->fields['transfer_method_receive']['date'] = null;
       }
