@@ -255,6 +255,7 @@ class Calculator extends Component
           
           if ($this->canCalcBoxes()) {
             $vol = $this->getField('boxes_data.volume');
+            $vol = ceil($vol / 0.05) * 0.05;
             $cost_vol = $vol * $costs['delivery_tariff_vol'];
             
             $builded_pallets = ($this->getField('palletizing_type') == 'pallet') 
@@ -270,7 +271,7 @@ class Calculator extends Component
             // $cost_vol = $this->getField('pallets_data.volume') * $costs['delivery_tariff_vol'];
             $cost_pallet = $this->getField('pallets_data.count') * $costs['delivery_tariff_pallete'];
             // $result += max($cost_vol, $cost_pallet);
-            return $cost_pallet;
+            return ceil($cost_pallet);
           }
       }
 
@@ -320,6 +321,7 @@ class Calculator extends Component
           
           if ($this->canCalcBoxes()) {
             $vol = $this->getField('boxes_data.volume');
+            $vol = ceil($vol / 0.05) * 0.05;
             $cost_vol = $vol * $data['pick_tariff_vol'];
 
             $builded_pallets = ($this->getField('palletizing_type') == 'pallet') 
@@ -333,10 +335,10 @@ class Calculator extends Component
           
           if ($this->canCalcPallets()) {
 
-            $cost_vol = $this->getField('pallets_data.volume') * $data['pick_tariff_vol'];
+            // $cost_vol = $this->getField('pallets_data.volume') * $data['pick_tariff_vol'];
             $cost_pallet = $this->getField('pallets_data.count') * $data['pick_tariff_pallete'];
-            $result += max($cost_vol, $cost_pallet);
-
+            // $result += max($cost_vol, $cost_pallet);
+            return ceil($cost_pallet);
             // $pallets = $this->getField('pallets_data.count');
             // $result += ($pallets * $data['pick_tariff_pallete']);
           }
