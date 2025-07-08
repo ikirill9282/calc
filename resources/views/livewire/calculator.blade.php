@@ -178,7 +178,7 @@
                 <div class="flex flex-col gap-6">
                     <div class="radio-box flex flex-col justify-start items-start w-full group/radio">
                         {{-- <x-form.checkbox label="Коробки" id="boxes" name="boxes" :checked="$this->getField('boxes') ? 'checked' : ''" /> --}}
-                        <x-form.radio label="Коробки" id="fields.boxes" value="boxes" name="fields.cargo" wire:model.change="fields.cargo" />
+                        <x-form.radio label="Коробки" id="fields.boxes" value="boxes" name="fields.cargo" wire:model.defer="fields.cargo" />
                         <div
                             class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'boxes' ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
@@ -192,7 +192,7 @@
                         </div>
                     </div>
                     <div class="radio-box flex flex-col justify-start items-start w-full group/radio" >
-                        <x-form.radio label="Палеты" name="fields.cargo" value="pallets" id="fields.pallets" wire:model.change="fields.cargo" />
+                        <x-form.radio label="Палеты" name="fields.cargo" value="pallets" id="fields.pallets" wire:model.defer="fields.cargo" />
                         <div
                             class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'pallets' ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
