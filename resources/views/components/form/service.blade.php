@@ -9,7 +9,7 @@
 @endphp
 
 <div class="flex flex-col sm:flex-row sm:gap-4 distributor-group">
-    <div class="py-4">{{ $label }}</div>
+    <div class="mb-4">{{ $label }}</div>
     <div class="flex flex-wrap justify-start items-start gap-3">
         @foreach ($items as $item)
             @php

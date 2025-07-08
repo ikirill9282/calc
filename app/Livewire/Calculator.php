@@ -79,15 +79,14 @@ class Calculator extends Component
         'address' => null,
         'date' => null,
       ],
-      'boxes' => false,
+      'cargo' => null,
       'boxes_data' => [
-        'count' => 0,
-        'volume' => 0,
+        'count' => null,
+        'volume' => null,
       ],
-      'pallets' => false,
       'pallets_data' => [
-        'count' => 0,
-        'volume' => 0,
+        'count' => null,
+        'weight' => null,
       ],
       'cargo_comment' => null,
       'cargo_type' => null,
@@ -135,10 +134,10 @@ class Calculator extends Component
             foreach ($order->toArray() as $key => $val) {
               if ($key == 'post_date') continue;
               
-              if (in_array($key, ['boxes', 'pallets'])) {
-                $this->fields[$key] = boolval($val);
-                continue;
-              }
+              // if (in_array($key, ['boxes', 'pallets'])) {
+              //   $this->fields[$key] = boolval($val);
+              //   continue;
+              // }
 
               if ($key == 'transfer_method_pick_address') {
                 $this->fields['transfer_method_pick']['address'] = $val;
@@ -216,6 +215,9 @@ class Calculator extends Component
 
     public function getAdditionalAmount(): int
     {
+      if (!$this->canCalcBoxes() && !$this->canCalcPallets()) {
+        return 0;
+      }
       $quant = match($this->getField('palletizing_type')) {
         'single' => 250,
         'pallet' => 650,
@@ -265,9 +267,10 @@ class Calculator extends Component
           }
           
           if ($this->canCalcPallets()) {
-            $cost_vol = $this->getField('pallets_data.volume') * $costs['delivery_tariff_vol'];
+            // $cost_vol = $this->getField('pallets_data.volume') * $costs['delivery_tariff_vol'];
             $cost_pallet = $this->getField('pallets_data.count') * $costs['delivery_tariff_pallete'];
-            $result += max($cost_vol, $cost_pallet);
+            // $result += max($cost_vol, $cost_pallet);
+            return $cost_pallet;
           }
       }
 
@@ -344,7 +347,7 @@ class Calculator extends Component
 
     public function canCalcBoxes(): bool
     {
-      return $this->getField('boxes')
+      return $this->getField('cargo') == 'boxes'
             && !empty($this->getField('boxes_data.count')) 
             && !empty($this->getField('boxes_data.volume'))
             ;
@@ -352,9 +355,9 @@ class Calculator extends Component
 
     public function canCalcPallets(): bool
     {
-      return $this->getField('pallets')
+      return $this->getField('cargo') == 'pallets'
             && !empty($this->getField('pallets_data.count'))
-            && !empty($this->getField('pallets_data.volume'))
+            && !empty($this->getField('pallets_data.weight'))
             ;
     }
 
@@ -457,21 +460,18 @@ class Calculator extends Component
             return true;
           }
 
-          $boxes_checbox = $this->getField('boxes');
-          $pallets_checkbox = $this->getField('pallets');
-
-          if (!$boxes_checbox && !$pallets_checkbox) {
+          if (empty($this->fields['cargo'])) {
             return true;
           }
 
-          if ($boxes_checbox) {
+          if ($this->fields['cargo'] == 'boxes') {
             $boxes_data = $this->getField('boxes_data');
             foreach ($boxes_data as $key => $val) {
               if (empty($val)) return true;
             }
             // dd('ok');
           } else {
-            if ($pallets_checkbox) {
+            if ($this->fields['cargo'] == 'pallets') {
               $pallets_data = $this->getField('pallets_data');
               foreach ($pallets_data as $key => $val) {
                 if (empty($val)) return true;
@@ -812,12 +812,11 @@ class Calculator extends Component
           "transfer_method_receive.date" => 'required_if:transfer_method,=,receive|nullable|string',
           "transfer_method_pick.address" => "required_if:transfer_method,=,pick|nullable|string",
           "transfer_method_pick.date" => "required_if:transfer_method,=,pick|nullable|string",
-          "boxes" => 'required:boolean',
+          'cargo' => 'string|required',
           'boxes_data.count' => 'required_if:boxes,true|nullable|integer',
           'boxes_data.volume' => 'required_if:boxes,true|nullable|numeric',
-          "pallets" => 'required:boolean',
           'pallets_data.count' => 'required_if:pallets,true|nullable|integer',
-          'pallets_data.volume' => 'required_if:pallets,true|nullable|numeric',
+          'pallets_data.weight' => 'required_if:pallets,true|nullable|numeric',
           "cargo_comment" => 'sometimes|nullable|string',
           "cargo_type" => 'sometimes|nullable|string',
           "palletizing_type" => 'sometimes|string',
@@ -835,7 +834,7 @@ class Calculator extends Component
         ]
       );
       if ($validator->fails()) {
-        // dd($validator->errors(), $this->fields);
+        dd($validator->errors(), $this->fields);
         throw new ValidationException($validator);
       }
 

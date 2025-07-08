@@ -305,19 +305,15 @@ document.addEventListener("DOMContentLoaded", function () {
               $(el).closest(".radio-box").find(".infoblock").slideUp();
             }
         });
-        // if (!cargo_open) {
-        //     $(this).closest(".group").find(".infoblock").slideToggle();
-        //     cargo_open = true;
-        // } else {
-        //     $('input[name="transfer_method"]').each((k, el) => {
-        //         $(el).closest(".group").find(".infoblock").slideToggle();
-        //     });
-        // }
-
-        // Livewire.dispatch("setField", {
-        //     name: $(this).attr("name"),
-        //     value: $(this).val(),
-        // });
+    });
+    $('input[name="fields.cargo"]').on("change", function () {
+        $('input[name="fields.cargo"]').each((k, el) => {
+            if ($(el).prop('checked')) {
+              $(el).closest(".radio-box").find(".infoblock").slideDown();
+            } else {
+              $(el).closest(".radio-box").find(".infoblock").slideUp();
+            }
+        });
     });
 
     // Checkbox Delivery Type

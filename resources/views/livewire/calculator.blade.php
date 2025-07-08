@@ -42,7 +42,7 @@
                 {{-- set_loading="false" --}}
                 set_class="{{ $this->isFieldDisabled(1) ? 'disabled' : '' }}"
                 >
-                <div class="flex flex-col sm:gap-8 bg-inherit">
+                <div class="flex flex-col gap-8 bg-inherit">
                     <x-form.dropdown 
                       label="Склад отправления {{ config('app.name') }}:"
                       name="warehouse_id"
@@ -176,11 +176,11 @@
             <x-form.fieldset set_title="Шаг 4" set_description="Тип доставки"
                 set_class="{{ $this->isFieldDisabled(4) ? 'disabled' : '' }}">
                 <div class="flex flex-col gap-6">
-                    <div class="checkbox-group flex flex-col justify-start items-start w-full">
+                    <div class="radio-box flex flex-col justify-start items-start w-full group/radio">
                         {{-- <x-form.checkbox label="Коробки" id="boxes" name="boxes" :checked="$this->getField('boxes') ? 'checked' : ''" /> --}}
-                        <x-form.checkbox label="Коробки" id="fields.boxes" value="0" name="fields.boxes" wire:model.live="fields.boxes" />
+                        <x-form.radio label="Коробки" id="fields.boxes" value="boxes" name="fields.cargo" wire:model.change="fields.cargo" />
                         <div
-                            class="infoblock boxes-item collapsed w-full {{ $this->getField('boxes') ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
+                            class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'boxes' ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
                                 <x-form.wrap label="Количество" name="fields.boxes_data.count">
                                   <x-form.input class="input-numeric" name="fields.boxes_data.count" wire:model.live="fields.boxes_data.count" />
@@ -191,16 +191,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="checkbox-group flex flex-col justify-start items-start w-full" >
-                        <x-form.checkbox label="Палеты" name="fields.pallets" id="fields.pallets" wire:model.live="fields.pallets" />
+                    <div class="radio-box flex flex-col justify-start items-start w-full group/radio" >
+                        <x-form.radio label="Палеты" name="fields.cargo" value="pallets" id="fields.pallets" wire:model.change="fields.cargo" />
                         <div
-                            class="infoblock boxes-item collapsed w-full {{ $this->getField('pallets') ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
+                            class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'pallets' ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
                                 <x-form.wrap label="Количество" name="fields.pallets_data.count">
                                   <x-form.input class="input-numeric" name="fields.pallets_data.count" wire:model.live="fields.pallets_data.count" />
                                 </x-form.wrap>
-                                <x-form.wrap label="Объем м3" name="fields.pallets_data.volume">
-                                  <x-form.input class="input-numeric" name="fields.pallets_data.volume" wire:model.live="fields.pallets_data.volume" />
+                                <x-form.wrap label="Вес кг" name="fields.pallets_data.weight">
+                                  <x-form.input class="input-numeric" name="fields.pallets_data.weight" wire:model.live="fields.pallets_data.weight" />
                                 </x-form.wrap>
                             </div>
                         </div>

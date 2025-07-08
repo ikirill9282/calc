@@ -29,12 +29,13 @@ return new class extends Migration
             $table->timestamp('transfer_method_receive_date')->nullable();
             $table->string('transfer_method_pick_address')->nullable();
             $table->timestamp('transfer_method_pick_date')->nullable();
-            $table->tinyInteger('boxes')->nullable();
+            $table->string('cargo');
+            // $table->tinyInteger('boxes')->nullable();
             $table->integer('boxes_count')->nullable();
             $table->integer('boxes_volume')->nullable();
-            $table->tinyInteger('pallets')->nullable();
+            // $table->tinyInteger('pallets')->nullable();
             $table->integer('pallets_count')->nullable();
-            $table->integer('pallets_volume')->nullable();
+            $table->integer('pallets_weight')->nullable();
             $table->text('cargo_comment')->nullable();
             $table->string('cargo_type')->nullable();
             $table->string('palletizing_type');
