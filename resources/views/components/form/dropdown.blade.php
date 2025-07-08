@@ -29,7 +29,7 @@
     />
     
     @if(!$searchable)
-      <div class="field relative z-20 {{ empty(\Illuminate\Support\Arr::get($this->fields, $fieldName)) ? 'text-primary-600/80 dark:text-primary-300/80 leading-9' : '' }}">
+      <div class="field relative z-20 min-h-9 flex justify-center items-center {{ empty(\Illuminate\Support\Arr::get($this->fields, $fieldName)) ? 'text-primary-600/80 dark:text-primary-300/80' : '' }}">
         @php
           $value = \Illuminate\Support\Arr::get($this->fields, $fieldName) ?? $placeholder;
           if ($optionValue == 'id') {
