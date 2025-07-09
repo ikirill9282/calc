@@ -92,13 +92,13 @@
               @php
                 $table_data = [
                   [
-                    'type' => ($order->cargo) ? 'Коробки' : '',
+                    'type' => ($order->cargo == 'boxes') ? 'Коробки' : '',
                     'count' => $order->boxes_count,
                     'volume' => $order->boxes_volume,
                     'cargo' => $order->cargo_type,
                   ],
                   [
-                    'type' => ($order->cargo) ? 'Паллеты' : '',
+                    'type' => ($order->cargo == 'pallets') ? 'Паллеты' : '',
                     'count' => $order->pallets_count,
                     'volume' => $order->pallets_volume,
                     'cargo' => $order->cargo_type,
