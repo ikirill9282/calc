@@ -92,13 +92,13 @@
               @php
                 $table_data = [
                   [
-                    'type' => ($order->boxes) ? 'Коробки' : '',
+                    'type' => ($order->cargo) ? 'Коробки' : '',
                     'count' => $order->boxes_count,
                     'volume' => $order->boxes_volume,
                     'cargo' => $order->cargo_type,
                   ],
                   [
-                    'type' => ($order->pallets) ? 'Паллеты' : '',
+                    'type' => ($order->cargo) ? 'Паллеты' : '',
                     'count' => $order->pallets_count,
                     'volume' => $order->pallets_volume,
                     'cargo' => $order->cargo_type,
@@ -118,6 +118,7 @@
                   </thead>
                   <tbody>
                     @foreach ($table_data as $row)
+                      @dd($row)
                       <tr>
                         <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
                         <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
