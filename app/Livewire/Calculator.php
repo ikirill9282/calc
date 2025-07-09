@@ -851,7 +851,7 @@ class Calculator extends Component
       $order = new Order();
       $order->fillFields($fields);
       $order->user_id = Auth::user()?->id;
-      $order->pick = ($this->fields['transfer_method' == 'pick']) ? $this->getPickAmount() : 0;
+      $order->pick = ($this->fields['transfer_method'] == 'pick') ? $this->getPickAmount() : 0;
       $order->delivery = $this->getDeliveryAmount();
       $order->additional = $this->getAdditionalAmount();
       $order->total = $this->getAmount();
