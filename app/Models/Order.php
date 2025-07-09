@@ -26,7 +26,7 @@ class Order extends Model
   {
     $sid = '1ZOkCAKId9W5nAQya3ZFC1GyYeeGM-Mbne7U-F44Zw-E';
     $user = User::find($this->user_id);
-    $agent = Agent::find($this->agent_id);
+    $agent = Agent::select('title', 'inn', 'ogrn', 'address')->where('id', $this->agent_id)->first();
 
     $user_data = $user->toArray();
     $user_data['verified'] = is_null($user->email_verified_at) ? 'false' : 'true';
