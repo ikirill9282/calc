@@ -551,9 +551,9 @@ class Calculator extends Component
       $key = str_ireplace('fields.', '', $name);
       $value = null;
 
-      if (in_array($key, $this->numeric_fields)) {
-        $value = 0;
-      }
+      // if (in_array($key, $this->numeric_fields)) {
+      //   $value = 0;
+      // }
 
       Arr::set($this->fields, $key, $value);
       $this->clearRelated($key);

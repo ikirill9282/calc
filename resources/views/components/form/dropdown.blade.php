@@ -21,7 +21,7 @@
   >
     <x-form.input 
       type="{{ $searchable ? 'text' : 'hidden' }}"
-      class="absolute top-0 left-0 w-full h-full z-10" 
+      class="top-0 left-0 w-full h-full z-10" 
       wire:model.live="{{ $attributes->get('wire:model') }}"
       name="{{ $name }}"
       autocomplete="off"
@@ -42,7 +42,7 @@
       </div>
     @endif
 
-    <div class="dropdown absolute z-40 w-full left-0 bottom-0 translate-y-[100%]
+    <div class="dropdown absolute z-40 w-full left-0 bottom-[-5px] translate-y-[100%]
               rounded-2xl shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}
               @if (!array_key_exists($attributes->get('wire:model'), ($this?->dropdownOpen ?? []))) hidden @endif
             "

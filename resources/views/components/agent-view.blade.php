@@ -23,29 +23,29 @@
   {{-- <div class="{{ in_array($agent->id, $this->agents_open) ? '' : 'hidden' }} agents-toggle overflow-hidden"> --}}
   <div class="agents-toggle overflow-hidden">
       <div class="py-3 flex flex-col relative gap-2">
-          <div class="flex justify-start items-center w-full">
-              <span class="font-bold basis-1/3 dark:text-primary-400">ИНН:</span>
-              <span>{{ $agent->inn }}</span>
+          <div class="flex justify-start items-start sm:items-center w-full sm:gap-2 flex-col sm:flex-row">
+              <span class="font-bold basis-1/3 dark:text-primary-400 grow">ИНН:</span>
+              <span class="basis-2/3">{{ $agent->inn }}</span>
           </div>
-          <div class="flex justify-start items-center w-full">
-              <span class="font-bold basis-1/3 dark:text-primary-400">ОГРН/ОГРНИП:</span>
-              <span>{{ $agent->ogrn }}</span>
+          <div class="flex justify-start items-start sm:items-center w-full sm:gap-2 flex-col sm:flex-row">
+              <span class="font-bold basis-1/3 dark:text-primary-400 grow">ОГРН/ОГРНИП:</span>
+              <span class="basis-2/3">{{ $agent->ogrn }}</span>
           </div>
-          <div class="flex justify-start items-center w-full">
-              <span class="font-bold basis-1/3 dark:text-primary-400">Юридический адрес:</span>
-              <span>{{ $agent->address }}</span>
+          <div class="flex justify-start items-start sm:items-center w-full sm:gap-2 flex-col sm:flex-row">
+              <span class="font-bold basis-1/3 dark:text-primary-400 grow">Юридический адрес:</span>
+              <span class="basis-2/3">{{ $agent->address }}</span>
           </div>
-          <div class="flex justify-start items-center w-full">
-              <span class="font-bold basis-1/3 dark:text-primary-400">ФИО:</span>
-              <span>{{ $agent->name }}</span>
+          <div class="flex justify-start items-start sm:items-center w-full sm:gap-2 flex-col sm:flex-row">
+              <span class="font-bold basis-1/3 dark:text-primary-400 grow">ФИО:</span>
+              <span class="basis-2/3">{{ $agent->name }}</span>
           </div>
-          <div class="flex justify-start items-center w-full">
-              <span class="font-bold basis-1/3 dark:text-primary-400">Номер телефона:</span>
-              <span>{{ $agent->phone }}</span>
+          <div class="flex justify-start items-start sm:items-center w-full sm:gap-2 flex-col sm:flex-row">
+              <span class="font-bold basis-1/3 dark:text-primary-400 grow">Номер телефона:</span>
+              <span class="basis-2/3">{{ $agent->phone }}</span>
           </div>
-          <div class="flex justify-start items-center w-full">
-              <span class="font-bold basis-1/3 dark:text-primary-400">Email:</span>
-              <span>{{ $agent->email }}</span>
+          <div class="flex justify-start items-start sm:items-center w-full sm:gap-2 flex-col sm:flex-row">
+              <span class="font-bold basis-1/3 dark:text-primary-400 grow">Email:</span>
+              <span class="basis-2/3">{{ $agent->email }}</span>
           </div>
 
           @if(!$view)
