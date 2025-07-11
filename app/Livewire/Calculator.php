@@ -821,8 +821,8 @@ class Calculator extends Component
           'pallets_data.weight' => 'required_if:cargo,pallets|nullable|numeric',
           "cargo_comment" => 'sometimes|nullable|string',
           "cargo_type" => 'sometimes|nullable|string',
-          "palletizing_type" => 'sometimes|string',
-          "palletizing_count" => 'sometimes|integer',
+          "palletizing_type" => 'sometimes|nullable|string',
+          "palletizing_count" => 'sometimes|nullable|integer',
         ],
         [
           'boxes_data.count.required_if' => 'Необходимо заоплнить поле',
