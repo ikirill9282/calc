@@ -20,7 +20,7 @@
       </div>
       <div>
           <x-card>
-              @dump($this->form)
+              {{-- @dump($this->form) --}}
               <form wire:submit.prevent="submit" action="{{ url('/agents/create') }}" class="flex flex-col gap-4 bg-inherit">
                   {{-- <x-form.wrap label="Название" name="title" >
                     <x-form.input wire:model="form.title" name="title" />
