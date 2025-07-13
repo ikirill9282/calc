@@ -284,9 +284,9 @@ class Agents extends Component
         $this->form['inn'] = $company['inn'];
         $this->form['ogrn'] = $company['ogrn'];
         $this->form['address'] = $company['address'];
-        $this->form['name'] = $company['manager'] ?? $this->form['name'];
-        $this->form['phone'] = $company['phone'] ?? $this->form['phone'];
-        $this->form['email'] = $company['email'] ?? $this->form['email'];
+        // $this->form['name'] = $company['manager'] ?? $this->form['name'];
+        // $this->form['phone'] = $company['phone'] ?? $this->form['phone'];
+        // $this->form['email'] = $company['email'] ?? $this->form['email'];
         $this->company = $company;
         $this->getCompanies($company['name']);
         $this->getAddresses($company['address']);
