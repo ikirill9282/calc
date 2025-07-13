@@ -2,7 +2,7 @@
   
       <div class="{{ $this->checkout ? 'flex' : 'hidden' }} flex-col gap-10">
           {{-- @dump($this->fields) --}}
-          <x-form.fieldset :title="false" set_description="Контрагент" :set_loading="true">
+          <x-form.fieldset :title="false" set_description="Контрагент" :set_loading="false">
             <div class="flex gap-4 flex-col md:flex-row bg-inherit">
               <x-form.dropdown 
                 :items="\App\Models\Agent::where('user_id', auth()->user()?->id)->get()"
@@ -26,7 +26,7 @@
               </x-agent-view>
             @endif
           </x-form.fieldset>
-          <x-form.fieldset :title="false" set_description="Способ оплаты" :set_loading="true">
+          <x-form.fieldset :title="false" set_description="Способ оплаты" :set_loading="false">
             <div class="flex flex-col gap-4">
               <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group" name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash" :checked="(($this->getField('payment_method') == 'cash') ? 'checked' : '')" />
               <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group" name="payment_method" value="bill" label="По счету" id="payment_method_bill" :checked="(($this->getField('payment_method') == 'bill') ? 'checked' : '')" />
