@@ -38,8 +38,8 @@ return new class extends Migration
             $table->integer('pallets_weight')->nullable();
             $table->text('cargo_comment')->nullable();
             $table->string('cargo_type')->nullable();
-            $table->string('palletizing_type');
-            $table->integer('palletizing_count');
+            $table->string('palletizing_type')->nullable();
+            $table->integer('palletizing_count')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
