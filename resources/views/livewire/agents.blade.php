@@ -20,10 +20,27 @@
       </div>
       <div>
           <x-card>
+              @dump($this->form)
               <form wire:submit.prevent="submit" action="{{ url('/agents/create') }}" class="flex flex-col gap-4 bg-inherit">
-                  <x-form.wrap label="Название" name="title" >
+                  {{-- <x-form.wrap label="Название" name="title" >
                     <x-form.input wire:model="form.title" name="title" />
-                  </x-form.wrap>
+                  </x-form.wrap> --}}
+                  <x-form.dropdown 
+                    id="title"
+                    name="title"
+                    label="Название"
+                    :items="$this->companies"
+                    :searchable="true"
+                    wire:model="form.title"
+                    :selectedKey="$this->company['key'] ?? null"
+                    optionLabel="name"
+                    optionValue="name"
+                    optionDescription="description"
+                    optionKey="key"
+                    autocomplete="off"
+                    aria-autocomplete="off"
+                    rp="form."
+                  />
 
                   <x-form.wrap label="ИНН/КПП" name="inn" >
                     <x-form.input wire:model="form.inn" name="inn" class="input-numeric" />

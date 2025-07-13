@@ -4,6 +4,8 @@
   'optionLabel' => null,
   'optionValue' => null,
   'optionDescription' => null,
+  'optionKey' => null,
+  'selectedKey' => null,
   'placeholder' => '',
   'empty_text' => 'Нет доступных адресов',
   'searchable' => false,
@@ -49,7 +51,6 @@
           @if($searchable) data-searchable="true" @endif
           data-open="false"
           >
-      
       <div class="dropdown-wrap py-4 flex flex-col justify-start items-stretch">
         @php
           if (is_array($items)) {
@@ -73,16 +74,21 @@
                 $fieldValue = (!is_null($getOptionValueUsing)) ? $getOptionValueUsing($item) : $arr[$optionValue] ?? null;
                 $label = $item[$optionLabel];
                 $description = $item[$optionDescription] ?? '';
-                
               }
             @endphp
-            
+            {{-- @dump($item[$optionKey] ?? false, $selectedKey, ($item[$optionKey] ?? false) == $selectedKey) --}}
             <div 
               class="dropdown-item py-1.5 px-4 flex flex-col justify-start items-stretch 
                 hover:cursor-pointer hover:bg-primary-100 dark:hover:bg-primary-800
-                @if($fieldValue == $this->getField($fieldName)) bg-secondary-600/25 dark:bg-secondary-400/25 @endif
+                @if($optionKey)
+                  @if(($optionKey && $selectedKey) && (($item[$optionKey] ?? false) == $selectedKey))
+                    bg-secondary-600/25 dark:bg-secondary-400/25 
+                  @endif
+                @elseif($fieldValue == $this->getField($fieldName))
+                 bg-secondary-600/25 dark:bg-secondary-400/25 
+                @endif
               "
-              wire:click.prevent="setField('{{ $attributes->get('wire:model') }}', '{{ $fieldValue }}')"
+              wire:click.prevent="setField('{{ $attributes->get('wire:model') }}', '{{ ($optionKey) ? $item[$optionKey] : $fieldValue }}')"
               >
                 <p class="text-md">{{  $label }}</p>
                 <p class="text-xs sm:text-sm text-primary-500">{{ $description }}</p>

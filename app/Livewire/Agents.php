@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Agent;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
 
 class Agents extends Component
@@ -50,6 +51,9 @@ class Agents extends Component
 
     public $addresses = [];
 
+    public $companies = [];
+    public $company = [];
+
     public function mount()
     {
       $this->getAddresses();
@@ -61,6 +65,10 @@ class Agents extends Component
       if ($property == 'form.address') {
         $this->dropdownOpen[$property] = true;
         $this->getAddresses(Arr::get($this->form, str_ireplace('form.', '', $property)));
+      }
+      if ($property == 'form.title') {
+        $this->dropdownOpen[$property] = true;
+        $this->getCompanies(Arr::get($this->form, str_ireplace('form.', '', $property)));
       }
     }
 
@@ -226,6 +234,28 @@ class Agents extends Component
     }
 
 
+    public function getCompanies(string $query = '')
+    {
+      $query = $query;
+      $client = new DadataClient();
+      $data = $client->suggest('party', $query);
+      $result = [];
+      foreach ($data as $key => $item) {
+        $formatted = [
+          'name' => $item['value'],
+          'inn' => $item['data']['inn'] ?? '',
+          'ogrn' => $item['data']['ogrn'] ?? '',
+        ];
+        $formatted['key'] = md5(serialize($formatted));
+        $formatted['description'] = 'ИНН: ' . $formatted['inn'] . ', ОГРН: ' . $formatted['ogrn'];
+        $result[] = $formatted;
+      }
+      $this->companies = $result;
+      // dd($this->companies);
+      return collect($result);
+    }
+
+
     public function getField(string $name): mixed
     {
       return Arr::get($this->form, str_ireplace('form.', '', $name));
@@ -238,6 +268,16 @@ class Agents extends Component
       
       if ($name == 'form.address') {
         $this->getAddresses();
+        unset($this->dropdownOpen[$name]);
+      }
+      
+      if ($name == 'form.title') {
+        $company = collect($this->companies)->where('key', $value)->first();
+        $this->form['title'] = $company['name'];
+        $this->form['inn'] = $company['inn'];
+        $this->form['ogrn'] = $company['ogrn'];
+        $this->company = $company;
+        $this->getCompanies($company['name']);
         unset($this->dropdownOpen[$name]);
       }
     }
