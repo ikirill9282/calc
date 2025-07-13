@@ -92,7 +92,7 @@
                             id="transfer_method_receive" 
                             value="receive"
                             label="Самостоятельно привезти груз"
-                            wire:model.live="fields.transfer_method"
+                            wire:model.live.debounce.350ms="fields.transfer_method"
                           />
                         <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['receive']) ? '' : 'hidden' }}">
                             <div
@@ -141,7 +141,7 @@
                             id="transfer_method_pick" 
                             value="pick"
                             label="Заберем груз от вас по адресу" 
-                            wire:model.live="fields.transfer_method"
+                            wire:model.live.debounce.350ms="fields.transfer_method"
                           />
                         <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['pick']) ? '' : 'hidden' }}">
                             <div
