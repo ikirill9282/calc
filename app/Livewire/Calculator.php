@@ -86,7 +86,7 @@ class Calculator extends Component
       ],
       'pallets_data' => [
         'count' => null,
-        'weight' => null,
+        // 'weight' => null,
       ],
       'cargo_comment' => null,
       'cargo_type' => null,
@@ -144,7 +144,7 @@ class Calculator extends Component
                 continue;
               }
 
-              if (in_array($key, ['boxes_count', 'boxes_volume', 'boxes_weight', 'pallets_count', 'pallets_volume'])) {
+              if (in_array($key, ['boxes_count', 'boxes_volume', 'pallets_count'])) {
                 $parts = explode('_', $key);
                 $this->fields["{$parts[0]}_data"][$parts[1]] = $val;
                 continue;
@@ -359,7 +359,7 @@ class Calculator extends Component
     {
       return $this->getField('cargo') == 'pallets'
             && !empty($this->getField('pallets_data.count'))
-            && !empty($this->getField('pallets_data.weight'))
+            // && !empty($this->getField('pallets_data.weight'))
             ;
     }
 
@@ -471,11 +471,11 @@ class Calculator extends Component
             foreach ($boxes_data as $key => $val) {
               if (empty($val)) return true;
             }
-            // dd('ok');
           } else {
             if ($this->fields['cargo'] == 'pallets') {
               $pallets_data = $this->getField('pallets_data');
               foreach ($pallets_data as $key => $val) {
+                // if ($key == 'weight') continue;
                 if (empty($val)) return true;
               }
             }
@@ -818,7 +818,7 @@ class Calculator extends Component
           'boxes_data.count' => 'required_if:cargo,boxes|nullable|integer',
           'boxes_data.volume' => 'required_if:cargo,boxes|nullable|numeric',
           'pallets_data.count' => 'required_if:cargo,pallets|nullable|integer',
-          'pallets_data.weight' => 'required_if:cargo,pallets|nullable|numeric',
+          // 'pallets_data.weight' => 'required_if:cargo,pallets|nullable|numeric',
           "cargo_comment" => 'sometimes|nullable|string',
           "cargo_type" => 'sometimes|nullable|string',
           "palletizing_type" => 'sometimes|nullable|string',

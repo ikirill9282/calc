@@ -60,11 +60,11 @@ class Order extends Model
     }
 
     if (!empty($order_data['created_at'])) {
-      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->toIso8601String();
+      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->tz('Europe/Moscow')->format('Y-m-d\TH:i:sP');
     }
 
     if (!empty($order_data['updated_at'])) {
-      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->toIso8601String();
+      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->tz('Europe/Moscow')->format('Y-m-d\TH:i:sP');
     }
 
     $order_data['palletizing_type'] = match($order_data['palletizing_type']) {
@@ -80,23 +80,24 @@ class Order extends Model
     $item = array_merge(['order_id' => $this->id], $item);
     $item = array_map(fn($val) => is_null($val) ? '' : $val, $item);
 
-
+    $list = str_contains(mb_strtolower($item['warehouse_id']), 'симферополь') ? 2 : 3;
     $int = ($this->id - 100500 + 2);
     $range = "A$int:AI$int";
     $sheet = Sheets::spreadsheet($sid)
-      ->sheet('Лист2')
-      ->range($range);
+      ->sheet("Лист$list")
+      ->range('')
+      ;
 
     $values = [
       array_values($item),
     ];
 
-    if (!$this->print()->exists()) {
+    // if (!$this->print()->exists()) {
       $sheet->append($values);
-      $this->print()->firstOrCreate();
-    } else {
-      $sheet->update($values);
-    }
+      // $this->print()->firstOrCreate();
+    // } else {
+      // $sheet->range($range)->update($values);
+    // }
   }
 
   public function getCity()

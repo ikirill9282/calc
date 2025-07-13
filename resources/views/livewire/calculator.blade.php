@@ -125,7 +125,7 @@
                                     <div
                                         class="flex justify-start items-center gap-3 w-full rounded-2xl p-3 text-white bg-sky-600">
                                         <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
-                                        <span class="">Дата отгрузки на склад {{ config('app.name') }}: <span
+                                        <span class="">Дата отгрузки на склад {{ str_contains(mb_strtolower($this->getField('warehouse_id')), 'симферополь') ? 'г. Симферополь' : 'г. Ростов-на-дону' }}: <span
                                                 class="date">{{ $this->getField('transfer_method_receive.date') ?? '01.01.2025' }}</span>
                                             с 09:00 до 18:00</span>
                                     </div>
@@ -199,9 +199,9 @@
                                 <x-form.wrap label="Количество" name="fields.pallets_data.count">
                                   <x-form.input class="input-numeric" name="fields.pallets_data.count" wire:model.live="fields.pallets_data.count" />
                                 </x-form.wrap>
-                                <x-form.wrap label="Вес кг" name="fields.pallets_data.weight">
+                                {{-- <x-form.wrap label="Вес кг" name="fields.pallets_data.weight">
                                   <x-form.input class="input-numeric" name="fields.pallets_data.weight" wire:model.live="fields.pallets_data.weight" />
-                                </x-form.wrap>
+                                </x-form.wrap> --}}
                             </div>
                         </div>
                     </div>
