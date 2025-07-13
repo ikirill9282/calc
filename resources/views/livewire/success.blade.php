@@ -134,24 +134,28 @@
               </div>
               
             </div>
-            <div class="border-t border-primary-500/50 mt-6 py-6">
-              <div class="text-xl font-bold mb-6">Услуги склада:</div>
-              @if (!empty($order->palletizing_type) && !empty($order->palletizing_count))
-              <div class="grid grid-cols-[130px_1fr] grid-rows-2">
-                <p class="col-span-1 row-span-1 font-normal dark:text-primary-200/50 text-primary-600/50">
-                  Наименование:
-                </p>
-                <p class="col-span-1 row-span-1">{{ match($order->palletizing_type) {
-                  'single' => 'Палетирование',
-                  'pallet' => 'Поддон и палетирование',
-                } }}</p>
-                <p class="col-span-1 row-span-2 font-normal dark:text-primary-200/50 text-primary-600/50">
-                  Количество:
-                </p>
-                <p class="col-span-1 row-span-2">{{ $order->palletizing_count }}шт.</p>
+
+
+            @if (!empty($order->palletizing_type) && !empty($order->palletizing_count))
+              <div class="border-t border-primary-500/50 mt-6 py-6">
+                <div class="text-xl font-bold mb-6">Услуги склада:</div>
+                <div class="grid grid-cols-[130px_1fr] grid-rows-2">
+                  <p class="col-span-1 row-span-1 font-normal dark:text-primary-200/50 text-primary-600/50">
+                    Наименование:
+                  </p>
+                  <p class="col-span-1 row-span-1">{{ match($order->palletizing_type) {
+                    'single' => 'Палетирование',
+                    'pallet' => 'Поддон и палетирование',
+                  } }}</p>
+                  <p class="col-span-1 row-span-2 font-normal dark:text-primary-200/50 text-primary-600/50">
+                    Количество:
+                  </p>
+                  <p class="col-span-1 row-span-2">{{ $order->palletizing_count }}шт.</p>
+                </div>
               </div>
-              @endif
-            </div>
+            @endif
+
+
             @if(!empty($order->cargo_comment))
               <div class="border-t border-primary-500/50 mt-6 py-6">
                 <div class="text-xl font-bold mb-6">Комментарий к составу груза:</div>
