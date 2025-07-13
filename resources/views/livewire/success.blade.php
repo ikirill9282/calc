@@ -95,13 +95,13 @@
               @php
                 $table_data = [
                   [
-                    'type' => ($order->boxes) ? 'Коробки' : '',
+                    'type' => ($order->cargo == 'boxes') ? 'Коробки' : '',
                     'count' => $order->boxes_count,
                     'volume' => $order->boxes_volume,
                     'cargo' => $order->cargo_type,
                   ],
                   [
-                    'type' => ($order->pallets) ? 'Паллеты' : '',
+                    'type' => ($order->cargo == 'pallets') ? 'Паллеты' : '',
                     'count' => $order->pallets_count,
                     'volume' => $order->pallets_volume,
                     'cargo' => $order->cargo_type,
@@ -115,7 +115,7 @@
                       <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип доставки:</th>
                       <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Кол-во:</th>
                       {{-- <th cltext-nowrap ass="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Вес:</th> --}}
-                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3:</th>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3/Вес кг:</th>
                       <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип груза:</th>
                     </tr>
                   </thead>
