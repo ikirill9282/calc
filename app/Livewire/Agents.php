@@ -239,12 +239,19 @@ class Agents extends Component
       $query = $query;
       $client = new DadataClient();
       $data = $client->suggest('party', $query);
+      // dd($data);
+      // unset($data[0]['data']['address']);
+      // dd($data[0]['data']['address']['unrestricted_value'] ?? $data[0]['data']['address']['value'] ?? '', $data[0]);
       $result = [];
       foreach ($data as $key => $item) {
         $formatted = [
           'name' => $item['value'],
           'inn' => $item['data']['inn'] ?? '',
           'ogrn' => $item['data']['ogrn'] ?? '',
+          'address' => $item['data']['address']['unrestricted_value'] ?? $item['data']['address']['value'] ?? null,
+          'manager' => $item['data']['management']['name'] ?? null,
+          'phone' => $item['data']['phones'][0] ?? null,
+          'email' => $item['data']['emails'][0] ?? null,
         ];
         $formatted['key'] = md5(serialize($formatted));
         $formatted['description'] = 'ИНН: ' . $formatted['inn'] . ', ОГРН: ' . $formatted['ogrn'];
@@ -276,9 +283,15 @@ class Agents extends Component
         $this->form['title'] = $company['name'];
         $this->form['inn'] = $company['inn'];
         $this->form['ogrn'] = $company['ogrn'];
+        $this->form['address'] = $company['address'];
+        $this->form['name'] = $company['manager'] ?? $this->form['name'];
+        $this->form['phone'] = $company['phone'] ?? $this->form['phone'];
+        $this->form['email'] = $company['email'] ?? $this->form['email'];
         $this->company = $company;
         $this->getCompanies($company['name']);
+        $this->getAddresses($company['address']);
         unset($this->dropdownOpen[$name]);
+        unset($this->dropdownOpen['form.address']);
       }
     }
 
