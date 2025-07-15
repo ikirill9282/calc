@@ -121,7 +121,7 @@
                   <tbody>
                     @foreach ($table_data as $row)
                       <tr>
-                        @if(isset($_GET['tt']))
+                        @if(isset($_GET['tt']) && $row['type'] == 'Коробки')
                           @dd(isset($row['volume']), $row)
                         @endif
                         <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
