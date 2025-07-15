@@ -118,7 +118,7 @@
                       <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип доставки:</th>
                       <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Кол-во:</th>
                       {{-- <th cltext-nowrap ass="py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Вес:</th> --}}
-                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3/Вес кг:</th>
+                      <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Объем м3:</th>
                       <th class="text-nowrap py-2 px-4 font-normal dark:text-primary-200/50 text-primary-600/50">Тип груза:</th>
                     </tr>
                   </thead>
