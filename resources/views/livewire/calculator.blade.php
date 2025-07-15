@@ -304,7 +304,7 @@
             <x-button class="w-full" outlined>
               <div class="flex justify-center items-center gap-2">
                 <span>@include('icons.download')</span>
-                <a href="https://docs.google.com/spreadsheets/d/198VI0GjoaFRSdPzP5meYhBg4AqhnbS1unyywGThg0-o/edit?gid=0#gid=0">Скачать прайс-лист</a>
+                <a target="_blank" href="https://docs.google.com/spreadsheets/d/198VI0GjoaFRSdPzP5meYhBg4AqhnbS1unyywGThg0-o/edit?usp=sharing">Скачать прайс-лист</a>
               </div>
             </x-button>
 
