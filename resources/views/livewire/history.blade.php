@@ -122,7 +122,7 @@
                     @foreach ($table_data as $row)
                       <tr>
                         @if(isset($_GET['tt']))
-                          @dd(isset($row['volume']))
+                          @dd(isset($row['volume']), $row)
                         @endif
                         <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
                         <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
