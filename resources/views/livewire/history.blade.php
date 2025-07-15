@@ -90,20 +90,22 @@
             <div class="border-t border-primary-500/50 mt-6 py-6">
               <div class="text-xl font-bold mb-6">Состав груза:</div>
               @php
-                $table_data = [
-                  [
-                    'type' => ($order->cargo == 'boxes') ? 'Коробки' : '',
+                $table_data = [];
+                if ($order->cargo == 'boxes') {
+                  $table_data[] = [
+                    'type' => 'Коробки',
                     'count' => $order->boxes_count,
                     'volume' => $order->boxes_volume,
                     'cargo' => $order->cargo_type,
-                  ],
-                  [
-                    'type' => ($order->cargo == 'pallets') ? 'Паллеты' : '',
+                  ];
+                } elseif ($order->cago_type == 'pallets') {
+                  $table_data[] = [
+                    'type' => 'Паллеты',
                     'count' => $order->pallets_count,
                     'volume' => $order->pallets_volume,
                     'cargo' => $order->cargo_type,
-                  ],
-                ];
+                  ];
+                }
               @endphp
               <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden">
                 <table>
