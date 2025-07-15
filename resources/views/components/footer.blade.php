@@ -22,9 +22,11 @@
                 </div>
             </div>
         </div> --}}
-        <p>ООО ТРАНСПОРТНАЯ КОМПАНИЯ "82 РЕГИОН"</p>
-        <p>ИНН 9102190477</p>
-        <p>ОРГН 1159102108440</p>
+        <div class="py-6 lg:py-12">
+          <p>ООО ТРАНСПОРТНАЯ КОМПАНИЯ "82 РЕГИОН"</p>
+          <p>ИНН 9102190477</p>
+          <p>ОРГН 1159102108440</p>
+        </div>
         <div class="border-b w-full border-primary-600/25"></div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-12 py-6">
             <div class="">
