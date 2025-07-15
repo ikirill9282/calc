@@ -106,7 +106,6 @@
                     'cargo' => $order->cargo_type,
                   ];
                 }
-                dd($table_data);
               @endphp
               <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden">
                 <table>
@@ -122,6 +121,9 @@
                   <tbody>
                     @foreach ($table_data as $row)
                       <tr>
+                        @if(isset($_GET['tt']))
+                          @dD($row)
+                        @endif
                         <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
                         <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
                         {{-- <td class="py-2 px-4">@if(isset($row['weight'])) {{ $row['weight'] }} кг @endif</td> --}}
