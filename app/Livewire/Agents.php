@@ -217,6 +217,12 @@ class Agents extends Component
       $this->refreshForm();
     }
 
+    public function delete(int $agent_id)
+    {
+      Agent::where('id', $agent_id)->delete();
+      $this->reloadAgents();
+    }
+
     public function refreshForm(array $data = [])
     {
       $this->form = array_merge(

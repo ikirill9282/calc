@@ -15,7 +15,7 @@
               @if($order->transfer_method === 'pick')
                 <div class="mb-1">Заберем груз от вас: {{ \Illuminate\Support\Carbon::parse($order->transfer_method_pick_date)->format('d.m.Y') }}</div>
               @endif
-              <div class="mb-1">Отправка от {{ env('APP_NAME') }}: {{ \Illuminate\Support\Carbon::parse($order->post_date)->format('d.m.Y') }}</div>
+              <div class="mb-1">Отправка со склада: {{ \Illuminate\Support\Carbon::parse($order->post_date)->format('d.m.Y') }}</div>
               <div class="">Прибытие в РЦ {{ $order->distributor_id }}: {{ \Illuminate\Support\Carbon::parse($order->delivery_date)->format('d.m.Y') }}</div>
             </div>
             <div class="basis-1/4 text-right text-xl">
