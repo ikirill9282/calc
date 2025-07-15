@@ -92,6 +92,10 @@
               @php
                 $table_data = [];
                 if ($order->cargo == 'boxes') {
+
+                  if (isset($_GET['tt'])) {
+                    dd($order->toArray());
+                  }
                   $table_data[] = [
                     'type' => 'Коробки',
                     'count' => $order->boxes_count,
