@@ -12,7 +12,7 @@
           </div>
           <div class="">
             <p>Ваш заказ успешно оформлен! В ближайшее время с вами свяжется наш менеджер для уточнения деталей.</p>
-            <p>На вашу почту уже отправлено письмо с информацией о заказе.</p>
+            {{-- <p>На вашу почту уже отправлено письмо с информацией о заказе.</p> --}}
             <p>Спасибо, что выбрали нашу компанию!</p>
           </div>
         </div>
@@ -177,15 +177,15 @@
             <div class="flex flex-col gap-4">
               <div class="flex flex-col gap-1">
                 <div class="font-bold">Имя:</div>
-                <div class="">Иванов Иван Иванович</div>
+                <div class="">Любимова София</div>
               </div>
               <div class="flex flex-col gap-1">
                 <div class="font-bold">Email:</div>
-                <div class="">1234569@gmail.com</div>
+                <div class="">tk82wb24@gmail.com</div>
               </div>
               <div class="flex flex-col gap-1">
                 <div class="font-bold">Телефон:</div>
-                <div class="">+71234569192</div>
+                <div class="">89785551920</div>
               </div>
             </div>
           </x-card>

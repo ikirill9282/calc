@@ -127,7 +127,8 @@
                                         <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
                                         <span class="">Дата отгрузки на склад {{ str_contains(mb_strtolower($this->getField('warehouse_id')), 'симферополь') ? 'г. Симферополь' : 'г. Ростов-на-дону' }}: <span
                                                 class="date">{{ $this->getField('transfer_method_receive.date') ?? '01.01.2025' }}</span>
-                                            с 09:00 до 18:00</span>
+                                            {{-- с 09:00 до 18:00 --}}
+                                          </span>
                                     </div>
                                 </div>
 
@@ -303,7 +304,7 @@
             <x-button class="w-full" outlined>
               <div class="flex justify-center items-center gap-2">
                 <span>@include('icons.download')</span>
-                <span>Скачать прайс-лист</span>
+                <a href="https://docs.google.com/spreadsheets/d/198VI0GjoaFRSdPzP5meYhBg4AqhnbS1unyywGThg0-o/edit?gid=0#gid=0">Скачать прайс-лист</a>
               </div>
             </x-button>
 

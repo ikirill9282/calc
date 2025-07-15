@@ -178,15 +178,15 @@
                   <div class="flex flex-col gap-1">
                     <div class="flex gap-2">
                       <span>Имя:</span>
-                      <span>Иванов Иван Иванович</span>
+                      <span>Любимова София</span>
                     </div>
                     <div class="flex gap-2">
                       <span>Email:</span>
-                      <span>123456789@gmail.com</span>
+                      <span>tk82wb24@gmail.com</span>
                     </div>
                     <div class="flex gap-2">
                       <span>Телефон:</span>
-                      <span>+71234567891</span>
+                      <span>89785551920</span>
                     </div>
                   </div>
                 </div>
