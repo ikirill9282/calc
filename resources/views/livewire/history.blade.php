@@ -98,7 +98,7 @@
                     'volume' => $order->boxes_volume,
                     'cargo' => $order->cargo_type,
                   ];
-                } elseif ($order->cago_type == 'pallets') {
+                } elseif ($order->cargo == 'pallets') {
                   $table_data[] = [
                     'type' => 'Паллеты',
                     'count' => $order->pallets_count,
