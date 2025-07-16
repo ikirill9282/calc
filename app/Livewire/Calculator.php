@@ -624,7 +624,7 @@ class Calculator extends Component
         //   $today->modify('+1 day');
         // }
 
-        return $result;
+        // return $result;
 
         $data = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
