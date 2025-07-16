@@ -1,5 +1,5 @@
 <footer class="px-2 sm:px-5 2xl:px-10 pb-3 text-right">
-    <div class="px-6 w-full rounded-lg shadow bg-white dark:bg-primary-900">
+    <div class="px-6 w-full shadow bg-white dark:bg-primary-900">
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_1fr_400px] gap-12 py-6">
             <div class="hidden lg:block"></div>
             <div class="hidden lg:block"></div>

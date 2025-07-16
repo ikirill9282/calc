@@ -27,7 +27,7 @@
                     @endif
                     />
                     {{-- px-4 py-2 sm:px-1 sm:py-2 --}}
-                  <div class="flex justify-center items-center border rounded-xl hover:cursor-pointer transition
+                  <div class="flex justify-center items-center border hover:cursor-pointer transition
                     border-primary-700/10 bg-primary-700/10 hover:bg-secondary-600/10 hover:text-secondary-600 hover:border-secondary-600
                     group-has-checked:bg-secondary-400/10 group-has-checked:text-secondary-600 group-has-checked:border-secondary-600
                     dark:bg-primary-400/25 dark:hover:bg-secondary-600/20 dark:hover:text-secondary-400

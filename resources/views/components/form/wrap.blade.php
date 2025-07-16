@@ -6,7 +6,7 @@
 
 <div class="bg-inherit w-full">
   <fieldset
-    class="input w-full min-h-14 py-2 ps-4 pe-12 ring-0 outline-0 rounded-xl border transition group bg-inherit relative
+    class="input w-full min-h-14 py-2 ps-4 pe-12 ring-0 outline-0 border transition group bg-inherit relative
       border-primary-200 dark:border-primary-400/50 
       placeholder:text-gray-400 @error($error_name) !border-red-500 @enderror
       hover:border-secondary-600 darkhover:border-secondary-400
@@ -14,7 +14,7 @@
     >
     <legend 
       class="absolute top-0 translate-y-[-50%] left-6 bg-inherit px-2 transition group-hover:text-secondary-600 dark:group-hover:text-secondary-400
-            text-[11px] rounded sm:text-xs md:text-sm absolute top-0 left-4 px-2 translate-y-[-50%] text-primary-400 transition
+            text-[11px] sm:text-xs md:text-sm absolute top-0 left-4 px-2 translate-y-[-50%] text-primary-400 transition
             bg-inherit
             {{-- bg-white  --}}
             {{-- dark:bg-primary-900 --}}

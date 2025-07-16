@@ -8,7 +8,7 @@
       <a href="{{ route('home') }}" class="w-30"><img class="max-w-full" src="{{ asset('/img/logo.jpg') }}" alt="Logo"></a>
       {{-- <span class="uppercase text-2xl">{{ config('app.name') }}</span> --}}
     </div>
-    <div class="p-2 rounded-full bg-primary-100 dark:bg-primary-800">
+    <div class="p-2 bg-primary-100 dark:bg-primary-800">
       @include('icons.profile', ['width' => 20, 'height' => 20])
     </div>
   </div>

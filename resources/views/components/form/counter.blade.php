@@ -4,7 +4,7 @@
 
 <div class="counter">
   <input type="hidden" {{ $attributes }} data-count="{{ $count }}">
-  <div class="flex justify-between items-center bg-primary-100 dark:bg-primary-800  rounded-2xl">
+  <div class="flex justify-between items-center bg-primary-100 dark:bg-primary-800">
     <span class="minus p-2 sm:p-3 select-none hover:cursor-pointer transition hover:text-secondary-600 dark:hover:text-secondary-400
                 ">
       @include('icons.minus', ['width' => 15, 'height' => 15])

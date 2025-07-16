@@ -1,6 +1,6 @@
 @props(['outlined', 'class'])
 
-<button {{ $attributes }} class="px-4 py-3 rounded-lg text-center transition
+<button {{ $attributes }} class="px-4 py-3 text-center transition
               hover:cursor-pointer text-primary-100 bg-secondary-600 hover:bg-secondary-700
             
               {{ 

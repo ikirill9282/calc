@@ -50,12 +50,12 @@
                     <li class="group {{ request()->route()->getName() === $item['route'] ? 'active' : '' }}">
                         <a 
                           href="{{ route($item['route']) }}"
-                          class="flex group justify-start items-center gap-2 w-full p-2 rounded-lg transition
+                          class="flex group justify-start items-center gap-2 w-full p-2 transition
                                 bg-primary-200/25 hover:bg-primary-200/75 group-[.active]:bg-primary-200/75
                                 dark:bg-primary-700/25 dark:hover:bg-primary-700 group-[.active]:dark:bg-primary-700
                                 "
                           >
-                            <span class="p-2 rounded-lg transition bg-primary-400/25 group-hover:bg-secondary-600 group-hover:text-white group-[.active]:bg-secondary-600 group-[.active]:text-white">@include("icons.{$item['icon']}", ['width' => 20, 'height' => 20])</span>
+                            <span class="p-2 transition bg-primary-400/25 group-hover:bg-secondary-600 group-hover:text-white group-[.active]:bg-secondary-600 group-[.active]:text-white">@include("icons.{$item['icon']}", ['width' => 20, 'height' => 20])</span>
                             <span class="">{{ $item['label'] }}</span>
                           </a>
                     </li>

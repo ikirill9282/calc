@@ -45,7 +45,7 @@
     @endif
 
     <div class="dropdown absolute z-40 w-full left-0 bottom-[-5px] translate-y-[100%]
-              rounded-2xl shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}
+            shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}
               @if (!array_key_exists($attributes->get('wire:model'), ($this?->dropdownOpen ?? []))) hidden @endif
             "
           @if($searchable) data-searchable="true" @endif

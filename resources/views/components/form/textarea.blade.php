@@ -14,7 +14,7 @@
     {{ $attributes }}
     name="{{ $name ?? '' }}" 
     id="{{ $id ?? '' }}"
-    class="w-full py-4 px-4 ring-0 outline-0 rounded-xl border transition
+    class="w-full py-4 px-4 ring-0 outline-0 border transition
           placeholder:text-gray-400
           border-primary-200 dark:border-primary-400/50 h-28 sm:h-22 md:h-20 {{ $class ?? '' }}
           placeholder:text-gray-400 @error($name ?? null) !border-red-500 @enderror
