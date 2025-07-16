@@ -60,13 +60,17 @@ class LoadSheet extends Command
 
         $data = Sheets::collection(static::$headers, $rows)->toArray();
 
-        $data = array_map(function($item) {
-          $item['distributor_center_delivery_date'] = Carbon::parse($item['distributor_center_delivery_date'])->format('Y-m-d H:i:s');
-          $item['delivery_diff'] = Carbon::parse($item['delivery_diff'])->format('Y-m-d H:i:s');
-          $item['pick_diff'] = Carbon::parse($item['pick_diff'])->format('Y-m-d H:i:s');
+        try {
+          $data = array_map(function($item) {
+            $item['distributor_center_delivery_date'] = Carbon::parse($item['distributor_center_delivery_date'])->format('Y-m-d H:i:s');
+            $item['delivery_diff'] = Carbon::parse($item['delivery_diff'])->format('Y-m-d H:i:s');
+            $item['pick_diff'] = Carbon::parse($item['pick_diff'])->format('Y-m-d H:i:s');
 
-          return array_map(fn($val) => trim($val), $item);
-        }, $data);
+            return array_map(fn($val) => trim($val), $item);
+          }, $data);
+        } catch (\Exception $e) {
+          dd($item);
+        }
 
         DB::beginTransaction();
         try {
