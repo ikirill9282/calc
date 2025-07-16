@@ -590,7 +590,7 @@ class Calculator extends Component
 
     public function getDeliveryDiff(): ?string
     {
-      return match($this->form['transfer_method']) {
+      return match($this->fields['transfer_method']) {
         'receive' => $this->getField('transfer_method_receive.date'),
         'pick' => $this->getField('transfer_method_pick.date'),
         default => null,
