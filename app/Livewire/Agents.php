@@ -12,6 +12,7 @@ use App\Models\Agent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
+use App\Models\Order;
 
 class Agents extends Component
 {
@@ -92,7 +93,7 @@ class Agents extends Component
 
     public function reloadAgents(): void
     {
-      $this->agents = Agent::where('user_id', Auth::user()->id)->get();
+      $this->agents = Agent::where('user_id', Auth::user()->id)->where('disabled', 0)->get();
     }
 
     public function getAddresses(string $query = 'г Москва')
@@ -219,7 +220,7 @@ class Agents extends Component
 
     public function delete(int $agent_id)
     {
-      Agent::where('id', $agent_id)->delete();
+      Agent::where('id', $agent_id)->update(['disabled' => 1]);
       $this->reloadAgents();
     }
 
