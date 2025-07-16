@@ -590,23 +590,29 @@ class Calculator extends Component
 
     public function getDeliveryDiff(): ?string
     {
-      if (!$this->isFieldDisabled(3)) {
-        /** FOR TESTING */
-        // return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
+      return match($this->form['transfer_method']) {
+        'receive' => $this->getField('transfer_method_receive.date'),
+        'pick' => $this->getField('transfer_method_pick.date'),
+        default => null,
+      };
+      // if (!$this->isFieldDisabled(3)) {
+      //   /** FOR TESTING */
+      //   // return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
 
-        return SheetData::query()
-          ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
-          ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
-          ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
-          ->select('delivery_diff')
-          ->orderByDesc('delivery_diff')
-          ->first()
-          ?->delivery_diff
-        ;
-      }
+      //   return SheetData::query()
+      //     ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
+      //     ->where('distributor', $this->getField('distributor_id'))
+      //     ->where('distributor_center', $this->getField('distributor_center_id'))
+      //     ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+      //     ->select('delivery_diff')
+      //     ->orderByDesc('delivery_diff')
+      //     ->first()
+      //     ?->delivery_diff
+      //   ;
 
-      return null;
+      // }
+
+      // return null;
     }
 
     public function getDeliveryDates(): array
