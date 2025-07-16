@@ -5,7 +5,7 @@
           <x-form.fieldset :title="false" set_description="Контрагент" :set_loading="false">
             <div class="flex gap-4 flex-col md:flex-row bg-inherit">
               <x-form.dropdown 
-                :items="\App\Models\Agent::where('user_id', auth()->user()?->id)->get()"
+                :items="\App\Models\Agent::where('user_id', auth()->user()?->id)->where('disabled', 0)->get()"
                 label="Контрагент"
                 name="agent_id"
                 placeholder="Выберите контрагента..."
