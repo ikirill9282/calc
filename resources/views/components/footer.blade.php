@@ -1,5 +1,5 @@
 <footer class="px-2 sm:px-5 2xl:px-10 pb-3">
-    <div class="px-6 2xl:px-12 w-full rounded-lg shadow bg-white dark:bg-primary-900">
+    <div class="px-6 w-full rounded-lg shadow bg-white dark:bg-primary-900">
         
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-12 py-6">
             <div class=""></div>
