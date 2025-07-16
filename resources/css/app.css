@@ -50,7 +50,6 @@
   --color-secondary-950: #6b100f;
 }
 
- --red-50:  #fdecea;
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark .air-datepicker {
