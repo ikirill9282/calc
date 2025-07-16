@@ -2,8 +2,8 @@
     <div class="px-6 2xl:px-12 w-full rounded-lg shadow bg-white dark:bg-primary-900">
         
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-12 py-6">
-            <div class="hidden"></div>
-            <div class="hidden"></div>
+            <div class=""></div>
+            <div class=""></div>
             <div class="">
               <div class="py-6 lg:py-12">
                 <p>ООО ТРАНСПОРТНАЯ КОМПАНИЯ "82 РЕГИОН"</p>
@@ -14,8 +14,8 @@
         </div>
         <div class="border-b w-full border-primary-600/25"></div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-12 py-6">
-          <div class="hidden"></div>
-          <div class="hidden"></div>
+          <div class=""></div>
+          <div class=""></div>
           <div class="">© {{ date('Y', time()) }}</div>
         </div>
     </div>
