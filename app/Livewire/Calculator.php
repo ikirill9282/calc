@@ -590,15 +590,6 @@ class Calculator extends Component
 
     public function getDeliveryDiff(): ?string
     {
-
-
-      // return match($this->fields['transfer_method']) {
-      //   'receive' => $this->getField('transfer_method_receive.date'),
-      //   'pick' => $this->getField('transfer_method_pick.date'),
-      //   default => null,
-      // };
-
-
       if (!$this->isFieldDisabled(3)) {
         /** FOR TESTING */
         // return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
@@ -771,6 +762,15 @@ class Calculator extends Component
         // return $result;
       }
       return [];
+    }
+
+    public function getPostDate(): ?string
+    {
+      return match($this->fields['transfer_method']) {
+        'receive' => $this->getField('transfer_method_receive.date'),
+        'pick' => $this->getField('transfer_method_pick.date'),
+        default => null,
+      };
     }
 
     public function clearRelated(string $name)
