@@ -44,7 +44,7 @@
                 >
                 <div class="flex flex-col gap-8 bg-inherit">
                     <x-form.dropdown 
-                      label="Склад отправления {{ config('app.name') }}:"
+                      label="Склад отправления:"
                       name="warehouse_id"
                       placeholder="Откуда"
                       wire:model="fields.warehouse_id"
