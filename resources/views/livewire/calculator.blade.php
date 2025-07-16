@@ -35,7 +35,7 @@
         </div>
         <div class="{{ $this->checkout ? 'hidden' : 'flex' }} flex-col justify-start items-stretch gap-10">
             
-            {{-- @dump($this->fields) --}}
+            @dump($this->fields)
             {{-- @dump($this->fields, $this->fields['pallets_data'], $this->fields['boxes_data']) --}}
             
             <x-form.fieldset set_title="Шаг 1" set_description="Выбор маршрута"
