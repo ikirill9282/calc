@@ -96,7 +96,7 @@
                           />
                         <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['receive']) ? '' : 'hidden' }}">
                             <div
-                                class="flex flex-col justify-start items-stretch gap-10 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
+                                class="flex flex-col justify-start items-stretch gap-10 p-4 md:p-8 w-full bg-primary-50 dark:bg-primary-950 my-4">
 
                                 <div class="flex flex-col gap-2">
                                     <div class="flex flex-col sm:flex-row gap-2">
@@ -123,7 +123,7 @@
                                 <div
                                     class="cargo-date {{ $this->getField('transfer_method_receive.date') ? 'collapsed' : 'hidden' }}">
                                     <div
-                                        class="flex justify-start items-center gap-3 w-full rounded-2xl p-3 text-white bg-sky-600">
+                                        class="flex justify-start items-center gap-3 w-full text-white bg-sky-600">
                                         <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
                                         <span class="">Дата отгрузки на склад {{ str_contains(mb_strtolower($this->getField('warehouse_id')), 'симферополь') ? 'г. Симферополь' : 'г. Ростов-на-дону' }}: <span
                                                 class="date">{{ $this->getField('transfer_method_receive.date') ?? '01.01.2025' }}</span>
@@ -146,7 +146,7 @@
                           />
                         <div class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['pick']) ? '' : 'hidden' }}">
                             <div
-                                class="flex flex-col justify-start items-stretch gap-6 p-4 md:p-8 w-full rounded-lg bg-primary-50 dark:bg-primary-950 my-4">
+                                class="flex flex-col justify-start items-stretch gap-6 p-4 md:p-8 w-full bg-primary-50 dark:bg-primary-950 my-4">
                                 {{-- @dump($this->fields['transfer_method_pick']) --}}
                                 {{-- @dump($this->addresses) --}}
                                 <x-form.dropdown 
@@ -181,7 +181,7 @@
                         {{-- <x-form.checkbox label="Коробки" id="boxes" name="boxes" :checked="$this->getField('boxes') ? 'checked' : ''" /> --}}
                         <x-form.radio label="Коробки" id="fields.boxes" value="boxes" name="fields.cargo" wire:model.live.debounce.350ms="fields.cargo" />
                         <div
-                            class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'boxes' ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
+                            class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'boxes' ? '' : 'hidden' }} p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
                                 <x-form.wrap label="Количество" name="fields.boxes_data.count">
                                   <x-form.input class="input-numeric" name="fields.boxes_data.count" wire:model.live="fields.boxes_data.count" />
@@ -195,7 +195,7 @@
                     <div class="radio-box flex flex-col justify-start items-start w-full group/radio" >
                         <x-form.radio label="Палеты" name="fields.cargo" value="pallets" id="fields.pallets" wire:model.live.debounce.350ms="fields.cargo" />
                         <div
-                            class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'pallets' ? '' : 'hidden' }} rounded-lg p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
+                            class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'pallets' ? '' : 'hidden' }} p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
                             <div class="flex flex-col gap-6 w-full bg-inherit">
                                 <x-form.wrap label="Количество" name="fields.pallets_data.count">
                                   <x-form.input class="input-numeric" name="fields.pallets_data.count" wire:model.live="fields.pallets_data.count" />
