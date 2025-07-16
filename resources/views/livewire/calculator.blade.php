@@ -123,7 +123,7 @@
                                 <div
                                     class="cargo-date {{ $this->getField('transfer_method_receive.date') ? 'collapsed' : 'hidden' }}">
                                     <div
-                                        class="flex justify-start items-center gap-3 w-full text-white bg-sky-600">
+                                        class="flex justify-start items-center gap-3 w-full p-4 text-white bg-sky-600">
                                         <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
                                         <span class="">Дата отгрузки на склад {{ str_contains(mb_strtolower($this->getField('warehouse_id')), 'симферополь') ? 'г. Симферополь' : 'г. Ростов-на-дону' }}: <span
                                                 class="date">{{ $this->getField('transfer_method_receive.date') ?? '01.01.2025' }}</span>
