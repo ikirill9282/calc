@@ -592,7 +592,7 @@ class Calculator extends Component
     {
       if (!$this->isFieldDisabled(3)) {
         /** FOR TESTING */
-        return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
+        // return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
 
         return SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
@@ -616,13 +616,13 @@ class Calculator extends Component
         
 
         /** FOR TESTING */
-        $today = Carbon::today();
-        $end = Carbon::today()->modify('+1 week');
-        $result = [];
-        while($today->lte($end)) {
-          array_push($result, $today->format('Y-m-d'));
-          $today->modify('+1 day');
-        }
+        // $today = Carbon::today();
+        // $end = Carbon::today()->modify('+1 week');
+        // $result = [];
+        // while($today->lte($end)) {
+        //   array_push($result, $today->format('Y-m-d'));
+        //   $today->modify('+1 day');
+        // }
 
         return $result;
 
@@ -665,15 +665,15 @@ class Calculator extends Component
 
 
         /** FOR TESTING */
-        $today = Carbon::today();
-        $end = Carbon::today()->modify('+2 week');
-        $result = [];
-        while($today->lte($end)) {
-          array_push($result, $today->format('Y-m-d'));
-          $today->modify('+1 day');
-        }
+        // $today = Carbon::today();
+        // $end = Carbon::today()->modify('+2 week');
+        // $result = [];
+        // while($today->lte($end)) {
+        //   array_push($result, $today->format('Y-m-d'));
+        //   $today->modify('+1 day');
+        // }
 
-        return $result;
+        // return $result;
 
 
         $date = $this->getDeliveryDiff();
@@ -713,15 +713,15 @@ class Calculator extends Component
       if (!$this->isFieldDisabled(3)) {
 
         /** FOR TESTING */
-        $today = Carbon::today();
-        $end = Carbon::today()->modify('+3 week');
-        $result = [];
-        while($today->lte($end)) {
-          array_push($result, $today->format('Y-m-d'));
-          $today->modify('+1 day');
-        }
+        // $today = Carbon::today();
+        // $end = Carbon::today()->modify('+3 week');
+        // $result = [];
+        // while($today->lte($end)) {
+        //   array_push($result, $today->format('Y-m-d'));
+        //   $today->modify('+1 day');
+        // }
 
-        return $result;
+        // return $result;
 
         $date = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
