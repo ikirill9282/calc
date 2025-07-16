@@ -110,7 +110,7 @@
                   ];
                 }
               @endphp
-              @endphp
+              
               <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden">
                 <table>
                   <thead>
