@@ -104,13 +104,13 @@
                                         <span
                                             class="text-secondary-600 dark:text-secondary-400">{{ $this->getWarehouseAddress() }}</span>
                                     </div>
-                                    <div class="flex flex-col sm:flex-row gap-2">
+                                    {{-- <div class="flex flex-col sm:flex-row gap-2">
                                         <span>Телефон:</span>
                                         <span class="text-secondary-600 dark:text-secondary-400">
                                             <a
                                                 href="tel:{{ $this->getWarehousePhone() }}">{{ $this->getWarehousePhone() }}</a>
                                         </span>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <x-form.datepicker 
