@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="border-b w-full border-primary-600/25"></div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-12 py-6">
+        <div class="grid grid-cols-2 sm:grid-cols-[1fr_1fr_400px] gap-12 py-6">
           <div class=""></div>
           <div class=""></div>
           <div class="">© {{ date('Y', time()) }}</div>
