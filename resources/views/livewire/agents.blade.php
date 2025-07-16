@@ -2,7 +2,7 @@
   @if(!empty($this->messages))
     @foreach($this->messages as $k => $message)
       <div class="w-full time-message mb-4">
-        <p class="py-4 px-6 bg-sky-500/25 rounded-lg border border-sky-600 text-sky-600 dark:text-sky-400">{{ $message }}</p>
+        <p class="py-4 px-6 bg-sky-500/25 border border-sky-600 text-sky-600 dark:text-sky-400">{{ $message }}</p>
       </div>
     @endforeach
   @endif

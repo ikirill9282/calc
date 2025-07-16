@@ -14,7 +14,7 @@
     style="display: none;"
 >
   <div class="w-full h-full flex justify-center items-center" id="modal">
-    <div class="relative max-w-xl w-full p-6 rounded-xl bg-white dark:bg-primary-800">
+    <div class="relative max-w-xl w-full p-6 bg-white dark:bg-primary-800">
       <div class="absolute top-3 right-3 text-right mb-2 leading-0">
         <x-link
           x-on:click.prevent="isOpen = false"
@@ -25,7 +25,7 @@
       </div>
 
       @error('modal')
-        <div class="text-red-500 bg-red-500/10 max-w-[90%] text-xl font-bold mb-6 p-4 border rounded-xl">{{ $message }}</div>
+        <div class="text-red-500 bg-red-500/10 max-w-[90%] text-xl font-bold mb-6 p-4 border ">{{ $message }}</div>
       @enderror
 
       @component("livewire.modal.{$this->view}")

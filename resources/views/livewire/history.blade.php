@@ -41,7 +41,7 @@
             <div class="flex mt-4">
               <x-link 
                 href="{{ url('/?reply='.\Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}" 
-                class="flex justify-center items-center gap-2 rounded-lg border px-4 py-2 group
+                class="flex justify-center items-center gap-2 border px-4 py-2 group
                     text-secondary-600 dark:text-secondary-400 border-secondary-600 dark:border-secondary-400
                     hover:bg-secondary-600/15 dark:hover:bg-secondary-400/15
                   ">

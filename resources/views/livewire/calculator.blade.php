@@ -313,14 +313,14 @@
                 <x-card>
                   <div class="flex flex-col gap-2 w-full">
                     <div class="flex items-center gap-4">
-                      <p class="w-2 h-2 rounded-full ml-2 ring-4 ring-amber-600"></p>
+                      <p class="w-2 h-2 ml-2 ring-4 ring-amber-600"></p>
                       <p>{{ \Illuminate\Support\Carbon::parse($this->getDeliveryDiff())->translatedFormat('d F') }} отправляется с терминала</p>
                     </div>
                     <div class="">
                       @include('icons.arrow', ['width' => 24, 'height' => 24])
                     </div>
                     <div class="flex items-center gap-4">
-                      <p class="w-2 h-2 rounded-full ml-2 ring-4 ring-secondary-600"></p>
+                      <p class="w-2 h-2 ml-2 ring-4 ring-secondary-600"></p>
                       <p>{{ \Illuminate\Support\Carbon::parse($this->getField('delivery_date'))->translatedFormat('d F') }} прибывает в РЦ</p>
                     </div>
                   </div>
