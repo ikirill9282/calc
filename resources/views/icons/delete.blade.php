@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="{{ $width }}px" height="{{ $height }}px" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" fill="white" />
+    <rect width="24" height="24" fill="transparent" />
     <path d="M5 7.5H19L18 21H6L5 7.5Z" stroke="currentColor" stroke-linejoin="round" />
     <path d="M15.5 9.5L15 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
     <path d="M12 9.5V19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
