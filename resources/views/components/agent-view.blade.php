@@ -49,11 +49,13 @@
           </div>
 
           @if(!$view)
-            <div wire:click.prevent="edit({{ $agent->id }})" class="absolute bottom-3 right-0 hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
-              @include('icons.edit', ['width' => 20, 'height' => 20])
-            </div>
-            <div wire:click.prevent="delete({{ $agent->id }})" class="absolute bottom-3 right-0 hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
-              @include('icons.delete', ['width' => 20, 'height' => 20])
+            <div class="flex">
+              <div wire:click.prevent="edit({{ $agent->id }})" class="absolute bottom-3 right-0 hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
+                @include('icons.edit', ['width' => 20, 'height' => 20])
+              </div>
+              <div wire:click.prevent="delete({{ $agent->id }})" class="absolute bottom-3 right-0 hover:cursor-pointer hover:text-secondary-600 dark:hover:text-secondary-400">
+                @include('icons.delete', ['width' => 20, 'height' => 20])
+              </div>
             </div>
           @endif
       </div>
