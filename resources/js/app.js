@@ -11,6 +11,8 @@ let datepicker2 = null;
 let datepicker3 = null;
 
 
+const show_password_btn = [];
+
 const dropdowns = [...document.querySelectorAll('div[id*=-dropdown]')];
 
 dropdowns.forEach((elem) => {
@@ -102,7 +104,27 @@ function discoverItems() {
           $(this).find('.icon').removeClass('rotate-180');
         }
       });
-    })
+    });
+
+    $('.datepicker-icon').on('click', function(evt) {
+      $(this).closest('.datepicker-group').find('.datepicker').focus();
+    });
+
+    // $('.show-password-btn').each((k, el) => {
+
+    //   const name = $(el).attr('name');
+    //   if(!show_password_btn.includes(name)) {
+    //     show_password_btn.push(name);
+
+    //     $(el).on('click', () => {
+    //       const input = $(el).closest('.input').find('input');
+    //       const type = input.attr('type') === 'password' ? 'text' : 'password';
+    //       input.attr('type', type);
+    //     });
+
+    //   }
+    
+    // });
 }
 
 document.addEventListener("DOMContentLoaded", function () {

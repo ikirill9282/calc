@@ -18,8 +18,11 @@
               <div class="mb-1">Отправка со склада: {{ \Illuminate\Support\Carbon::parse($order->post_date)->format('d.m.Y') }}</div>
               <div class="">Прибытие в РЦ {{ $order->distributor_id }}: {{ \Illuminate\Support\Carbon::parse($order->delivery_date)->format('d.m.Y') }}</div>
             </div>
-            <div class="basis-1/4 text-right text-xl">
-              Цена: {{ \Illuminate\Support\Number::currency($order->total, 'RUB', locale: 'ru') }}
+            <div class="basis-1/4 sm:text-right text-xl">
+              Предварительная&nbsp;стоимость: {{ \Illuminate\Support\Number::currency($order->total, 'RUB', locale: 'ru') }}
+              <p class="text-xs">
+                Итоговая стоимость является предварительным расчетом, точная стоимость будет известна после взвешивания и обмера груза на складе приема.
+              </p>
             </div>
           </div>
 

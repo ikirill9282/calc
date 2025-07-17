@@ -4,7 +4,7 @@
     <form wire:submit.prevent="reg" action="{{ route('register') }}" id="register" class="flex flex-col justify-start items-stretch gap-6 bg-inherit" method="POST">
         @csrf
         <div class="bg-inherit">
-            <x-form.wrap label="ФИО">
+            <x-form.wrap label="ФИО" name="name">
               <x-form.input  
                 type="text"
                 name="name"
@@ -21,7 +21,7 @@
         </div>
         <div class="bg-inherit">
 
-          <x-form.wrap label="E-mail" >
+          <x-form.wrap label="E-mail" name="email" >
             <x-form.input 
                 type="email" 
                 name="email"
@@ -34,14 +34,15 @@
           @enderror
         </div>
         <div class="bg-inherit">
-            <x-form.wrap label="Номер телефона" >
+            <x-form.wrap label="Номер телефона" name="phone" >
               <x-form.input
                 type="text" 
-                placeholder="+7..." 
+                {{-- placeholder="+7..."  --}}
                 aria-autocomplete="off"
                 autocomplete="off"
                 name="phone"
-                x-mask="+7(999)999-99-99"
+                class="input-numeric"
+                {{-- x-mask="+7(999)999-99-99" --}}
                 wire:model.live="register.phone"
               />
             </x-form.wrap>
@@ -51,9 +52,9 @@
             @enderror
         </div>
         <div class="bg-inherit">
-            <x-form.wrap label="Пароль" >
+            <x-form.wrap label="Пароль" :show_password="true" name="password" >
               <x-form.input 
-                  type="password" 
+                  type="{{ array_key_exists('password', $this->showPassword) ? 'text' : 'password' }}" 
                   required
                   aria-autocomplete="off"
                   autocomplete="new-password"
@@ -68,10 +69,10 @@
             @enderror
         </div>
         <div class="bg-inherit">
-          <x-form.wrap label="Повторите пароль" >
+          <x-form.wrap label="Повторите пароль" :show_password="true" name="password_confirm" >
             <x-form.input 
                 required="required"
-                type="password" 
+                type="{{ array_key_exists('password_confirm', $this->showPassword) ? 'text' : 'password' }}" 
                 name='password_confirm'
                 id='reg_password_confirm'
                 autocomplete='new-password'

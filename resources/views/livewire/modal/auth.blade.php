@@ -22,14 +22,15 @@
           <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
       @enderror
     </div>
-    <x-form.wrap label="Пароль">
+    <x-form.wrap label="Пароль" :show_password="true" name="password">
       <x-form.input
-        type="password"
+        type="{{ array_key_exists('password', $this->showPassword) ? 'text' : 'password' }}"
         wire:model="credentials.password"
         name="password"
         reuquired="reuquired"
         aria-autocomplete="off"
         autocomplete="off"
+        class="password-input"
       />
     </x-form.wrap>
     

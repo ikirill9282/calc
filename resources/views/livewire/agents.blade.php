@@ -6,7 +6,9 @@
       </div>
     @endforeach
   @endif
+  <a href="{{ url('/') }}" class="hover:text-secondary-600 dark:hover:text-secondary-400 mb-4 inline-block">Вернуться к заполнению</a>
   <div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_1fr] gap-5 2xl:gap-10">
+      
       <div class="flex flex-col gap-4" id="agents-table">
           @if ($this->agents->isNotEmpty())
             @foreach ($this->agents as $agent)          
@@ -69,7 +71,11 @@
                   </x-form.wrap>
 
                   <x-form.wrap label="Номер телефона" name="phone">
-                    <x-form.input wire:model="form.phone" name="phone" x-mask="+7(999)999-99-99" />
+                    <x-form.input 
+                      wire:model="form.phone" 
+                      name="phone"
+                      {{-- x-mask="+7(999)999-99-99"  --}}
+                     />
                   </x-form.wrap>
 
                   <x-form.wrap label="Email" name="email">

@@ -1,7 +1,7 @@
 @php
     $menu = [
         [
-            'label' => 'Главная',
+            'label' => 'Оформление заявки',
             'route' => 'home',
             'icon' => 'home',
         ],

@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('orders', function (Blueprint $table) {
+            $table->integer('boxes_weight')->nullable()->default(0)->after('boxes_volume');
+            $table->string('payment_method_pick')->default('cash')->after('payment_method');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('orders', function (Blueprint $table) {
+          $table->dropColumn('boxes_weight');
+          $table->dropColumn('payment_method_pick');
+        });
+    }
+};

@@ -21,6 +21,8 @@ class Modal extends Component
     public $active = false;
     public $isOpen = false;
 
+    public $showPassword = [];
+
     public $phone = null;
     
     public array $credentials = [
@@ -82,6 +84,12 @@ class Modal extends Component
         $this->isOpen = false;
     }
 
+    public function clearField($name)
+    {
+      $this->register[$name] = null;
+      $this->credentials[$name] = null;
+    }
+
     public function auth(string $fallback_url = '/')
     {
       if (Auth::attempt($this->credentials, true)) {
@@ -96,7 +104,7 @@ class Modal extends Component
       $validator = Validator::make($this->register, [
           'name' => 'required|string',
           'email' => 'required|string|email',
-          'phone' => 'sometimes|nullable|string|min:16',
+          'phone' => 'sometimes|nullable|string',
           'password' => 'required|string',
           'password_confirm' => 'required|string',
       ]);
@@ -143,6 +151,15 @@ class Modal extends Component
         ]);
         $this->addError('modal', 'Что то пошло не так...');
         return ;
+      }
+    }
+
+    public function setShowPassword(string $name)
+    {
+      if (array_key_exists($name, $this->showPassword)) {
+        unset($this->showPassword[$name]);
+      } else {
+        $this->showPassword[$name] = true;
       }
     }
 

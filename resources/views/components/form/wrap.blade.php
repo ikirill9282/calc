@@ -1,3 +1,7 @@
+@props([
+  'show_password' => false,
+])
+
 @php
   $name = $attributes->get('name') ?? '';
   $label = $attributes->get('label') ?? $label ?? '';
@@ -27,12 +31,22 @@
     </legend>
     {{ $slot }}
 
+
+    @if(!$show_password)
     <div wire:click.prevent='clearField("{{ $name }}")' class="absolute top-3.5 right-4" data-name="{{ $name }}">
         <div
             class="hover:cursor-pointer transition text-primary-500 hover:text-secondary-600 dark:hover:text-secondary-400">
             @include('icons.close')
         </div>
     </div>
+    @else
+      <div wire:click.prevent="setShowPassword('{{ $name }}')" class="show-password-btn absolute top-3.5 right-4" data-name="{{ $name }}">
+          <div
+              class="hover:cursor-pointer transition text-primary-500 hover:text-secondary-600 dark:hover:text-secondary-400">
+              @include('icons.eye')
+          </div>
+      </div>
+    @endif
   </fieldset>
 
   @error($error_name)

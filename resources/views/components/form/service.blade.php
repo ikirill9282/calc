@@ -33,7 +33,7 @@
                     dark:bg-primary-400/25 dark:hover:bg-secondary-600/20 dark:hover:text-secondary-400
                     group-has-checked:dark:bg-secondary-600/20 group-has-checked:dark:text-secondary-400">
                     @if (\Illuminate\Support\Facades\View::exists(strtolower("icons.{$item['distributor']}")))
-                        <span class="p-2 pe-0">@include(strtolower("icons.{$item['distributor']}"), ['width' => 38, 'height' => 38])</span>
+                        {{-- <span class="p-2 pe-0">@include(strtolower("icons.{$item['distributor']}"), ['width' => 38, 'height' => 38])</span> --}}
                     @endif
                     <div class="px-4 py-2">
                         {{ $item['distributor'] }}

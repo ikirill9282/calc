@@ -7,7 +7,7 @@
   class="datepicker-group relative bg-inherit {{ $pickerClass ?? '' }}"
   data-name="{{ $name ?? '' }}"
   >
-  <div class="absolute top-[50%] left-6 translate-y-[-50%] dark:text-primary-500 z-10">
+  <div class="datepicker-icon absolute top-[50%] left-6 translate-y-[-50%] dark:text-primary-500 z-10 hover:cursor-pointer">
     @include('icons.calendar')
   </div>
   

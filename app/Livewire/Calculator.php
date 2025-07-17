@@ -83,6 +83,7 @@ class Calculator extends Component
       'boxes_data' => [
         'count' => null,
         'volume' => null,
+        'weight' => null,
       ],
       'pallets_data' => [
         'count' => null,
@@ -94,6 +95,7 @@ class Calculator extends Component
       'palletizing_count' => 0,
       'agent_id' => null,
       'payment_method' => null,
+      'payment_method_pick' => null,
     ];
 
     protected array $numeric_fields = [
@@ -144,10 +146,10 @@ class Calculator extends Component
                 continue;
               }
 
-              if (in_array($key, ['boxes_count', 'boxes_volume', 'pallets_count'])) {
+              if (in_array($key, ['boxes_count', 'boxes_volume', 'boxes_weight', 'pallets_count', 'pallets_weight'])) {
+                continue;
                 $parts = explode('_', $key);
                 $this->fields["{$parts[0]}_data"][$parts[1]] = $val;
-                continue;
               }
 
               if (array_key_exists($key, $this->fields) && !in_array($key, $clear_fields)) {
@@ -220,7 +222,7 @@ class Calculator extends Component
       }
       $quant = match($this->getField('palletizing_type')) {
         'single' => 250,
-        'pallet' => 650,
+        'pallet' => 800,
         default => 0,
       };
 
@@ -289,7 +291,7 @@ class Calculator extends Component
             ->where('distributor_center', $this->getField('distributor_center_id'))
             
             /** DISABLE FOR TEST */
-            // ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+            ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
             
             ->select('pick_tariff_min')
             ->first()
@@ -302,7 +304,7 @@ class Calculator extends Component
             ->where('distributor_center', $this->getField('distributor_center_id'))
 
             /** DISABLE FOR TEST */
-            // ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+            ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
             
             ->select('pick_tariff_vol', 'pick_tariff_pallete')
             ->groupBy(['pick_tariff_vol', 'pick_tariff_pallete'])
@@ -319,6 +321,7 @@ class Calculator extends Component
           : $data->first()->toArray();
 
           
+
           if ($this->canCalcBoxes()) {
             $vol = $this->getField('boxes_data.volume');
             $vol = ceil($vol / 0.05) * 0.05;
@@ -334,10 +337,11 @@ class Calculator extends Component
           }
           
           if ($this->canCalcPallets()) {
-
+            
             // $cost_vol = $this->getField('pallets_data.volume') * $data['pick_tariff_vol'];
             $cost_pallet = $this->getField('pallets_data.count') * $data['pick_tariff_pallete'];
             // $result += max($cost_vol, $cost_pallet);
+            // dd($cost_pallet);
             return ceil($cost_pallet);
             // $pallets = $this->getField('pallets_data.count');
             // $result += ($pallets * $data['pick_tariff_pallete']);
@@ -352,6 +356,7 @@ class Calculator extends Component
       return $this->getField('cargo') == 'boxes'
             && !empty($this->getField('boxes_data.count')) 
             && !empty($this->getField('boxes_data.volume'))
+            // && !empty($this->getField('boxes_data.weight'))
             ;
     }
 
@@ -468,6 +473,7 @@ class Calculator extends Component
 
           if ($this->fields['cargo'] == 'boxes') {
             $boxes_data = $this->getField('boxes_data');
+            // dd($boxes_data, $this->fields);
             foreach ($boxes_data as $key => $val) {
               if (empty($val)) return true;
             }
@@ -542,6 +548,10 @@ class Calculator extends Component
 
       if ($key == 'delivery_date') {
         $this->fields['post_date'] = $this->getDeliveryDiff();
+      }
+
+      if ($key == 'palletizing_count') {
+        if ($value == 0) $this->fields['palletizing_type'] = null;
       }
 
       Session::put('calc', json_encode($this->fields));
@@ -827,12 +837,16 @@ class Calculator extends Component
           'cargo' => 'string|required',
           'boxes_data.count' => 'required_if:cargo,boxes|nullable|integer',
           'boxes_data.volume' => 'required_if:cargo,boxes|nullable|numeric',
+          'boxes_data.weight' => 'required_if:cargo,boxes|nullable|numeric',
           'pallets_data.count' => 'required_if:cargo,pallets|nullable|integer',
           // 'pallets_data.weight' => 'required_if:cargo,pallets|nullable|numeric',
           "cargo_comment" => 'sometimes|nullable|string',
           "cargo_type" => 'sometimes|nullable|string',
           "palletizing_type" => 'sometimes|nullable|string',
           "palletizing_count" => 'sometimes|nullable|integer',
+          // 'agent_id' => 'required|integer',
+          // 'payment_method' => 'required|string',
+          // 'payment_method_pick' => 'required|string',
         ],
         [
           'boxes_data.count.required_if' => 'Необходимо заоплнить поле',
@@ -846,7 +860,7 @@ class Calculator extends Component
         ]
       );
       if ($validator->fails()) {
-        dd($validator->errors(), $this->fields);
+        // dd($validator->errors(), $this->fields);
         throw new ValidationException($validator);
       }
 
@@ -877,6 +891,11 @@ class Calculator extends Component
           $validator = Validator::make($this->fields, [
             'agent_id' => 'required|integer',
             'payment_method' => 'required|string',
+            'payment_method_pick' => 'required|string',
+          ], [
+            'agent_id' => 'Выберите контрагента',
+            'payment_method' => 'Выберите способ оплаты',
+            'payment_method_pick' => 'Выберите способ оплаты',
           ]);
           if ($validator->fails()) {
             throw new ValidationException($validator);

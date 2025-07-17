@@ -13,7 +13,5 @@ use Revolution\Google\Sheets\Facades\Sheets;
 Schedule::command('app:load-sheet')->hourly();
 
 Artisan::command('tt', function() {
-  foreach (Order::all() as $order) {
-    $order->writeSheet();
-  }
+  Order::find(100502)->writeSheet();
 });

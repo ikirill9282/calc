@@ -34,7 +34,8 @@ class Order extends Model
 
     $order_data = $this->toArray();
     $order_data['transfer_method'] = $this->getTransferMethod();
-    $order_data['payment_method'] = $this->getPaymentMethodLabel();
+    $order_data['payment_method'] = $this->getPaymentMethodLabel($this->payment_method);
+    $order_data['payment_method_pick'] = $this->getPaymentMethodLabel($this->payment_method_pick);
     unset($order_data['user'], $order_data['id'], $order_data['user_id'], $order_data['agent_id']);
     if ($this->transfer_method == 'pick') {
       $order_data['transfer_method_receive_date'] = '';
@@ -115,6 +116,7 @@ class Order extends Model
 
   public function fillFields(array $fields): void
   {
+    // dd($fields);
     foreach ($fields as $field => $value) {
       if (is_array($value)) {
         foreach ($value as $key => $val) {
@@ -148,9 +150,9 @@ class Order extends Model
     return $order;
   }
 
-  public function getPaymentMethodLabel(): string
+  public function getPaymentMethodLabel($val): string
   {
-    return match($this->payment_method) {
+    return match($val) {
       'cash' => 'Наличными при отправке',
       'bill' => 'По счету',
     };
