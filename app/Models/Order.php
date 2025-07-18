@@ -93,8 +93,6 @@ class Order extends Model
       ->range('')
       ;
 
-      
-
     $values = [
       array_values($item),
     ];
