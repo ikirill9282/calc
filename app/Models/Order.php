@@ -24,7 +24,6 @@ class Order extends Model
 
   public function writeSheet()
   {
-    $sid = '1ZOkCAKId9W5nAQya3ZFC1GyYeeGM-Mbne7U-F44Zw-E';
     $user = User::find($this->user_id);
     $agent = Agent::select('title', 'inn', 'ogrn', 'address')->where('id', $this->agent_id)->first();
 
@@ -81,11 +80,16 @@ class Order extends Model
     $item = array_merge(['order_id' => $this->id], $item);
     $item = array_map(fn($val) => is_null($val) ? '' : $val, $item);
 
-    $list = str_contains(mb_strtolower($item['warehouse_id']), 'симферополь') ? 2 : 3;
     $int = ($this->id - 100500 + 2);
     $range = "A$int:AI$int";
+
+    // $sid = '1ZOkCAKId9W5nAQya3ZFC1GyYeeGM-Mbne7U-F44Zw-E';
+    $sid = str_contains(mb_strtolower($item['warehouse_id']), 'симферополь') 
+      ? '1j6TkvE3ocDSQXP9ECKQ0MsJeXk2hYvgoTXgYkQIbh9I'
+      : '1mXYqtlmxfe7qr_hnAJOjdSuy_NmjO9Fu0CrxTvkG4C4';
+
     $sheet = Sheets::spreadsheet($sid)
-      ->sheet("Лист$list")
+      ->sheet("Лист1")
       ->range('')
       ;
 
