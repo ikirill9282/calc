@@ -264,7 +264,7 @@
                       груз.</p>
               </div>
               <div class="flex flex-col justify-start items-stretch gap-4 additional-box {{ empty($this->getField('warehouse_id')) ? 'hidden' : '' }}">
-                  {{-- <div class="flex justify-start items-center group/radio radio-box" data-related="additional">
+                  <div class="flex justify-start items-center group/radio radio-box" data-related="additional">
                       <div
                           class="flex justify-start items-start flex-col gap-2 sm:gap-0 text-sm sm:text-base sm:flex-row">
                           <x-form.radio 
@@ -274,7 +274,7 @@
                             value="single"
                             wire:model="fields.palletizing_type"
                           />
-                          <div class="sm:ml-8 font-bold">250 ₽ / шт</div>
+                          <div class="sm:ml-8 font-bold">800 ₽ / шт</div>
                       </div>
                       <div class="grow"></div>
                       <x-form.counter 
@@ -283,8 +283,8 @@
                         wire:model="fields.palletizing_count"
                         :count="($this->getField('palletizing_type') == 'single') ? $this->getField('palletizing_count'): 0" 
                       />
-                  </div> --}}
-                  <div class="flex justify-start items-center group/radio radio-box" data-related="additional">
+                  </div>
+                  {{-- <div class="flex justify-start items-center group/radio radio-box" data-related="additional">
                       <div
                           class="flex justify-start items-start flex-col gap-2 sm:gap-0 text-sm sm:text-base sm:flex-row">
                           <x-form.radio 
@@ -303,7 +303,7 @@
                         wire:model="fields.palletizing_count"
                         :count="($this->getField('palletizing_type') == 'pallet') ? $this->getField('palletizing_count'): 0"
                       />
-                  </div>
+                  </div> --}}
               </div>
           </x-form.fieldset>
       </div>

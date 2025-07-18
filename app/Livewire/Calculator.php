@@ -221,7 +221,7 @@ class Calculator extends Component
         return 0;
       }
       $quant = match($this->getField('palletizing_type')) {
-        'single' => 250,
+        'single' => 800,
         'pallet' => 800,
         default => 0,
       };
