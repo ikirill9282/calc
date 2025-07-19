@@ -135,9 +135,7 @@ class Order extends Model
       'user_email' => $user->email,
     ];
 
-    dd($formatted, $agent);
     $formatted = array_map(fn($val) => is_null($val) ? '' : $val, $formatted);
-
     
     $values = [
       array_values($formatted),
