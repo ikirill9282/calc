@@ -99,7 +99,7 @@ class Order extends Model
       'created_at' => $item['created_at'],
       'agent' => $item['title'],
       'agent_name' => $agent->name,
-      'agent_phone' => $agent->phone,
+      'agent_phone' => "'$agent->phone",
       'delivery_date' => $item['delivery_date'],
       'distrubutor_id' => $item['distributor_id'],
       'payment_method' => $item['payment_method'],
@@ -131,7 +131,7 @@ class Order extends Model
       'inn' => $item['inn'],
       'ogrn' => $item['ogrn'],
       'user_name' => $user->name,
-      'user_phone' => $user->phone,
+      'user_phone' => "'$user->phone",
       'user_email' => $user->email,
     ];
 
