@@ -94,7 +94,7 @@ class Order extends Model
       ;
 
     $formatted = [
-      'num' => '=СТРОКА()',
+      'num' => '=СТРОКА()-1',
       'order_id' => $item['order_id'],
       'created_at' => $item['created_at'],
       'agent' => $item['title'],
