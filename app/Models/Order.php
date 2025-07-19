@@ -25,7 +25,7 @@ class Order extends Model
   public function writeSheet()
   {
     $user = User::find($this->user_id);
-    $agent = Agent::select('title', 'inn', 'ogrn', 'address')->where('id', $this->agent_id)->first();
+    $agent = Agent::where('id', $this->agent_id)->first();
 
     $user_data = $user->toArray();
     $user_data['verified'] = is_null($user->email_verified_at) ? 'false' : 'true';
@@ -93,12 +93,60 @@ class Order extends Model
       ->range('')
       ;
 
-    $values = [
-      array_values($item),
+    $formatted = [
+      'num' => '=СТРОКА()',
+      'order_id' => $item['order_id'],
+      'created_at' => $item['created_at'],
+      'agent' => $item['title'],
+      'agent_name' => $agent->name,
+      'agent_phone' => $agent->phone,
+      'delivery_date' => $item['delivery_date'],
+      'distrubutor_id' => $item['distributor_id'],
+      'payment_method' => $item['payment_method'],
+      'custom1' => null,
+      'custom2' => null,
+      'custom3' => null,
+      'custom4' => null,
+      'pallets_count' => $item['pallets_count'],
+      'custom5' => null,
+      'boxes_count' => $item['boxes_count'],
+      'custom6' => null,
+      'fn1' => null,
+      'fn2' => null,
+      'fn3' => null,
+      'custom7' => null,
+      'boxes_volume' => $item['boxes_volume'],
+      'custom8' => null,
+      'boxes_weight' => $item['boxes_weight'],
+      'palletizing_type' => empty($item['palletizing_type']) ? 'Нет' : 'Да',
+      'transfer_method_pick' => match($this->transfer_method) {
+        'receive' => 'Нет',
+        'pick' => 'Да',
+      },
+      'pick' => $item['pick'],
+      'pick_date' => $item['transfer_method_pick_date'],
+      'pick_address' => $item['transfer_method_pick_address'],
+      'comment' => $item['cargo_comment'],
+      'agent_mail' => $agent->email,
+      'inn' => $item['inn'],
+      'ogrn' => $item['ogrn'],
+      'user_name' => $user->name,
+      'user_phone' => $user->phone,
+      'user_email' => $user->email,
     ];
 
+    dd($formatted, $agent);
+    $formatted = array_map(fn($val) => is_null($val) ? '' : $val, $formatted);
+
+    
+    $values = [
+      array_values($formatted),
+    ];
+
+    // dd($values, [array_values($formatted)]);
+
     // if (!$this->print()->exists()) {
-      $sheet->append($values);
+      $sheet->append($values, 'USER_ENTERED');
       // $this->print()->firstOrCreate();
     // } else {
       // $sheet->range($range)->update($values);
