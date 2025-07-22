@@ -85,6 +85,7 @@ class LoadSheet extends Command
         }
 
         DB::commit();
+        Log::info('Sheet data loaded.');
         return 200;
     }
 }
