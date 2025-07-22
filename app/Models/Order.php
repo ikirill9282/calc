@@ -124,7 +124,7 @@ class Order extends Model
         'receive' => 'Нет',
         'pick' => 'Да',
       },
-      'pick' => $this->getPaymentMethodLabel($item['payment_method_pick']),
+      'payment_method_pick' => $item['payment_method_pick'],
       'pick_date' => $item['transfer_method_pick_date'],
       'pick_address' => $item['transfer_method_pick_address'],
       'comment' => $item['cargo_comment'],
