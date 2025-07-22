@@ -131,7 +131,7 @@
                         <td class="py-2 px-4">{{ $row['type'] ?? '' }}</td>
                         <td class="py-2 px-4">@if(isset($row['count'])) {{ $row['count'] }} шт @endif</td>
                         {{-- <td class="py-2 px-4">@if(isset($row['weight'])) {{ $row['weight'] }} кг @endif</td> --}}
-                        <td class="py-2 px-4">@if(isset($row['volume'])) {{ number_format($row['volume'], strlen(preg_replace('/^.*?\.(\d+)/is'), "$1", $row['volume']), '.') }} м3 @endif</td>
+                        <td class="py-2 px-4">@if(isset($row['volume'])) {{ number_format($row['volume'], strlen(preg_replace('/^.*?\.(\d+)$/is'), "$1", $row['volume']), '.') }} м3 @endif</td>
                         <td class="py-2 px-4">@if(isset($row['cargo'])) {{ $row['cargo'] }} @endif</td>
                       </tr>                      
                     @endforeach
