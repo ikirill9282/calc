@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
         LogViewer::auth(function($request) {
-          return $request->user() && $request->user()->id === 1;
+          return Auth::check() && $request->user() && $request->user()->id === 1;
         });
     }
 }
