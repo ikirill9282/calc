@@ -23,8 +23,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::unguard();
-        LogViewer::auth(function() {
-          return Auth::user()->id === 1;
+        LogViewer::auth(function($request) {
+          return $request->user()->id === 1;
         });
     }
 }
