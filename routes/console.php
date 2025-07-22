@@ -10,7 +10,7 @@ use App\Models\Agent;
 use Illuminate\Support\Facades\Schedule;
 use Revolution\Google\Sheets\Facades\Sheets;
 
-Schedule::command('app:load-sheet')->hourly();
+Schedule::command('app:load-sheet')->everyMinute();
 
 Artisan::command('tt', function() {
   foreach (Order::all() as $order) {
