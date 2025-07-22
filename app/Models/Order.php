@@ -36,6 +36,7 @@ class Order extends Model
     $order_data['payment_method'] = $this->getPaymentMethodLabel($this->payment_method);
     $order_data['payment_method_pick'] = $this->getPaymentMethodLabel($this->payment_method_pick);
     unset($order_data['user'], $order_data['id'], $order_data['user_id'], $order_data['agent_id']);
+
     if ($this->transfer_method == 'pick') {
       $order_data['transfer_method_receive_date'] = '';
     } elseif ($this->transfer_method == 'receive') {
@@ -123,7 +124,7 @@ class Order extends Model
         'receive' => 'Нет',
         'pick' => 'Да',
       },
-      'pick' => $item['pick'],
+      'pick' => $this->getPaymentMethodLabel($item['pick']),
       'pick_date' => $item['transfer_method_pick_date'],
       'pick_address' => $item['transfer_method_pick_address'],
       'comment' => $item['cargo_comment'],
