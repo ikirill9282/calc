@@ -753,7 +753,8 @@ class Calculator extends Component
           ->select('pick_weekend')
           ->first()
           ;
-        $weekend = $weekend?->delivery_weekend;
+
+        $weekend = !intval($weekend?->pick_weekend);
 
         $diff = Carbon::today()->diffInDays($point_date);
         $result = [];
@@ -764,7 +765,10 @@ class Calculator extends Component
 
           array_push($result, $date->format('Y-m-d'));
         }
-        array_push($result, $point_date->format('Y-m-d'));
+        
+        if ($date->isWeekend() && intval($weekend)) {
+          array_push($result, $point_date->format('Y-m-d'));
+        }
         sort($result, SORT_DESC);
 
         // dd(Carbon::today());

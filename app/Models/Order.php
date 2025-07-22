@@ -43,29 +43,29 @@ class Order extends Model
       $order_data['transfer_method_pick_address'] = '';
       $order_data['transfer_method_pick_date'] = '';
     }
-
+// ->toIso8601String()
     if (!empty($order_data['delivery_date'])) {
-      $order_data['delivery_date'] = Carbon::parse($order_data['delivery_date'])->toIso8601String();
+      $order_data['delivery_date'] = Carbon::parse($order_data['delivery_date'])->format('d.m.Y');
     }
 
     if (!empty($order_data['post_date'])) {
-      $order_data['post_date'] = Carbon::parse($order_data['post_date'])->toIso8601String();
+      $order_data['post_date'] = Carbon::parse($order_data['post_date'])->format('d.m.Y');
     }
 
     if (!empty($order_data['transfer_method_receive_date'])) {
-      $order_data['transfer_method_receive_date'] = Carbon::parse($order_data['transfer_method_receive_date'])->toIso8601String();
+      $order_data['transfer_method_receive_date'] = Carbon::parse($order_data['transfer_method_receive_date'])->format('d.m.Y');
     }
 
     if (!empty($order_data['transfer_method_pick_date'])) {
-      $order_data['transfer_method_pick_date'] = Carbon::parse($order_data['transfer_method_pick_date'])->toIso8601String();
+      $order_data['transfer_method_pick_date'] = Carbon::parse($order_data['transfer_method_pick_date'])->format('d.m.Y');
     }
 
     if (!empty($order_data['created_at'])) {
-      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->tz('Europe/Moscow')->format('Y-m-d\TH:i:sP');
+      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->tz('Europe/Moscow')->format('d.m.Y');
     }
 
     if (!empty($order_data['updated_at'])) {
-      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->tz('Europe/Moscow')->format('Y-m-d\TH:i:sP');
+      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->tz('Europe/Moscow')->format('d.m.Y');
     }
 
     $order_data['palletizing_type'] = match($order_data['palletizing_type']) {
