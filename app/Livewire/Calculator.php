@@ -661,8 +661,8 @@ class Calculator extends Component
           ;
         
         
-          dd($weekend);
           $weekend = !(count($weekend) > 1 ? 1 : $weekend[0] ?? 1);
+          dd($weekend);
         
         
         $result = $data->toArray();
