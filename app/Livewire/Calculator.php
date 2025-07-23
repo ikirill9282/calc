@@ -661,7 +661,7 @@ class Calculator extends Component
           ;
         
         
-          $weekend = !(count($weekend) > 1 ? 1 : $weekend[0] ?? 1);
+          $weekend = !intval($weekend?->delivery_weekend);
           dd($weekend);
         
         
