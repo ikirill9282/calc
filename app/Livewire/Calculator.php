@@ -659,7 +659,7 @@ class Calculator extends Component
           // ->ddRawSql()
           ->get()
           ;
-        $weekend = count($weekend) > 1 ? 1 : $weekend[0] ?? 1;
+        $weekend = !(count($weekend) > 1 ? 1 : $weekend[0] ?? 1);
 
         
         $result = $data->toArray();
