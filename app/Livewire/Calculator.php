@@ -653,11 +653,11 @@ class Calculator extends Component
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
           ->where('distributor_center', $this->getField('distributor_center_id'))
-          // ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+          ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
           ->select('delivery_weekend')
           ->groupBy('delivery_weekend')
           // ->ddRawSql()
-          ->get()
+          ->first()
           ;
         
         
