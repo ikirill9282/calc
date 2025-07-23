@@ -661,6 +661,7 @@ class Calculator extends Component
           ;
         $weekend = count($weekend) > 1 ? 1 : $weekend[0] ?? 1;
 
+        
         $result = $data->toArray();
         $result = $weekend ? $result : array_values(array_filter($result, fn($date) => !Carbon::parse($date)->isWeekend()));
 
@@ -699,8 +700,9 @@ class Calculator extends Component
           ->orderByDesc('delivery_diff')
           ->first()
           ;
-        $weekend = $weekend?->delivery_weekend;
+        $weekend = !intval($weekend?->delivery_weekend);
 
+        
         $diff = Carbon::today()->diffInDays($point_date);
         $result = [];
 
@@ -710,7 +712,11 @@ class Calculator extends Component
 
           array_push($result, $date->format('Y-m-d'));
         }
-        array_push($result, $point_date->format('Y-m-d'));
+
+        if ($date->isWeekend() && intval($weekend)) {
+          array_push($result, $point_date->format('Y-m-d'));
+        }
+        
         sort($result, SORT_DESC);
 
         return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
