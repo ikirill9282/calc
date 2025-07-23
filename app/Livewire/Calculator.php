@@ -702,10 +702,12 @@ class Calculator extends Component
           ->orderByDesc('delivery_diff')
           ->first()
           ;
+
         $weekend = !intval($weekend?->delivery_weekend);
 
         
         $diff = Carbon::today()->diffInDays($point_date);
+        dd($diff);
         $result = [];
 
         for ($i = 0; $i < $diff; $i++) {
