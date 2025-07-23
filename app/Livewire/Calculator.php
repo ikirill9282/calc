@@ -711,11 +711,12 @@ class Calculator extends Component
 
         for ($i = 0; $i < $diff; $i++) {
           $date = Carbon::today()->modify("+$i days");
-          dd($date);
+          dump($date);
           if ($date->isWeekend() && !$weekend) continue;
 
           array_push($result, $date->format('Y-m-d'));
         }
+        dd('pl');
 
         if ($date->isWeekend() && intval($weekend)) {
           array_push($result, $point_date->format('Y-m-d'));
