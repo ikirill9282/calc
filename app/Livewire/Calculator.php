@@ -779,6 +779,8 @@ class Calculator extends Component
         
         if ($date->isWeekend() && intval($weekend)) {
           array_push($result, $point_date->format('Y-m-d'));
+        } elseif (!$date->isWeekend()) {
+          array_push($result, $point_date->format('Y-m-d'));
         }
         sort($result, SORT_DESC);
 
