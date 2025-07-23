@@ -661,8 +661,7 @@ class Calculator extends Component
           ;
         
         
-          $weekend = !intval($weekend?->delivery_weekend);
-          dd($weekend);
+        $weekend = !intval($weekend?->delivery_weekend);
         
         
         $result = $data->toArray();
