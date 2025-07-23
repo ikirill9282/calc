@@ -691,6 +691,8 @@ class Calculator extends Component
 
 
         $date = $this->getDeliveryDiff();
+
+        dd($date);
         $point_date = Carbon::parse($date);
 
         $weekend = SheetData::query()
@@ -707,7 +709,6 @@ class Calculator extends Component
 
         
         $diff = Carbon::today()->diffInDays($point_date);
-        dd($diff);
         $result = [];
 
         for ($i = 0; $i < $diff; $i++) {
