@@ -102,7 +102,7 @@ class Order extends Model
       'agent_name' => $agent->name,
       'agent_phone' => "'$agent->phone",
       'delivery_date' => $item['delivery_date'],
-      'distrubutor_id' => $item['distributor_center_id'] . $item['distributor_id'],
+      'distrubutor_id' => $item['distributor_center_id'] . ' ' . $item['distributor_id'],
       'payment_method' => $item['payment_method'],
       'custom1' => null,
       'custom2' => null,
