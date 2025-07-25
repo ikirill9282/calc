@@ -61,11 +61,11 @@ class Order extends Model
     }
 
     if (!empty($order_data['created_at'])) {
-      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->tz('Europe/Moscow')->format('d.m.Y');
+      $order_data['created_at'] = Carbon::parse($order_data['created_at'])->tz('Europe/Moscow')->format('d.m.Y H:i:s');
     }
 
     if (!empty($order_data['updated_at'])) {
-      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->tz('Europe/Moscow')->format('d.m.Y');
+      $order_data['updated_at'] = Carbon::parse($order_data['updated_at'])->tz('Europe/Moscow')->format('d.m.Y H:i:s');
     }
 
     $order_data['palletizing_type'] = match($order_data['palletizing_type']) {
