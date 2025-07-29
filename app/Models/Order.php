@@ -103,6 +103,8 @@ class Order extends Model
         $sid = 3;
         break;
     }
+
+    $sid = $sids[$sid];
     // $sid = str_contains(mb_strtolower($item['warehouse_id']), 'симферополь') 
     //   ? '1j6TkvE3ocDSQXP9ECKQ0MsJeXk2hYvgoTXgYkQIbh9I'
     //   : '1mXYqtlmxfe7qr_hnAJOjdSuy_NmjO9Fu0CrxTvkG4C4';
