@@ -85,9 +85,27 @@ class Order extends Model
     $range = "A$int:AI$int";
 
     // $sid = '1ZOkCAKId9W5nAQya3ZFC1GyYeeGM-Mbne7U-F44Zw-E';
-    $sid = str_contains(mb_strtolower($item['warehouse_id']), 'симферополь') 
-      ? '1j6TkvE3ocDSQXP9ECKQ0MsJeXk2hYvgoTXgYkQIbh9I'
-      : '1mXYqtlmxfe7qr_hnAJOjdSuy_NmjO9Fu0CrxTvkG4C4';
+    $sids = [
+      1 => '1j6TkvE3ocDSQXP9ECKQ0MsJeXk2hYvgoTXgYkQIbh9I',
+      2 => '1mXYqtlmxfe7qr_hnAJOjdSuy_NmjO9Fu0CrxTvkG4C4',
+      3 => '1DGdOmjC0ItxX22ynwVnVTi-7VDHcpK11wtmJv7cICQI',
+    ];
+
+    $sid = null;
+    switch(true) {
+      case str_contains(mb_strtolower($item['warehouse_id']), 'симферополь'):
+        $sid = 1;
+        break;
+      case str_contains(mb_strtolower($item['warehouse_id']), 'ростов-на-дону'):
+        $sid = 2;
+        break;
+      case str_contains(mb_strtolower($item['warehouse_id']), 'москва'):
+        $sid = 3;
+        break;
+    }
+    // $sid = str_contains(mb_strtolower($item['warehouse_id']), 'симферополь') 
+    //   ? '1j6TkvE3ocDSQXP9ECKQ0MsJeXk2hYvgoTXgYkQIbh9I'
+    //   : '1mXYqtlmxfe7qr_hnAJOjdSuy_NmjO9Fu0CrxTvkG4C4';
 
     $sheet = Sheets::spreadsheet($sid)
       ->sheet("Лист1")
