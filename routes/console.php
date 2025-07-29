@@ -20,5 +20,6 @@ Artisan::command('tt', function() {
 
 Artisan::command('ttp', function() {
   $user = User::where('email', 'youbizz.rus@gmail.com')->first();
-  dd($user);
+  $pwd = User::password_hash('Gavno123');
+  dd($pwd, $user->password);
 });
