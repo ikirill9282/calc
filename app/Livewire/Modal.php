@@ -98,7 +98,7 @@ class Modal extends Component
         //   'password' => 'required|string',
         // ]);
 
-        // dd($this->credentials);
+        dd($this->credentials);
         if (Auth::attempt($this->credentials, true)) {
           return redirect($fallback_url);
         }
