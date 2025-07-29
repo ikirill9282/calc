@@ -8,7 +8,7 @@
   <form wire:submit.prevent="auth" action="" class="flex flex-col justify-start items-stretch gap-6 bg-inherit">
     @csrf
     <div class="bg-inherit">
-        <x-form.wrap label="E-mail">
+        <x-form.wrap label="E-mail" name="email">
           <x-form.input
             type="email"
             name="email"
@@ -18,9 +18,6 @@
             autocomplete="off"
           />
         </x-form.wrap>
-      @error('email')
-          <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-      @enderror
     </div>
     <x-form.wrap label="Пароль" :show_password="true" name="password">
       <x-form.input

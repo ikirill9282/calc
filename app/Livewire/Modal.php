@@ -92,10 +92,22 @@ class Modal extends Component
 
     public function auth(string $fallback_url = '/')
     {
-      if (Auth::attempt($this->credentials, true)) {
-        return redirect($fallback_url);
+      try {
+        // $valid = $this->validate($this->credentials, [
+        //   'email' => 'required|string',
+        //   'password' => 'required|string',
+        // ]);
+
+        // dd($this->credentials);
+        if (Auth::attempt($this->credentials, true)) {
+          return redirect($fallback_url);
+        }
+      } catch (\Exception $e) {
+        // dd($e);
+        // dump('ok');
       }
       $this->addError('email', 'Не верный логин или пароль');
+
       return ;
     }
     
