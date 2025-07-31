@@ -13,9 +13,11 @@ use Revolution\Google\Sheets\Facades\Sheets;
 Schedule::command('app:load-sheet')->everyFifteenMinutes();
 
 Artisan::command('tt', function() {
-  foreach (Order::all() as $order) {
-    $order->writeSheet();
-  }
+  $o = Order::find(100532);
+  dd($o->writeSheet());
+  // foreach (Order::all() as $order) {
+  //   $order->writeSheet();
+  // }
 });
 
 Artisan::command('ttp', function() {

@@ -81,8 +81,8 @@ class Order extends Model
     $item = array_merge(['order_id' => $this->id], $item);
     $item = array_map(fn($val) => is_null($val) ? '' : $val, $item);
 
-    $int = ($this->id - 100500 + 2);
-    $range = "A$int:AI$int";
+    // $int = ($this->id - 100500 + 2);
+    // $range = "A$int:AI$int";
 
     // $sid = '1ZOkCAKId9W5nAQya3ZFC1GyYeeGM-Mbne7U-F44Zw-E';
     $sids = [
@@ -114,6 +114,7 @@ class Order extends Model
       ->range('')
       ;
 
+      dd($item);
     $formatted = [
       'num' => '=СТРОКА()-1',
       'order_id' => $item['order_id'],
