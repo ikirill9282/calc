@@ -156,7 +156,6 @@ class Order extends Model
       'user_email' => $user->email,
     ];
 
-    dd($formatted);
     $formatted = array_map(fn($val) => is_null($val) ? '' : $val, $formatted);
     
     $values = [
