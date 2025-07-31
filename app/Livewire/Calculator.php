@@ -716,9 +716,9 @@ class Calculator extends Component
           array_push($result, $date->format('Y-m-d'));
         }
 
-        if ($date->isWeekend() && intval($weekend)) {
+        if ($point_date->isWeekend() && intval($weekend)) {
           array_push($result, $point_date->format('Y-m-d'));
-        } elseif (!$date->isWeekend()) {
+        } elseif (!$point_date->isWeekend()) {
           array_push($result, $point_date->format('Y-m-d'));
         }
         
@@ -777,9 +777,9 @@ class Calculator extends Component
           array_push($result, $date->format('Y-m-d'));
         }
         
-        if ($date->isWeekend() && intval($weekend)) {
+        if ($point_date->isWeekend() && intval($weekend)) {
           array_push($result, $point_date->format('Y-m-d'));
-        } elseif (!$date->isWeekend()) {
+        } elseif (!$point_date->isWeekend()) {
           array_push($result, $point_date->format('Y-m-d'));
         }
         sort($result, SORT_DESC);
