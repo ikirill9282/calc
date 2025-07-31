@@ -114,7 +114,6 @@ class Order extends Model
       ->range('')
       ;
 
-      dd($item);
     $formatted = [
       'num' => '=СТРОКА()-1',
       'order_id' => $item['order_id'],
@@ -157,6 +156,7 @@ class Order extends Model
       'user_email' => $user->email,
     ];
 
+    dd($formatted);
     $formatted = array_map(fn($val) => is_null($val) ? '' : $val, $formatted);
     
     $values = [
