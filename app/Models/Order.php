@@ -136,9 +136,9 @@ class Order extends Model
       'fn2' => null,
       'fn3' => null,
       'custom7' => null,
-      'boxes_volume' => $item['boxes_volume'],
+      'boxes_volume' => floatval($item['boxes_volume']),
       'custom8' => null,
-      'boxes_weight' => $item['boxes_weight'],
+      'boxes_weight' => floatval($item['boxes_weight']),
       'palletizing_type' => empty($item['palletizing_type']) ? 'Нет' : 'Да',
       'transfer_method_pick' => match($this->transfer_method) {
         'receive' => 'Нет',
