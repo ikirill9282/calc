@@ -593,6 +593,19 @@ class Calculator extends Component
         : SheetData::where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))->first()?->wh_address ?? $this->getField('warehouse_id');
     }
 
+    public function getCity(): string
+    {
+      if (str_contains(mb_strtolower($this->getField('warehouse_id')), 'симферополь')) {
+        return 'г. Симферополь';
+      } else if (str_contains(mb_strtolower($this->getField('warehouse_id')), 'ростов-на-дону')) {
+        return 'г. Ростов-на-дону';
+      } else if (str_contains(mb_strtolower($this->getField('warehouse_id')), 'москва')) {
+        return 'г. Москва';
+      }
+
+      return '';
+    }
+
     public function getWarehousePhone(): ?string
     {
       return empty($this->fields['warehouse_id']) ? null : Warehouse::find($this->fields['warehouse_id'])?->phone;
