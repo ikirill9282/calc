@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schedule;
 use Revolution\Google\Sheets\Facades\Sheets;
 
 Schedule::command('app:load-sheet')->everyFifteenMinutes();
-Schedule::command('tts')->everyMinute();
+// Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
   $o = Order::find(100532);
