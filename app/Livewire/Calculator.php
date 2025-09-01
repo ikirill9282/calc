@@ -950,6 +950,7 @@ class Calculator extends Component
 
     public function render()
     {
+      dd('ok');
       return view('livewire.calculator');
     }
 }
