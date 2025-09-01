@@ -64,7 +64,7 @@ class Calculator extends Component
 
     public array $fields = [
       'warehouse_id' => null,
-      'distributor_id' => null,
+      'distributor_id' => 'Wildberries',
       'distributor_center_id' => null,
       'delivery_date' => null,
       'post_date' => null,
@@ -817,7 +817,7 @@ class Calculator extends Component
     {
       if ($name == 'warehouse_id') {
         
-        $this->fields['distributor_id'] = null;
+        // $this->fields['distributor_id'] = null;
         $this->fields['distributor_center_id'] = null;
         $this->fields['delivery_date'] = null;
         $this->fields['transfer_method_pick']['date'] = null;
