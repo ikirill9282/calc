@@ -124,7 +124,7 @@ class Calculator extends Component
 
     public function mount()
     {
-      // Session::forget('calc');
+      Session::forget('calc');
 
       if (request()->has('reply')) {
         Session::forget('calc');
@@ -950,7 +950,6 @@ class Calculator extends Component
 
     public function render()
     {
-      // dd('ok');
       return view('livewire.calculator');
     }
 }
