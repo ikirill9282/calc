@@ -19,7 +19,7 @@ if (!env('APP_LOCAL', false)) {
 // Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
-  $o = Order::find(100514);
+  $o = Order::latest();
   $o->writeSheet();
   // foreach (Order::all() as $order) {
   //   $order->writeSheet();
