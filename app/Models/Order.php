@@ -27,7 +27,7 @@ class Order extends Model
 
       if ($model->cargo == 'boxes') {
         $model->pallets_count = 0;
-      } elseif ($model->cargp == 'pallets') {
+      } elseif ($model->cargo == 'pallets') {
         $model->boxes_count = 0;
         $model->boxes_weight = 0;
         $model->boxes_volume = 0;
@@ -152,6 +152,10 @@ class Order extends Model
       'custom2' => null,
       'custom3' => null,
       'custom4' => null,
+      'cargo' => match($item['cargo']) {
+        'boxes' => 'Коробки',
+        'pallets' => 'Палеты',
+      },
       'pallets_count' => $item['pallets_count'],
       'custom5' => null,
       'boxes_count' => $item['boxes_count'],

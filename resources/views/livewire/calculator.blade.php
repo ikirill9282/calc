@@ -198,8 +198,8 @@
                                         name="palletizing_type" value="single"
                                         wire:model.live="fields.palletizing_type"
                                         x-on:change="() => {
-                                          console.log({{ $this->fields['palletizing_count'] }});
-                                          if ({{ $this->fields['palletizing_count'] }} == 0) {
+                                          console.log({{ $this->fields['palletizing_count'] ?? 0 }});
+                                          if ({{ $this->fields['palletizing_count'] ?? 0 }} == 0) {
                                             $dispatch('setField', {
                                               name: 'palletizing_count',
                                               value: 1,

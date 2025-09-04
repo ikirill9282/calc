@@ -629,7 +629,7 @@ class Calculator extends Component
 
     public function getDeliveryDiff(?string $date = null): ?string
     {
-      if (!$this->isFieldDisabled(3)) {
+      if (!$this->isFieldDisabled(2)) {
         /** FOR TESTING */
         // return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
         return SheetData::query()
@@ -684,10 +684,9 @@ class Calculator extends Component
         $result = array_values(array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today())));
 
         foreach($result as $k => $date) {
-          $sub_dates = $this->getDeliveryPickDates($date);;
+          $sub_dates = $this->getDeliveryPickDates($date);
           if (empty($sub_dates)) unset($result[$k]);
         }
-
         return array_values($result);
       }
       return [];
@@ -699,6 +698,7 @@ class Calculator extends Component
         $delivery_date = $delivery_date ?? Carbon::parse($this->getField('delivery_date'))->format('Y-m-d');
 
         $date = $this->getDeliveryDiff($delivery_date);
+        
         $point_date = Carbon::parse($date);
 
         $weekend = SheetData::query()
