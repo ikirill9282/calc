@@ -63,10 +63,6 @@
                   id="password"
                 />
             </x-form.wrap>
-
-            @error('password')
-                <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-            @enderror
         </div>
         <div class="bg-inherit">
           <x-form.wrap label="Повторите пароль" :show_password="true" name="password_confirm" >

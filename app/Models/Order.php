@@ -12,6 +12,29 @@ use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 class Order extends Model
 {
 
+  public static function boot()
+  {
+    parent::boot();
+
+    static::saving(function($model) {
+      if ($model->transfer_method == 'pick') {
+        $model->transfer_method_receive_date = null;
+        $model->payment_method_pick = null;
+      } elseif ($model->transfer_method == 'receive') {
+        $model->transfer_method_pick_address = null;
+        $model->transfer_method_pick_date = null;
+      }
+
+      if ($model->cargo == 'boxes') {
+        $model->pallets_count = 0;
+      } elseif ($model->cargp == 'pallets') {
+        $model->boxes_count = 0;
+        $model->boxes_weight = 0;
+        $model->boxes_volume = 0;
+      }
+    });
+  }
+
   public function user()
   {
     return $this->belongsTo(User::class);
@@ -122,8 +145,9 @@ class Order extends Model
       'agent_name' => $agent->name,
       'agent_phone' => "'$agent->phone",
       'delivery_date' => $item['delivery_date'],
-      'distrubutor_id' => $item['distributor_center_id'] . ' ' . $item['distributor_id'],
-      'payment_method' => $item['payment_method'],
+      'distrubutor_id' => $item['distributor_id'],
+      'distributor_center_id' => $item['distributor_center_id'],
+      'payment_method_pick' => $item['payment_method_pick'], // Стоимость доставки
       'custom1' => null,
       'custom2' => null,
       'custom3' => null,
@@ -144,7 +168,7 @@ class Order extends Model
         'receive' => 'Нет',
         'pick' => 'Да',
       },
-      'payment_method_pick' => $item['payment_method_pick'],
+      'payment_method' => $item['payment_method'],
       'pick_date' => $item['transfer_method_pick_date'],
       'pick_address' => $item['transfer_method_pick_address'],
       'comment' => $item['cargo_comment'],
@@ -221,11 +245,12 @@ class Order extends Model
     return $order;
   }
 
-  public function getPaymentMethodLabel($val): string
+  public function getPaymentMethodLabel($val): ?string
   {
     return match($val) {
       'cash' => 'Наличными при отправке',
       'bill' => 'По счету',
+      default => null
     };
   }
 

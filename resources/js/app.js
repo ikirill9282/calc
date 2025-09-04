@@ -27,7 +27,7 @@ dropdowns.forEach((elem) => {
 
   const toggle = (evt, open = true) => {
     $(dropdown).data('open', !$(dropdown).data('open'));
-
+    
     if (!$(dropdown).data('open')) {
       document.removeEventListener('click', checkDropdownClose);
       if (evt.target !== input) {
@@ -431,7 +431,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         
         radio.on("change", (evt) => {
-          console.log(radio.prop('checked'));
           $('.additional-box').find('input[type="radio"]').each((k, el) => {
             if (!$(el).prop('checked')) {
               $(el).closest('.radio-box').find('.count').html(0);

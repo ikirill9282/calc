@@ -10,7 +10,7 @@
     <form action="" class="flex flex-col justify-center items-stretch gap-4 {{ $formClass }}">
       <h2 class="text-2xl">Предварительная стоимость:</h2>
       <div class="border-b w-full"></div>
-      @if($order->transfer_method == 'pick')
+      {{-- @if($order->transfer_method == 'pick')
         <div class="flex opacity-50">
           <div class="justify-start items-center">Забор груза</div>
           <div class="border-b border-dotted grow mx-1 translate-y-[-20%]"></div>
@@ -20,7 +20,7 @@
             <div class="">{{ Illuminate\Support\Number::currency($order->pick, 'RUB', locale: 'ru')}}</div>
           @endif
         </div>
-      @endif
+      @endif --}}
       @if(!empty($order->delivery))
         <div class="flex opacity-50">
           <div class="justify-start items-center">Доставка груза</div>

@@ -69,6 +69,7 @@ class Calculator extends Component
       'delivery_date' => null,
       'post_date' => null,
       'transfer_method' => null,
+
       'transfer_method_receive' => [
          'date' => null,
       ],
@@ -125,6 +126,8 @@ class Calculator extends Component
     public function mount()
     {
       // Session::forget('calc');
+
+      $this->checkout = Session::exists('checkout') ? Session::get('checkout') : $this->checkout;
 
       if (request()->has('reply')) {
         Session::forget('calc');
@@ -192,7 +195,6 @@ class Calculator extends Component
         $this->dispatch('deliveryDates', $this->getDeliveryDates());
       }
 
-      // dd($this->isFieldDisabled(3));
       if (!$this->isFieldDisabled(3)) {
         $this->dispatch('deliveryPickDates', $this->getDeliveryPickDates());
         $this->dispatch('pickDates', $this->getPickDates());
@@ -217,6 +219,11 @@ class Calculator extends Component
 
     public function getAdditionalAmount(): int
     {
+
+      if ($this->getField('cargo') == 'boxes') {
+        return 0;
+      }
+
       if (!$this->canCalcBoxes() && !$this->canCalcPallets()) {
         return 0;
       }
@@ -237,7 +244,7 @@ class Calculator extends Component
           $costs = SheetData::query()
             ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
             ->where('distributor', $this->getField('distributor_id'))
-            ->where('distributor_center', $this->getField('distributor_center_id'))
+            ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
 
             /** DISABLE FOR TEST */
             // ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
@@ -255,18 +262,20 @@ class Calculator extends Component
               ]
             : $costs->first()->toArray();
           
+          
           if ($this->canCalcBoxes()) {
             $vol = $this->getField('boxes_data.volume');
             $vol = ceil($vol / 0.05) * 0.05;
             $cost_vol = $vol * $costs['delivery_tariff_vol'];
-            
-            $builded_pallets = ($this->getField('palletizing_type') == 'pallet') 
-              ? $this->getField('palletizing_count')
-              : 0;
 
-            $cost_builded_pallets = $builded_pallets * $costs['delivery_tariff_pallete'];
+            // $builded_pallets = ($this->getField('palletizing_type') == 'pallet') 
+            //   ? $this->getField('palletizing_count')
+            //   : 0;
 
-            $result += max($costs['delivery_tariff_min'], $cost_vol, $cost_builded_pallets);
+            // $cost_builded_pallets = $builded_pallets * $costs['delivery_tariff_pallete'];
+
+            // $result += max($costs['delivery_tariff_min'], $cost_vol, $cost_builded_pallets);
+            $result += max($costs['delivery_tariff_min'], $cost_vol);
           }
           
           if ($this->canCalcPallets()) {
@@ -277,7 +286,7 @@ class Calculator extends Component
           }
       }
 
-      return ceil($result);
+      return $result;
     }
 
     public function getPickAmount(): int
@@ -288,7 +297,7 @@ class Calculator extends Component
           $min = SheetData::query()
             ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
             ->where('distributor', $this->getField('distributor_id'))
-            ->where('distributor_center', $this->getField('distributor_center_id'))
+            ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
             
             /** DISABLE FOR TEST */
             ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
@@ -301,7 +310,7 @@ class Calculator extends Component
           $data = SheetData::query()
             ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
             ->where('distributor', $this->getField('distributor_id'))
-            ->where('distributor_center', $this->getField('distributor_center_id'))
+            ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
 
             /** DISABLE FOR TEST */
             ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
@@ -327,13 +336,15 @@ class Calculator extends Component
             $vol = ceil($vol / 0.05) * 0.05;
             $cost_vol = $vol * $data['pick_tariff_vol'];
 
-            $builded_pallets = ($this->getField('palletizing_type') == 'pallet') 
-              ? $this->getField('palletizing_count')
-              : 0;
+            // $builded_pallets = ($this->getField('palletizing_type') == 'pallet') 
+            //   ? $this->getField('palletizing_count')
+            //   : 0;
 
-            $cost_builded_pallets = $builded_pallets * $data['pick_tariff_pallete'];
+            // $cost_builded_pallets = $builded_pallets * $data['pick_tariff_pallete'];
 
-            $result += max($min, $cost_vol, $cost_builded_pallets);
+            // $result += max($min, $cost_vol, $cost_builded_pallets);
+
+            $result += max($min, $cost_vol);
           }
           
           if ($this->canCalcPallets()) {
@@ -348,7 +359,7 @@ class Calculator extends Component
           }
       }
 
-      return ceil($result);
+      return $result;
     }
 
     public function canCalcBoxes(): bool
@@ -384,13 +395,18 @@ class Calculator extends Component
         return SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->select('distributor_center')
+          ->select(
+            'distributor_center', 
+            'distributor_address',
+            DB::raw('CONCAT(distributor_center, " ", distributor_address) as val')
+          )
           ->distinct()
           // ->ddRawSql()
           ->get()
+          // ->dd()
           // ->map(function($item) {
           //   $arr = $item->toArray();
-          //   $arr['wh'] = $item['distributor_center'];
+          //   $arr['val'] = $item['distributor_center'] . ' ' . $item['distributor_address'];
           //   return $arr;
           // });
           ;
@@ -400,7 +416,7 @@ class Calculator extends Component
 
     public function getAddresses(string $query = '')
     {
-      $query = empty($query) ? 'г Москва' : $query;
+      $query = empty($query) ? '' : $query;
       $client = new DadataClient();
       $addresses = $client->suggest('address', $query);
       $this->addresses = array_column($addresses, 'value');
@@ -473,7 +489,6 @@ class Calculator extends Component
 
           if ($this->fields['cargo'] == 'boxes') {
             $boxes_data = $this->getField('boxes_data');
-            // dd($boxes_data, $this->fields);
             foreach ($boxes_data as $key => $val) {
               if (empty($val)) return true;
             }
@@ -538,6 +553,7 @@ class Calculator extends Component
     {
       $key = str_ireplace('fields.', '', $name);
       Arr::set($this->fields, $key, $value);
+
       $this->clearRelated($key);
       $this->onInitDatepickers();
 
@@ -611,17 +627,16 @@ class Calculator extends Component
       return empty($this->fields['warehouse_id']) ? null : Warehouse::find($this->fields['warehouse_id'])?->phone;
     }
 
-    public function getDeliveryDiff(): ?string
+    public function getDeliveryDiff(?string $date = null): ?string
     {
       if (!$this->isFieldDisabled(3)) {
         /** FOR TESTING */
         // return Carbon::parse($this->getField('delivery_date'))->modify('-2 days')->format('Y-m-d H:i:s');
-
         return SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
-          ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+          ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
+          ->where('distributor_center_delivery_date', $date ?? Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
           ->select('delivery_diff')
           ->orderByDesc('delivery_diff')
           ->first()
@@ -637,7 +652,6 @@ class Calculator extends Component
     {
 
       if (!$this->isFieldDisabled(2)) {
-        
 
         /** FOR TESTING */
         // $today = Carbon::today();
@@ -653,19 +667,17 @@ class Calculator extends Component
         $data = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
+          ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
           ->select('distributor_center_delivery_date')
           // ->ddRawSql()
           ->get()
           ->pluck('distributor_center_delivery_date')
         ;
-
-        // dd($data->toArray());
         
         $weekend = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
+          ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
           // ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
           ->select('delivery_weekend')
           ->groupBy('delivery_weekend')
@@ -680,37 +692,31 @@ class Calculator extends Component
         $result = $data->toArray();
         $result = $weekend ? $result : array_values(array_filter($result, fn($date) => !Carbon::parse($date)->isWeekend()));
 
-        return array_values(array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today())));
-        // return $result;
+        $result = array_values(array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today())));
+
+        foreach($result as $k => $date) {
+          $sub_dates = $this->getDeliveryPickDates($date);;
+          if (empty($sub_dates)) unset($result[$k]);
+        }
+
+        return array_values($result);
       }
       return [];
     }
 
-    public function getDeliveryPickDates(): array
+    public function getDeliveryPickDates(?string $delivery_date = null): array
     {
-      if (!$this->isFieldDisabled(3)) {
+      if (!$this->isFieldDisabled(3) || $delivery_date) {
+        $delivery_date = $delivery_date ?? Carbon::parse($this->getField('delivery_date'))->format('Y-m-d');
 
-
-        /** FOR TESTING */
-        // $today = Carbon::today();
-        // $end = Carbon::today()->modify('+2 week');
-        // $result = [];
-        // while($today->lte($end)) {
-        //   array_push($result, $today->format('Y-m-d'));
-        //   $today->modify('+1 day');
-        // }
-
-        // return $result;
-
-
-        $date = $this->getDeliveryDiff();
+        $date = $this->getDeliveryDiff($delivery_date);
         $point_date = Carbon::parse($date);
 
         $weekend = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
-          ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
+          ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
+          ->where('distributor_center_delivery_date', $delivery_date)
           ->select('delivery_weekend')
           ->orderByDesc('delivery_diff')
           ->first()
@@ -738,7 +744,6 @@ class Calculator extends Component
         sort($result, SORT_DESC);
 
         return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
-        // return $result;
       }
       return [];
     }
@@ -746,7 +751,6 @@ class Calculator extends Component
     public function getPickDates(): array
     {
       if (!$this->isFieldDisabled(3)) {
-
         /** FOR TESTING */
         // $today = Carbon::today();
         // $end = Carbon::today()->modify('+3 week');
@@ -761,7 +765,7 @@ class Calculator extends Component
         $date = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
+          ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
           ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
           ->select('pick_diff')
           ->first()
@@ -772,7 +776,7 @@ class Calculator extends Component
         $weekend = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
-          ->where('distributor_center', $this->getField('distributor_center_id'))
+          ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
           ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
           ->select('pick_weekend')
           ->first()
@@ -797,9 +801,7 @@ class Calculator extends Component
         }
         sort($result, SORT_DESC);
 
-        // dd(Carbon::today());
         return array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today()));
-        // return $result;
       }
       return [];
     }
@@ -850,6 +852,11 @@ class Calculator extends Component
         $this->fields['transfer_method_pick']['date'] = null;
         $this->fields['transfer_method_receive']['date'] = null;
       }
+
+      if ($name == "pallets_data.count") {
+        $this->fields['palletizing_type'] = null;
+        $this->fields['palletizing_count'] = 0;
+      }
     }
 
     public function validateFields(): bool
@@ -890,7 +897,6 @@ class Calculator extends Component
         ]
       );
       if ($validator->fails()) {
-        // dd($validator->errors(), $this->fields);
         throw new ValidationException($validator);
       }
 
@@ -913,15 +919,20 @@ class Calculator extends Component
       return $order;
     }
 
+    public function back(): void
+    {
+      $this->checkout = false;
+      Session::put('checkout', $this->checkout);
+    }
+
     public function submit()
     {
-      // dd($this->fields);s
       if ($this->validateFields()) {
         if ($this->checkout) {
           $validator = Validator::make($this->fields, [
             'agent_id' => 'required|integer',
-            'payment_method' => 'required|string',
-            'payment_method_pick' => 'required|string',
+            'payment_method' => 'nullable|string',
+            'payment_method_pick' => 'nullable|string',
           ], [
             'agent_id' => 'Выберите контрагента',
             'payment_method' => 'Выберите способ оплаты',
@@ -931,13 +942,13 @@ class Calculator extends Component
             throw new ValidationException($validator);
           }
           $order = $this->prepareOrder();
-          // dd($order);
           $order->save();
 
           Session::forget('calc');
           return redirect('/success/?order='.Crypt::encrypt($order->id));
         } else {
           $this->checkout = true;
+          Session::put('checkout', $this->checkout);
         }
       }
 

@@ -38,6 +38,11 @@ class Modal extends Component
       'password_confirm' => null,
     ];
 
+    public array $reset = [
+      'password' => null,
+      'password_confirm' => null,
+    ];
+
     public function mount(?string $view = 'auth')
     {
       $this->view = $view;
@@ -62,6 +67,13 @@ class Modal extends Component
     public function openPasswordReset()
     {
         $this->view = 'password-reset';
+        $this->open();
+    }
+
+    #[On('openReset')]
+    public function openReset()
+    {
+        $this->view = 'reset';
         $this->open();
     }
 
@@ -135,13 +147,13 @@ class Modal extends Component
       }
 
       if (!User::validatePassword($valid['password'])) {
-        $this->addError('password', __('validation.password_simple'));
+        $this->addError('password', 'Пароль должен состоять из букв и цифр верхнего и нижнего регистра и иметь длину не менее 6 символов');
         return ;
       }
 
       if ($valid['password'] !== $valid['password_confirm']) {
-        $this->addError('password', __('validation.password_confirm'));
-        $this->addError('password_confirm', __('validation.password_confirm'));
+        $this->addError('password', 'Пароли не совпадают');
+        $this->addError('password_confirm', 'Пароли не совпадают');
         return ;
       }
 

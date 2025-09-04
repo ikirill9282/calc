@@ -32,12 +32,11 @@
               <div class="mb-1">Отправка со склада: {{ \Illuminate\Support\Carbon::parse($order->post_date)->format('d.m.Y') }}</div>
               <div class="">Прибытие в РЦ {{ $order->distributor_id }}: {{ \Illuminate\Support\Carbon::parse($order->delivery_date)->format('d.m.Y') }}</div>
             </div>
-            {{-- <div class="basis-1/4 text-right text-xl">
-              Предварительная&nbsp;стоимость: {{ \Illuminate\Support\Number::currency($order->total, 'RUB', locale: 'ru') }}
-              <p class="text-xs">
-                Итоговая стоимость является предварительным расчетом, точная стоимость будет известна после взвешивания и обмера груза на складе приема.
-              </p>
-            </div> --}}
+          </div>
+
+
+          <div class="font-medium text-lg p-4 border mt-4 inline-block text-secondary-400 dark:text-secondary-600 border-secondary-400 dark:border-secondary-600">
+            Важно! Дата доставки в РЦ может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
           </div>
 
           <div class="py-6 mt-6 border-t border-primary-500/50">
@@ -55,6 +54,7 @@
               </p>
               <p class="">{{ $order->distributor_id }} {{ $order->distributor_center_id }}</p>
             </div>
+            
             <div class="border-t border-primary-500/50 mt-6 py-6">
               <div class="text-xl font-bold mb-6">Способ передачи груза:</div>
               <div class="flex justify-start items-stretch gap-5 flex-col sm:flex-row sm:gap-10 lg:gap-20">

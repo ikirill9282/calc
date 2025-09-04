@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
       return preg_match( '/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*()_\-+=]{6,}$/is', $password);
     }
+
+    public function makeResetUrl(): string
+    {
+      return '';
+    }
 }

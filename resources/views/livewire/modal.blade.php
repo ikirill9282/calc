@@ -17,7 +17,13 @@
     <div class="relative max-w-xl w-full p-6 bg-white dark:bg-primary-800">
       <div class="absolute top-3 right-3 text-right mb-2 leading-0">
         <x-link
-          x-on:click.prevent="isOpen = false"
+          x-on:click.prevent="() => {
+            isOpen = false;
+            const url = new URL(window.location);
+            url.searchParams.delete('modal');
+            window.history.replaceState(null, '', url);
+          }
+          "
           class="hover:cursor-pointer inline-block"
         >
           @include('icons.close')

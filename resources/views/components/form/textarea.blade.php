@@ -19,6 +19,7 @@
           border-primary-200 dark:border-primary-400/50 h-28 sm:h-22 md:h-20 {{ $class ?? '' }}
           placeholder:text-gray-400 @error($name ?? null) !border-red-500 @enderror
           group-hover/input:border-secondary-600 dark:group-hover/input:border-secondary-400
+          group-has-focus/input:border-secondary-600 dark:group-has-focus/input:border-secondary-400
           "
     placeholder="{{ $placeholder ?? '' }}"
     ></textarea>

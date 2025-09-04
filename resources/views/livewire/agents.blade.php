@@ -6,7 +6,7 @@
       </div>
     @endforeach
   @endif
-  <a href="{{ url('/') }}" class="hover:text-secondary-600 dark:hover:text-secondary-400 mb-4 inline-block">Вернуться к заполнению</a>
+  <x-link href="{{ url('/') }}" class="inline-block sm:text-lg sm:mb-8">← Вернуться назад к&nbsp;заполнению заявки</x-link>
   <div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_1fr] gap-5 2xl:gap-10">
       
       <div class="flex flex-col gap-4" id="agents-table">

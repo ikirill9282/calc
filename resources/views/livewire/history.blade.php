@@ -17,7 +17,9 @@
               @endif
               <div class="mb-1">Отправка со склада: {{ \Illuminate\Support\Carbon::parse($order->post_date)->format('d.m.Y') }}</div>
               <div class="">Прибытие в РЦ {{ $order->distributor_id }}: {{ \Illuminate\Support\Carbon::parse($order->delivery_date)->format('d.m.Y') }}</div>
+              
             </div>
+            
             <div class="basis-1/4 sm:text-right text-xl">
               Предварительная&nbsp;стоимость: {{ \Illuminate\Support\Number::currency($order->total, 'RUB', locale: 'ru') }}
               <p class="text-xs">
@@ -27,6 +29,12 @@
           </div>
 
           <div class="order-details-view py-6 mt-6 border-t hidden border-primary-500/50">
+
+            <div class="font-medium text-lg p-4 border mb-4 inline-block text-secondary-400 dark:text-secondary-600 border-secondary-400 dark:border-secondary-600">
+              Важно! Дата доставки в РЦ может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
+            </div>
+
+
             <div class="flex justify-start items-start gap-2 mb-4">
               <p class="flex justify-start items-center gap-2 min-w-26">
                 <span>@include('icons.point')</span>
@@ -41,6 +49,7 @@
               </p>
               <p class="">{{ $order->distributor_id }} {{ $order->distributor_center_id }}</p>
             </div>
+
             <div class="flex mt-4">
               <x-link 
                 href="{{ url('/?reply='.\Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}" 
@@ -110,7 +119,7 @@
                   ];
                 }
               @endphp
-              <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden">
+              <div class="max-w-[85vw] overflow-x-scroll overflow-y-hidden sm:!overflow-hidden">
                 <table>
                   <thead>
                     <tr>

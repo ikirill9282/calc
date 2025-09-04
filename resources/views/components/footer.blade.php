@@ -8,6 +8,8 @@
                 <p>ООО ТРАНСПОРТНАЯ КОМПАНИЯ "82 РЕГИОН"</p>
                 <p>ИНН: 9102190477</p>
                 <p>ОРГН: 1159102108440</p>
+                <x-link target="_blank" href="https://tk82.ru/regulation.html" class="block">Политика конфиденциальности</x-link>
+                <x-link target="_blank" href="https://tk82.ru/consent.html" class="block">Пользовательское соглашение</x-link>
               </div>
             </div>
         </div>
