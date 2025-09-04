@@ -172,6 +172,7 @@ class Order extends Model
         'receive' => 'Нет',
         'pick' => 'Да',
       },
+      'receive_date' => $item['transfer_method_receive_date'],
       'payment_method' => $item['payment_method'],
       'pick_date' => $item['transfer_method_pick_date'],
       'pick_address' => $item['transfer_method_pick_address'],
