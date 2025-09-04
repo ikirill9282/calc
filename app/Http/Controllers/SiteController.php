@@ -8,6 +8,7 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 class SiteController extends Controller
 {
@@ -36,6 +37,7 @@ class SiteController extends Controller
           
           // Mail::to(Auth::user()->email)->send(new OrderSuccess($order));
           $order->writeSheet();
+          Session::forget('checkout');
 
         } catch (\Exception $e) {
           throw $e;
