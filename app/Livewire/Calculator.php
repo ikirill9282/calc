@@ -653,17 +653,6 @@ class Calculator extends Component
 
       if (!$this->isFieldDisabled(2)) {
 
-        /** FOR TESTING */
-        // $today = Carbon::today();
-        // $end = Carbon::today()->modify('+1 week');
-        // $result = [];
-        // while($today->lte($end)) {
-        //   array_push($result, $today->format('Y-m-d'));
-        //   $today->modify('+1 day');
-        // }
-
-        // return $result;
-
         $data = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
           ->where('distributor', $this->getField('distributor_id'))
@@ -751,16 +740,6 @@ class Calculator extends Component
     public function getPickDates(): array
     {
       if (!$this->isFieldDisabled(3)) {
-        /** FOR TESTING */
-        // $today = Carbon::today();
-        // $end = Carbon::today()->modify('+3 week');
-        // $result = [];
-        // while($today->lte($end)) {
-        //   array_push($result, $today->format('Y-m-d'));
-        //   $today->modify('+1 day');
-        // }
-
-        // return $result;
 
         $date = SheetData::query()
           ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->getField('warehouse_id'))
