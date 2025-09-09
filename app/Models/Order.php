@@ -23,7 +23,6 @@ class Order extends Model
       } elseif ($model->transfer_method == 'receive') {
         $model->transfer_method_pick_address = null;
         $model->transfer_method_pick_date = null;
-        $model->payment_method_pick = null;
       }
 
       if ($model->cargo == 'boxes') {
