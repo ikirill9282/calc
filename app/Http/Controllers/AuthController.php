@@ -118,7 +118,7 @@ class AuthController extends Controller
       }
 
       $user->update(['password' => $valid['password']]);
-      $url = route('home') . '?modal=reset-success';
+      $url = route('home') . '?modal=auth';
       
       return redirect($url);
     }
