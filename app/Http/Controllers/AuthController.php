@@ -85,7 +85,7 @@ class AuthController extends Controller
         }
       }
 
-      return redirect('/?modal=reset');
+      return redirect('/?modal=password-reset');
     }
 
     public function change(Request $request)
@@ -118,7 +118,7 @@ class AuthController extends Controller
       }
 
       $user->update(['password' => $valid['password']]);
-      $url = route('home') . '?modal=auth';
+      $url = route('home') . '?modal=reset-success';
       
       return redirect($url);
     }

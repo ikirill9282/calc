@@ -84,11 +84,18 @@ class Modal extends Component
         $this->open();
     }
 
+    #[On('openResetSuccess')]
+    public function openResetSuccess()
+    {
+        $this->view = 'reset-success';
+        $this->open();
+    }
+
     #[On('openRegister')]
     public function openRegister()
     {
-        $this->view = 'register';
-        $this->open();
+      $this->view = 'register';
+      $this->open();
     }
 
     #[On('modalOpen')]
