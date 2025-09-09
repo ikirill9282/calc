@@ -3,8 +3,6 @@
 namespace App\Livewire;
 
 use Livewire\Attributes\On;
-use App\Models\Distributor;
-use App\Models\DistributorCenter;
 use App\Models\Warehouse;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -97,6 +95,7 @@ class Calculator extends Component
       'agent_id' => null,
       'payment_method' => null,
       'payment_method_pick' => null,
+      'individual' => 0,
     ];
 
     protected array $numeric_fields = [
@@ -208,6 +207,7 @@ class Calculator extends Component
         'pick' => $this->getPickAmount(),
         default => 0,
       };
+
       $additional = $this->getAdditionalAmount();
       $delivery = $this->getDeliveryAmount();
 
@@ -220,6 +220,8 @@ class Calculator extends Component
     public function getAdditionalAmount(): int
     {
 
+      if ($this->getField('individual')) return 0;
+
       if ($this->getField('cargo') == 'boxes') {
         return 0;
       }
@@ -227,6 +229,7 @@ class Calculator extends Component
       if (!$this->canCalcBoxes() && !$this->canCalcPallets()) {
         return 0;
       }
+
       $quant = match($this->getField('palletizing_type')) {
         'single' => 800,
         'pallet' => 800,
@@ -239,6 +242,7 @@ class Calculator extends Component
     public function getDeliveryAmount(): int
     {
       $result = 0;
+      if ($this->getField('individual')) return $result;
 
       if (!$this->isFieldDisabled(4)) {
           $costs = SheetData::query()
@@ -292,6 +296,7 @@ class Calculator extends Component
     public function getPickAmount(): int
     {
       $result = 0;
+      if ($this->getField('individual')) return $result;
 
       if (!$this->isFieldDisabled(4)) {
           $min = SheetData::query()
