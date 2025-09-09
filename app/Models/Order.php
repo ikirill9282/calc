@@ -19,10 +19,10 @@ class Order extends Model
     static::saving(function($model) {
       if ($model->transfer_method == 'pick') {
         $model->transfer_method_receive_date = null;
-        $model->payment_method_pick = null;
       } elseif ($model->transfer_method == 'receive') {
         $model->transfer_method_pick_address = null;
         $model->transfer_method_pick_date = null;
+        $model->payment_method_pick = null;
       }
 
       if ($model->cargo == 'boxes') {
@@ -147,7 +147,7 @@ class Order extends Model
       'delivery_date' => $item['delivery_date'],
       'distrubutor_id' => $item['distributor_id'],
       'distributor_center_id' => $item['distributor_center_id'],
-      'payment_method_pick' => $item['payment_method_pick'], // Стоимость доставки
+      'payment_method' => $item['payment_method'],
       'custom1' => null,
       'custom2' => null,
       'custom3' => null,
@@ -173,7 +173,7 @@ class Order extends Model
         'pick' => 'Да',
       },
       'receive_date' => $item['transfer_method_receive_date'],
-      'payment_method' => $item['payment_method'],
+      'payment_method_pick' => $item['payment_method_pick'],
       'pick_date' => $item['transfer_method_pick_date'],
       'pick_address' => $item['transfer_method_pick_address'],
       'comment' => $item['cargo_comment'],

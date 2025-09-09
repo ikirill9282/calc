@@ -23,12 +23,12 @@
         @if ($this->getField('transfer_method') == 'pick')
             <x-form.fieldset :title="false" set_description="Способ оплаты забора груза" :set_loading="false">
                 <div class="flex flex-col gap-4">
-                    <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
-                        name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash"
-                        :checked="$this->getField('payment_method') == 'cash' ? 'checked' : ''" />
-                    <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
-                        name="payment_method" value="bill" label="По счету" id="payment_method_bill"
-                        :checked="$this->getField('payment_method') == 'bill' ? 'checked' : ''" />
+                    <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
+                        name="payment_method_pick" value="cash" label="Наличными при отправке"
+                        id="payment_method_pick_cash" :checked="$this->getField('payment_method_pick') == 'cash' ? 'checked' : ''" />
+                    <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
+                        name="payment_method_pick" value="bill" label="По счету" id="payment_method_pick_bill"
+                        :checked="$this->getField('payment_method_pick') == 'bill' ? 'checked' : ''" />
                 </div>
 
                 @error('payment_method_pick')
@@ -39,14 +39,15 @@
 
         <x-form.fieldset :title="false" set_description="Способ оплаты доставки груза" :set_loading="false">
             <div class="flex flex-col gap-4">
-                <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
-                    name="payment_method_pick" value="cash" label="Наличными при отправке"
-                    id="payment_method_pick_cash" :checked="$this->getField('payment_method_pick') == 'cash' ? 'checked' : ''" />
-                <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
-                    name="payment_method_pick" value="bill" label="По счету" id="payment_method_pick_bill"
-                    :checked="$this->getField('payment_method_pick') == 'bill' ? 'checked' : ''" />
+                <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
+                    name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash"
+                    :checked="$this->getField('payment_method') == 'cash' ? 'checked' : ''" />
+                <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
+                    name="payment_method" value="bill" label="По счету" id="payment_method_bill"
+                    :checked="$this->getField('payment_method') == 'bill' ? 'checked' : ''" />
             </div>
-            @error('payment_method_pick')
+
+            @error('payment_method')
                 <span class="text-red-500 mt-4 inline-block">{{ $message }}</span>
             @enderror
         </x-form.fieldset>

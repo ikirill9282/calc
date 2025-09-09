@@ -914,10 +914,11 @@ class Calculator extends Component
     {
       if ($this->validateFields()) {
         if ($this->checkout) {
+          // dd($this->fields);
           $validator = Validator::make($this->fields, [
             'agent_id' => 'required|integer',
-            'payment_method' => 'nullable|string',
-            'payment_method_pick' => 'nullable|string',
+            'payment_method_pick' => 'required_if:transfer_method,pick|nullable|string',
+            'payment_method' => 'required|string',
           ], [
             'agent_id' => 'Выберите контрагента',
             'payment_method' => 'Выберите способ оплаты',
