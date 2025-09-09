@@ -208,6 +208,7 @@ class Calculator extends Component
         default => 0,
       };
 
+      // dump($this->getField('individual'));
       $additional = $this->getAdditionalAmount();
       $delivery = $this->getDeliveryAmount();
 

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
           $table->tinyInteger('individual')->default(0)->after('payment_method_pick');
+          $table->tinyInteger('palletizing_count')->nullable()->default(null)->change();
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
           $table->dropColumn('individual');
+          $table->tinyInteger('palletizing_count')->nullable(null)->default(0)->change();
         });
     }
 };
