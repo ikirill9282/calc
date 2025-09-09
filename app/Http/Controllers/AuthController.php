@@ -64,7 +64,7 @@ class AuthController extends Controller
         $valid = $request->validate(['email' => 'required|string|email']);
         $user = User::where('email', $valid['email'])->first();
         if ($user) {
-          // Mail::to($user->email)->send(new Reset($user));
+          Mail::to($user->email)->send(new Reset($user));
           $url = route('home') . '?modal=reset-sended';
           return redirect($url);
         }
