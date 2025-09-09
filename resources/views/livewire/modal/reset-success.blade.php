@@ -1,6 +1,6 @@
 <div class="bg-inherit">
-  <h3 class="font-bold text-xl mb-4 flex gap-3 items-center justify-start">
-    <p>@include('icons.check', ['width' => 50, 'height' => 50])</p>
+  <h3 class="font-bold text-xl mb-8 flex gap-3 flex-col-reverse  items-center justify-start">
+    <p class="py-4">@include('icons.check', ['width' => 75, 'height' => 75])</p>
     <p>Пароль успешно изменен!</p>
   </h3>
   <div class="flex justify-between items-center gap-4">
