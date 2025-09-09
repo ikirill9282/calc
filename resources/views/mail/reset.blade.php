@@ -25,18 +25,27 @@
             margin-bottom: 20px;
         }
         .button {
-            display: block;
+            display: inline-block;
             background-color: #f44336;
             color: white !important;
             padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
+            margin: 0 auto;
         }
         .footer {
             margin-top: 20px;
             font-size: 12px;
             color: #777;
             text-align: center;
+        }
+
+        p {
+          text-align: center;
+        }
+
+        div {
+          text-align: center;
         }
     </style>
 </head>
@@ -45,10 +54,10 @@
         <div class="header">
             <h1>Сброс пароля</h1>
         </div>
-        <p>Здравствуйте,</p>
+        <p>Здравствуйте, {{ $user->name }}!</p>
         <p>Вы получили это письмо, потому что запросили сброс пароля для своей учетной записи.</p>
         <p>Чтобы сбросить пароль, нажмите на кнопку ниже:</p>
-        <a href="{{ $resetLink ?? '#' }}" class="button">Сбросить пароль</a>
+        <a href="{{ $user->makeResetUrl() ?? '#' }}" class="button">Сбросить пароль</a>
         <p>Если вы не запрашивали сброс пароля, можете проигнорировать это письмо.</p>
         <div class="footer">
             <p>С уважением,<br> команда {{ env('APP_NAME') }}</p>

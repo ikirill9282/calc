@@ -42,7 +42,7 @@
         </div>
     </div>
     @else
-      <div wire:click.prevent="setShowPassword('{{ $name }}')" class="show-password-btn absolute top-3.5 right-4" data-name="{{ $name }}">
+      <div wire:click.prevent="setShowPassword('{{ $name }}')" class="{{ $attributes->get('showPasswordClass') }} absolute top-3.5 right-4" data-name="{{ $name }}">
           <div
               class="hover:cursor-pointer transition text-primary-500 hover:text-secondary-600 dark:hover:text-secondary-400">
               @include('icons.eye')

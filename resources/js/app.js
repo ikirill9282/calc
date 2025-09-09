@@ -110,21 +110,17 @@ function discoverItems() {
       $(this).closest('.datepicker-group').find('.datepicker').focus();
     });
 
-    // $('.show-password-btn').each((k, el) => {
-
-    //   const name = $(el).attr('name');
-    //   if(!show_password_btn.includes(name)) {
-    //     show_password_btn.push(name);
-
-    //     $(el).on('click', () => {
-    //       const input = $(el).closest('.input').find('input');
-    //       const type = input.attr('type') === 'password' ? 'text' : 'password';
-    //       input.attr('type', type);
-    //     });
-
-    //   }
+    $('.show-password-btn').each((k, el) => {
+      if(!show_password_btn.includes(el)) {
+        $(el).on('click', () => {
+          const input = $(el).closest('.input').find('input');
+          const type = input.attr('type') === 'password' ? 'text' : 'password';
+          input.attr('type', type);
+        });
+        show_password_btn.push(el);
+      }
     
-    // });
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {

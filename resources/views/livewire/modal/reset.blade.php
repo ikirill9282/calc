@@ -29,7 +29,7 @@
 
     <div class="flex justify-between items-stretch gap-2">
       <x-button wire:click.prevent="openAuthModal" outlined class="w-full">Назад</x-button>
-      <x-button class="w-full">Отправить ссылку</x-button>
+      <x-button class="w-full">Изменить пароль</x-button>
     </div>
   </form>
 </div>

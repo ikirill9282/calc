@@ -23,9 +23,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::unguard();
-        LogViewer::auth(function($request) {
-          // dd($request->user());
-          return $request->user() && $request->user()->id === 1;
+        LogViewer::auth(function ($request) {
+          return $request->user() && in_array($request->user()->email, [
+            'service882211777@gmail.com',
+            'errewer123@gmail.com',
+          ]);
         });
     }
 }

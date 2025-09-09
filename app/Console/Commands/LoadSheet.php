@@ -67,6 +67,10 @@ class LoadSheet extends Command
             } catch (\Exception $e) {
               dd($item);
             }
+
+            $item['delivery_weekend'] = empty($item['delivery_weekend']) ? 0 : $item['delivery_weekend'];
+            $item['pick_weekend'] = empty($item['pick_weekend']) ? 0 : $item['pick_weekend'];
+
             return array_map(fn($val) => trim($val), $item);
           }, $data);
 

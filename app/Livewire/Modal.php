@@ -77,6 +77,13 @@ class Modal extends Component
         $this->open();
     }
 
+    #[On('openResetSend')]
+    public function openResetSend()
+    {
+        $this->view = 'reset-sended';
+        $this->open();
+    }
+
     #[On('openRegister')]
     public function openRegister()
     {

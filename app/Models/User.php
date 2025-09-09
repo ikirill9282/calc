@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Confirm;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 
 class User extends Authenticatable
@@ -50,6 +51,6 @@ class User extends Authenticatable
 
     public function makeResetUrl(): string
     {
-      return '';
+      return url('/auth/reset') . '?p=' . Crypt::encrypt(['id' => $this->id, 'expires' => Carbon::now()->modify('+5 minutes')->timestamp]);
     }
 }
