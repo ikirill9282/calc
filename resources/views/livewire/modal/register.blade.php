@@ -14,10 +14,6 @@
                 aria-autocomplete="off"
               />
             </x-form.wrap>
-
-            @error('name')
-                <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-            @enderror
         </div>
         <div class="bg-inherit">
 
@@ -29,9 +25,6 @@
                 wire:model.live="register.email"
               />
           </x-form.wrap>
-          @error('email')
-              <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-          @enderror
         </div>
         <div class="bg-inherit">
             <x-form.wrap label="Номер телефона" name="phone" >
@@ -46,10 +39,6 @@
                 wire:model.live="register.phone"
               />
             </x-form.wrap>
-
-            @error('phone')
-                <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-            @enderror
         </div>
         <div class="bg-inherit">
             <x-form.wrap label="Пароль" :show_password="true" name="password" >
