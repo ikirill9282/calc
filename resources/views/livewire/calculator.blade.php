@@ -250,17 +250,6 @@
                 </div>
             </div>
         </x-form.fieldset>
-
-        {{-- <x-form.fieldset set_description="Дополнительно: складские услуги" :title="false"
-              set_class="{{ $this->isFieldDisabled(7) ? 'disabled' : '' }}">
-              <div class="{{ empty($this->getField('warehouse_id')) ? '' : 'hidden' }}">
-                  <p class="my-2">Для получения подробной информации выберите склад, из которого будет доставлен
-                      груз.</p>
-              </div>
-              <div class="flex flex-col justify-start items-stretch gap-4 additional-box {{ empty($this->getField('warehouse_id')) ? 'hidden' : '' }}">
-                  
-              </div>
-          </x-form.fieldset> --}}
     </div>
 
     <div class="">

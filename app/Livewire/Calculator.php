@@ -173,7 +173,7 @@ class Calculator extends Component
       $this->onInitDatepickers();
     }
 
-    public function updated($property)
+    public function updated($property, $value)
     {
       if ($property == 'fields.transfer_method_pick.address') {
         $this->dropdownOpen[$property] = true;
@@ -182,6 +182,10 @@ class Calculator extends Component
 
       if ($property == 'fields.delivery_date') {
         $this->fields['post_date'] = $this->getDeliveryDiff();
+      }
+
+      if (in_array($property, ['fields.boxes_data.weight', 'fields.boxes_data.volume'])) {
+        $this->checkIndividual();
       }
 
       Session::put('calc', json_encode($this->fields));
@@ -200,6 +204,28 @@ class Calculator extends Component
       }
     }
 
+    /**
+     * If density more than 300 - enable "individual" field.
+     */
+    public function checkIndividual(): void
+    {
+      $volume = (int)$this->getField('boxes_data.volume');
+      $weight = (int)$this->getField('boxes_data.weight');
+
+      if (!empty($volume) && !empty($weight)) {
+        $density = round($weight / $volume);
+        if ($density > 300) {
+          $this->setField('individual', 1);
+        } elseif ($this->getField('individual')) {
+          $this->setField('individual', 0);
+        }
+      }
+    }
+
+    /**
+     * Get total price.
+     * @return integer
+     */
     public function getAmount(): int
     {
       $pick_amount = match($this->getField('transfer_method')) {
@@ -243,6 +269,7 @@ class Calculator extends Component
     public function getDeliveryAmount(): int
     {
       $result = 0;
+
       if ($this->getField('individual')) return $result;
 
       if (!$this->isFieldDisabled(4)) {

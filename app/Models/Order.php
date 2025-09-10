@@ -32,6 +32,13 @@ class Order extends Model
         $model->boxes_weight = 0;
         $model->boxes_volume = 0;
       }
+
+      if ($model->individual) {
+        $model->pick = null;
+        $model->delivery = null;
+        $model->additional = null;
+        $model->total = null;
+      }
     });
   }
 
@@ -148,6 +155,7 @@ class Order extends Model
       'distrubutor_id' => $item['distributor_id'],
       'distributor_center_id' => $item['distributor_center_id'],
       'payment_method' => $item['payment_method'],
+      'individual' => $item['individual'] ? 'Да' : 'Нет',
       'custom1' => null,
       'custom2' => null,
       'custom3' => null,
