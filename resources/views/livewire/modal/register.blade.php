@@ -64,10 +64,6 @@
                 wire:model.live='register.password_confirm'
               />
           </x-form.wrap>
-
-            @error('password_confirm')
-                <div class="text-red-500 mt-2 inline-block">{{ $message }}</div>
-            @enderror
         </div>
 
         <div class="flex justify-between items-stretch gap-2">
