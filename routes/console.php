@@ -19,7 +19,7 @@ if (!env('APP_LOCAL', false)) {
 // Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
-  
+  Order::find(100510)->writeSheet();
 });
 
 Artisan::command('ttm', function() {

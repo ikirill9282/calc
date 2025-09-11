@@ -176,6 +176,7 @@ class Order extends Model
       'custom8' => null,
       'boxes_weight' => strval(floatval($item['boxes_weight'])),
       'palletizing_type' => empty($item['palletizing_type']) ? 'Нет' : 'Да',
+      'palletizing_count' => $item['palletizing_count'],
       'transfer_method_pick' => match($this->transfer_method) {
         'receive' => 'Нет',
         'pick' => 'Да',
