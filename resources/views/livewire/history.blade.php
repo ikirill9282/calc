@@ -21,7 +21,13 @@
             </div>
             
             <div class="basis-1/4 sm:text-right text-xl">
-              Предварительная&nbsp;стоимость: {{ \Illuminate\Support\Number::currency($order->total ?? 0, 'RUB', locale: 'ru') }}
+              
+              @if($order->individual)
+                Расчет индивидуальный
+              @else
+                Предварительная&nbsp;стоимость: {{ \Illuminate\Support\Number::currency($order->total ?? 0, 'RUB', locale: 'ru') }}
+              @endif
+              
               <p class="text-xs">
                 Итоговая стоимость является предварительным расчетом, точная стоимость будет известна после взвешивания и обмера груза на складе приема.
               </p>
