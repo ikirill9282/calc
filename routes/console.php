@@ -19,11 +19,17 @@ if (!env('APP_LOCAL', false)) {
 // Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
-  dd(User::find(1)->makeResetUrl());
+  
 });
 
 Artisan::command('ttm', function() {
   Mail::to(User::find(1)->email)->send(new Reset(User::find(1)));
+});
+
+Artisan::command('tto', function() {
+  foreach (Order::all() as $order) {
+    $order->writeSheet();
+  }
 });
 
 Artisan::command('tts', function() {

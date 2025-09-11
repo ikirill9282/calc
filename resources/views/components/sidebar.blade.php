@@ -24,7 +24,7 @@
 @endphp
 
 <aside class="lg:p-3 h-full">
-    <div class="relative flex flex-col p-3 h-full w-full overflow-scroll lg:rounded-lg transition shadow bg-white dark:bg-primary-900">
+    <div class="relative flex flex-col p-3 h-full w-full overflow-scroll md:overflow-hidden lg:rounded-lg transition shadow bg-white dark:bg-primary-900">
         <div class="flex justify-end items-center lg:hidden" id="close-menu">
           <span class="block rotate-45">
             @include('icons.plus')
