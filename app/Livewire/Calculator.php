@@ -115,11 +115,6 @@ class Calculator extends Component
 
     public bool $checkout = false;
 
-    // public function setWarehouse($value): void
-    // {
-    //   $this->warehouse = $value;
-    // }
-
     public array $dropdownOpen = [];
 
     public function mount()
@@ -188,6 +183,10 @@ class Calculator extends Component
         $this->checkIndividual();
       }
 
+      if ($property == 'fields.cargo') {
+        $this->checkIndividual();
+      }
+
       Session::put('calc', json_encode($this->fields));
     }
 
@@ -209,6 +208,12 @@ class Calculator extends Component
      */
     public function checkIndividual(): void
     {
+      // Only for boxes
+      if ($this->getField('cargo') == 'pallets') {
+        $this->setField('individual', 0);
+        return ;
+      }
+
       $volume = (int)$this->getField('boxes_data.volume');
       $weight = (int)$this->getField('boxes_data.weight');
 

@@ -185,7 +185,7 @@
                                 <x-form.input class="input-numeric" name="fields.pallets_data.count"
                                     wire:model.live="fields.pallets_data.count" />
                             </x-form.wrap>
-                            <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производиться
+                            <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производится
                                 индивидуально, предварительная стоимость указана при условии, что вес каждой паллеты не
                                 превышает 400кг</div>
                         </div>
@@ -218,7 +218,7 @@
                             <div class="flex justify-start items-center gap-3 w-full p-4 mt-4 text-white bg-amber-600">
                                 <span>@include('icons.info', ['width' => 40, 'height' => 40])</span>
                                 <span class="">Важно! При отправке груза на паллетах, необходимо самостоятельно
-                                    запаллетить груз, либо заказать услугу у нас.</span>
+                                    запаллетировать груз, либо заказать услугу у нас.</span>
                             </div>
                         </div>
                     </div>
@@ -261,10 +261,11 @@
                     ">
                 {{ $this->checkout ? 'Оформить' : 'Перейти к оформлению' }}
             </x-button>
-            <x-button class="w-full" outlined>
+            <x-button class="w-full !p-0" outlined>
                 <div class="flex justify-center items-center gap-2">
                     {{-- <span>@include('icons.download')</span> --}}
                     <a target="_blank"
+                        class="!p-3 !w-full"
                         href="https://docs.google.com/spreadsheets/d/198VI0GjoaFRSdPzP5meYhBg4AqhnbS1unyywGThg0-o/edit?usp=sharing">
                         Прайс-лист
                     </a>
