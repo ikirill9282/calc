@@ -191,7 +191,7 @@
               </div>
               <div class="flex flex-col gap-1">
                 <div class="font-bold">Телефон:</div>
-                <div class="">89785551920</div>
+                <div class="">+79785550055<br>89785551920</div>
               </div>
             </div>
           </x-card>
