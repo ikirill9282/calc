@@ -209,7 +209,7 @@
                     </div>
                     <div class="flex gap-2">
                       <span>Телефон:</span>
-                      <span>+79785550055<br>89785551920</span>
+                      <span>+79785550055<br>+79785551920</span>
                     </div>
                   </div>
                 </div>
