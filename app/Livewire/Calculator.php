@@ -133,11 +133,6 @@ class Calculator extends Component
             foreach ($order->toArray() as $key => $val) {
               if ($key == 'post_date') continue;
               
-              // if (in_array($key, ['boxes', 'pallets'])) {
-              //   $this->fields[$key] = boolval($val);
-              //   continue;
-              // }
-
               if ($key == 'transfer_method_pick_address') {
                 $this->fields['transfer_method_pick']['address'] = $val;
                 continue;
@@ -164,6 +159,7 @@ class Calculator extends Component
         $this->fields = array_merge($this->fields, json_decode(Session::get('calc'), true));
       }
 
+      $this->checkIndividual();
       $this->getAddresses();
       $this->onInitDatepickers();
     }
@@ -179,14 +175,7 @@ class Calculator extends Component
         $this->fields['post_date'] = $this->getDeliveryDiff();
       }
 
-      if (in_array($property, ['fields.boxes_data.weight', 'fields.boxes_data.volume'])) {
-        $this->checkIndividual();
-      }
-
-      if ($property == 'fields.cargo') {
-        $this->checkIndividual();
-      }
-
+      $this->checkIndividual();
       Session::put('calc', json_encode($this->fields));
     }
 
@@ -214,8 +203,8 @@ class Calculator extends Component
         return ;
       }
 
-      $volume = (int)$this->getField('boxes_data.volume');
-      $weight = (int)$this->getField('boxes_data.weight');
+      $volume = $this->getField('boxes_data.volume');
+      $weight = $this->getField('boxes_data.weight');
 
       if (!empty($volume) && !empty($weight)) {
         $density = round($weight / $volume);
