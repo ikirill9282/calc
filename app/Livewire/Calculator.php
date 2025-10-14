@@ -462,7 +462,7 @@ class Calculator extends Component
         3 => call_user_func(function() {
           if ($this->isFieldDisabled(2)) {
             return true;
-          } elseif (empty($this->fields['delivery_date'])) {
+          } elseif (empty($this->fields['delivery_date']) || !$this->isValidCarbonDate($this->getField('delivery_date'))) {
             return true;
           } else {
             return false;
@@ -474,7 +474,7 @@ class Calculator extends Component
           } elseif (empty($this->fields['transfer_method'])) {
             return true;
           } elseif ($this->fields['transfer_method'] == 'receive') {
-            if (empty($this->getField('transfer_method_receive.date'))) {
+            if (empty($this->getField('transfer_method_receive.date')) || !$this->isValidCarbonDate($this->getField('transfer_method_receive.date'))) {
               return true;
             } else {
               return false;
@@ -482,7 +482,7 @@ class Calculator extends Component
           } elseif ($this->fields['transfer_method'] == 'pick') {
             if (empty($this->getField('transfer_method_pick.address'))) {
               return true;
-            } elseif (empty($this->getField('transfer_method_pick.date'))) {
+            } elseif (empty($this->getField('transfer_method_pick.date')) || !$this->isValidCarbonDate(empty($this->getField('transfer_method_pick.date')))) {
               return true;
             } else {
               return false;
