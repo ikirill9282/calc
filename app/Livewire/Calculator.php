@@ -560,16 +560,6 @@ class Calculator extends Component
  
     public function setField(string $name, mixed $value)
     {
-
-      if (str_ends_with($name, 'date')) {
-        try {
-          Carbon::parse($value);
-        } catch (\Exception $e) {
-          $this->addError('fields.delivery_date', 'Неверный формат даты'); 
-          return ;
-        }
-      }
-
       $key = str_ireplace('fields.', '', $name);
       Arr::set($this->fields, $key, $value);
 
