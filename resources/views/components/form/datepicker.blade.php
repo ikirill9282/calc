@@ -17,6 +17,7 @@
       autocomplete="off"
       aria-autocomplete="off"
       data-datepicker="{{ $name }}"
+      readonly
       {{ $attributes }}
       />
   </x-form.wrap>
