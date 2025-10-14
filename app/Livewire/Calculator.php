@@ -129,16 +129,15 @@ class Calculator extends Component
     
     public function updating($property, $value)
     {
-
       if (str_ends_with($property, 'date')) {
         try {
           Carbon::parse($value);
         } catch (\Exception $e) {
+          dd('ok');
           $this->addError('fields.delivery_date', 'Неверный формат даты'); 
           $value = null;
         }
       }
-
     }
 
     public function updated($property, $value)
@@ -154,6 +153,16 @@ class Calculator extends Component
 
       $this->checkIndividual();
       Session::put('calc', json_encode($this->fields));
+    }
+
+    function isValidCarbonDate(string $dateString): bool
+    {
+      try {
+        Carbon::parse($dateString);
+        return true;
+      } catch (\Exception $e) {
+        return false;
+      }
     }
 
     #[On('initDatepickers')]
