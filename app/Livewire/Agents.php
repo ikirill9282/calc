@@ -157,21 +157,24 @@ class Agents extends Component
       $valid = $validator->validated();
       $valid['user_id'] = Auth::user()->id;
       
+      $agent = Agent::where([
+        'user_id' => $valid['user_id'],
+        'title' => $valid['title'],
+        'ogrn' => $valid['ogrn'],
+        'inn' => $valid['inn'],
+      ])->first();
+
       if (
         !$this->edit_mode &&
-        Agent::where([
-          'user_id' => $valid['user_id'],
-          'title' => $valid['title'],
-          'ogrn' => $valid['ogrn'],
-          'inn' => $valid['inn'],
-        ])
-        ->exists()
+        $agent
       ) {
-        $this->setErrorBag([
-          'title' => 'Контрагент уже существует',
-          'inn' => 'Контрагент уже существует',
-          'ogrn' => 'Контрагент уже существует',
+        $agent->update([
+          'disabled' => 0,
+          'name' => $valid['name'],
+          'phone' => $valid['phone'],
+          'email' => $valid['email'],
         ]);
+        $this->reloadAgents();
         return ;
       }
 
@@ -291,9 +294,6 @@ class Agents extends Component
         $this->form['inn'] = $company['inn'];
         $this->form['ogrn'] = $company['ogrn'];
         $this->form['address'] = $company['address'];
-        // $this->form['name'] = $company['manager'] ?? $this->form['name'];
-        // $this->form['phone'] = $company['phone'] ?? $this->form['phone'];
-        // $this->form['email'] = $company['email'] ?? $this->form['email'];
         $this->company = $company;
         $this->getCompanies($company['name']);
         $this->getAddresses($company['address']);
