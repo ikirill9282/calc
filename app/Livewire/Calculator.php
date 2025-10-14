@@ -132,8 +132,8 @@ class Calculator extends Component
       if (str_ends_with($property, 'date')) {
         try {
           Carbon::parse($value);
+          dd($value);
         } catch (\Exception $e) {
-          dd('ok');
           $this->addError('fields.delivery_date', 'Неверный формат даты'); 
           $value = null;
         }
