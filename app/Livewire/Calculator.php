@@ -129,10 +129,10 @@ class Calculator extends Component
     
     public function updating($property, $value)
     {
+      dd($property, $value);
       if (str_ends_with($property, 'date')) {
         try {
           Carbon::parse($value);
-          dd($value);
         } catch (\Exception $e) {
           $this->addError('fields.delivery_date', 'Неверный формат даты'); 
           $value = null;
