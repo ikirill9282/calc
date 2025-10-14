@@ -129,6 +129,7 @@ class Calculator extends Component
     
     public function updating($property, $value)
     {
+      dd($property, $value);
       if (str_ends_with($property, 'date')) {
         try {
           Carbon::parse($value);
@@ -136,7 +137,6 @@ class Calculator extends Component
           throw ValidationException::withMessages([
             "$property" => ['Неверный формат даты'],
           ]);
-          dd('ok');
         }
       }
     }
