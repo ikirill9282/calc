@@ -54,6 +54,10 @@ class Order extends Model
 
   public function writeSheet()
   {
+    if ($this->print()->exists()) {
+      return ;
+    }
+
     $user = User::find($this->user_id);
     $agent = Agent::where('id', $this->agent_id)->first();
 
@@ -204,7 +208,7 @@ class Order extends Model
 
     // if (!$this->print()->exists()) {
       $sheet->append($values, 'USER_ENTERED');
-      // $this->print()->firstOrCreate();
+      $this->print()->firstOrCreate();
     // } else {
       // $sheet->range($range)->update($values);
     // }
