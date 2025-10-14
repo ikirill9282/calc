@@ -133,7 +133,11 @@ class Calculator extends Component
         try {
           Carbon::parse($value);
         } catch (\Exception $e) {
-          $this->$property = $this->$property;
+          $keys = explode('.', $property);
+          $oldValue = $this->getNestedPropertyValue($keys);
+          
+          $this->setNestedPropertyValue($keys, $oldValue);
+          
           throw ValidationException::withMessages([
             "$property" => ['Неверный формат даты'],
           ]);
