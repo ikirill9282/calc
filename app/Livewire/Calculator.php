@@ -136,6 +136,7 @@ class Calculator extends Component
           throw ValidationException::withMessages([
             "$property" => ['Неверный формат даты'],
           ]);
+          dd('ok');
         }
       }
     }
