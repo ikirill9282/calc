@@ -124,8 +124,8 @@ class Agents extends Component
         $this->form, 
         [
           'title' => 'required|string',
-          'inn' => 'required|integer',
-          'ogrn' => 'required|integer',
+          'inn' => 'required|string',
+          'ogrn' => 'required|string',
           'address' => 'required|string',
           'name' => 'required|string',
           'phone' => 'required|string',
