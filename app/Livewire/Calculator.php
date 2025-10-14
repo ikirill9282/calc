@@ -173,7 +173,7 @@ class Calculator extends Component
 
     protected function getNestedPropertyValue(array $keys)
     {
-        $value = $this;
+        $value = $this->fields;
         foreach ($keys as $key) {
             if (is_array($value) && array_key_exists($key, $value)) {
                 $value = $value[$key];
@@ -189,7 +189,7 @@ class Calculator extends Component
 
     protected function setNestedPropertyValue(array $keys, $newValue)
     {
-        $target = &$this;
+        $target = &$this->fields;
         $lastKey = array_pop($keys);
 
         foreach ($keys as $key) {
