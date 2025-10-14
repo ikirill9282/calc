@@ -273,7 +273,7 @@
             </x-button>
 
             <x-slot:bot>
-                @if (!empty($this->getField('delivery_date')))
+                @if (!empty($this->getField('delivery_date')) && $this->isValidCarbonDate($this->getField('delivery_date')))
                     <x-card>
                         <div class="flex flex-col gap-2 w-full">
                             @if (!empty($this->getPostDate()))
