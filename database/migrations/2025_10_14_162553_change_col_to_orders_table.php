@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-          $table->decimal('pick', 12, 2)->nullable()->index();
-          $table->decimal('delivery', 12, 2)->nullable()->index();
-          $table->decimal('additional', 12, 2)->nullable()->index();
-          $table->decimal('total', 12, 2)->nullable()->index();
+          $table->decimal('pick', 12, 2)->nullable()->change();
+          $table->decimal('delivery', 12, 2)->nullable()->change();
+          $table->decimal('additional', 12, 2)->nullable()->change();
+          $table->decimal('total', 12, 2)->nullable()->change();
         });
     }
 
