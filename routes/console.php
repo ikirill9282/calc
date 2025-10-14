@@ -19,10 +19,7 @@ if (!env('APP_LOCAL', false)) {
 // Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
-  $orders = Order::whereBetween('id', [100648, 100656])->get();
-  foreach ($orders as $order) {
-    $order->writeSheet();
-  }
+  
 });
 
 Artisan::command('ttm', function() {
