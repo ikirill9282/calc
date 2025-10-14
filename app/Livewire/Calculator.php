@@ -133,10 +133,6 @@ class Calculator extends Component
         try {
           Carbon::parse($value);
         } catch (\Exception $e) {
-          $keys = explode('.', $property);
-          $oldValue = $this->getNestedPropertyValue($keys);
-          
-          $this->setNestedPropertyValue($keys, $oldValue);
 
           throw ValidationException::withMessages([
             "$property" => ['Неверный формат даты'],
@@ -152,7 +148,7 @@ class Calculator extends Component
         $this->getAddresses(Arr::get($this->fields, str_ireplace('fields.', '', $property)));
       }
 
-      if ($property == 'fields.delivery_date') {
+      if ($property == 'fields.delivery_date' && $this->isValidCarbonDate($this->getField('delivery_date'))) {
         $this->fields['post_date'] = $this->getDeliveryDiff();
       }
 
@@ -168,37 +164,6 @@ class Calculator extends Component
       } catch (\Exception $e) {
         return false;
       }
-    }
-
-
-    protected function getNestedPropertyValue(array $keys)
-    {
-        $value = $this->fields;
-        foreach ($keys as $key) {
-            if (is_array($value) && array_key_exists($key, $value)) {
-                $value = $value[$key];
-            } elseif (is_object($value) && isset($value->$key)) {
-                $value = $value->$key;
-            } else {
-                return null;
-            }
-        }
-        return $value;
-    }
-
-
-    protected function setNestedPropertyValue(array $keys, $newValue)
-    {
-        $target = &$this->fields;
-        $lastKey = array_pop($keys);
-
-        foreach ($keys as $key) {
-            if (!isset($target[$key])) {
-                $target[$key] = [];
-            }
-            $target = &$target[$key];
-        }
-        $target[$lastKey] = $newValue;
     }
 
     #[On('initDatepickers')]
