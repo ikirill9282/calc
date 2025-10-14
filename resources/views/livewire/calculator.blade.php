@@ -75,7 +75,7 @@
         <x-form.fieldset set_title="Шаг 2" set_description="Дата доставки на РЦ"
             set_class="{{ $this->isFieldDisabled(2) ? 'disabled' : '' }}">
             <x-form.datepicker id="datepicker" name="fields.delivery_date"
-                label="Выберите, к какому числу доставить на РЦ" wire:model="fields.delivery_date" />
+                label="Выберите, к какому числу доставить на РЦ" wire:model.live="fields.delivery_date" />
         </x-form.fieldset>
 
         <x-form.fieldset set_title="Шаг 3" set_description="Способ передачи груза"
