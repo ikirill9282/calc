@@ -129,7 +129,7 @@ class Calculator extends Component
     
     public function updating($property, $value)
     {
-      dd($property, $value);
+      dd($property, $value, str_ends_with($property, 'date'));
       if (str_ends_with($property, 'date')) {
         try {
           Carbon::parse($value);
