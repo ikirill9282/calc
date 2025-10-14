@@ -126,6 +126,20 @@ class Calculator extends Component
       $this->getAddresses();
       $this->onInitDatepickers();
     }
+    
+    public function updating($property, $value)
+    {
+
+      if (str_ends_with($property, 'date')) {
+        try {
+          Carbon::parse($value);
+        } catch (\Exception $e) {
+          $this->addError('fields.delivery_date', 'Неверный формат даты'); 
+          return ;
+        }
+      }
+
+    }
 
     public function updated($property, $value)
     {
@@ -536,7 +550,6 @@ class Calculator extends Component
  
     public function setField(string $name, mixed $value)
     {
-
 
       if (str_ends_with($name, 'date')) {
         try {
