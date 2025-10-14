@@ -27,39 +27,6 @@ class Calculator extends Component
       'setField',
     ];
 
-    // public array $fields = [
-    //     'agent_id' => null,
-    //     'warehouse_id' => 'Ростов-на-Дону Ростовская область, г Ростов-на-Дону, пр. 40-летия Победы, 85/4А1',
-    //     'distributor_id' => 'Wildberries',
-    //     'distributor_center_id' => 'Подольск 2 (WB)',
-    //     'delivery_date' => '21.06.2025',
-    //     'transfer_method' => 'pick',
-    //     'transfer_method_receive' => [
-    //       'date' => '19.06.2025',
-    //     ],
-    //     'transfer_method_pick' => [
-    //       'address' => 'г Москва, г Щербинка ',
-    //       'date' => '19.06.2025',
-    //     ],
-    //     'user_address_query' => null,
-    //     'user_focused_dropdown' => null,
-    //     'boxes' => true,
-    //     'boxes_data' => [
-    //       'count' => 2,
-    //       'volume' => 1.2,
-    //       'weight' => 1234,
-    //     ],
-    //     'pallets' => true,
-    //     'pallets_data' => [
-    //       'count' => 2,
-    //       'volume' => 4,
-    //     ],
-    //     'cargo_comment' => null,
-    //     'cargo_type' => null,
-    //     'palletizing_type' => null,
-    //     'palletizing_count' => 0,
-    // ];
-
     public array $fields = [
       'warehouse_id' => null,
       'distributor_id' => 'Wildberries',
@@ -68,9 +35,6 @@ class Calculator extends Component
       'post_date' => null,
       'transfer_method' => null,
 
-      'transfer_method_receive' => [
-         'date' => null,
-      ],
       'transfer_method_receive' => [
         'date' => null,
       ],
@@ -86,7 +50,6 @@ class Calculator extends Component
       ],
       'pallets_data' => [
         'count' => null,
-        // 'weight' => null,
       ],
       'cargo_comment' => null,
       'cargo_type' => null,
@@ -272,7 +235,6 @@ class Calculator extends Component
             ->where('distributor', $this->getField('distributor_id'))
             ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->getField('distributor_center_id'))
 
-            /** DISABLE FOR TEST */
             // ->where('distributor_center_delivery_date', Carbon::parse($this->getField('delivery_date'))->format('Y-m-d'))
             
             ->select(['delivery_tariff_min', 'delivery_tariff_vol', 'delivery_tariff_pallete'])
@@ -563,10 +525,6 @@ class Calculator extends Component
 
     public function getField(string $name): mixed
     {
-      // if (str_contains($name, '.')) {
-      //   return Arr::get($this->fields, $name);
-      // }
-      // return array_key_exists($name, $this->fields) ? $this->fields[$name] : null;
       $key = str_ireplace('fields.', '', $name);
       $val = Arr::get($this->fields, $key);
       if (in_array($key, $this->numeric_fields)) {
@@ -578,6 +536,17 @@ class Calculator extends Component
  
     public function setField(string $name, mixed $value)
     {
+
+
+      if (str_ends_with($name, 'date')) {
+        try {
+          Carbon::parse($value);
+        } catch (\Exception $e) {
+          $this->addError('fields.delivery_date', 'Неверный формат даты'); 
+          return ;
+        }
+      }
+
       $key = str_ireplace('fields.', '', $name);
       Arr::set($this->fields, $key, $value);
 
