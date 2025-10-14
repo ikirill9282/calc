@@ -137,7 +137,7 @@ class Calculator extends Component
           $oldValue = $this->getNestedPropertyValue($keys);
           
           $this->setNestedPropertyValue($keys, $oldValue);
-          
+
           throw ValidationException::withMessages([
             "$property" => ['Неверный формат даты'],
           ]);
@@ -168,6 +168,37 @@ class Calculator extends Component
       } catch (\Exception $e) {
         return false;
       }
+    }
+
+
+    protected function getNestedPropertyValue(array $keys)
+    {
+        $value = $this;
+        foreach ($keys as $key) {
+            if (is_array($value) && array_key_exists($key, $value)) {
+                $value = $value[$key];
+            } elseif (is_object($value) && isset($value->$key)) {
+                $value = $value->$key;
+            } else {
+                return null;
+            }
+        }
+        return $value;
+    }
+
+
+    protected function setNestedPropertyValue(array $keys, $newValue)
+    {
+        $target = &$this;
+        $lastKey = array_pop($keys);
+
+        foreach ($keys as $key) {
+            if (!isset($target[$key])) {
+                $target[$key] = [];
+            }
+            $target = &$target[$key];
+        }
+        $target[$lastKey] = $newValue;
     }
 
     #[On('initDatepickers')]
