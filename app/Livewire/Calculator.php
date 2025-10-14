@@ -921,11 +921,11 @@ class Calculator extends Component
             throw new ValidationException($validator);
           }
           $order = $this->prepareOrder();
-          try {
+          // try {
             $order->save();
-          } catch (\Exception $e) {
-            dd($order);
-          }
+          // } catch (\Exception $e) {
+            
+          // }
 
           Session::forget('calc');
           return redirect('/success/?order='.Crypt::encrypt($order->id));
