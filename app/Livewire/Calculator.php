@@ -133,8 +133,9 @@ class Calculator extends Component
         try {
           Carbon::parse($value);
         } catch (\Exception $e) {
-          $this->addError('fields.delivery_date', 'Неверный формат даты'); 
-          $value = null;
+          throw ValidationException::withMessages([
+            "$property" => ['Неверный формат даты'],
+          ]);
         }
       }
     }
