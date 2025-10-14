@@ -142,14 +142,18 @@ class Calculator extends Component
       Session::put('calc', json_encode($this->fields));
     }
 
-    function isValidCarbonDate(string $dateString): bool
+    function isValidCarbonDate(string $value): bool
     {
-      try {
-        Carbon::parse($dateString);
-        return true;
-      } catch (\Exception $e) {
+      $validator = Validator::make(
+        ['value' => $value],
+        ['value' => 'date'],
+      );
+
+      if ($validator->fails()) {
         return false;
       }
+
+      return true;
     }
 
     #[On('initDatepickers')]
