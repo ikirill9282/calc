@@ -33,7 +33,7 @@ class WriteSheet extends Command
         ->range('')
         ;
       
-      foreach (Order::all() as $order) {
+      foreach (Order::where('id', '>' 100570)->get() as $order) {
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
         $order->print()->firstOrCreate();
