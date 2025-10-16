@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Order;
 use Illuminate\Console\Command;
 use Revolution\Google\Sheets\Facades\Sheets;
+use Illuminate\Support\Facades\Log;
 
 
 class WriteSheet extends Command
@@ -37,6 +38,11 @@ class WriteSheet extends Command
       foreach ($orders as $order) {
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
+        try {
+          $order->writeSheet();
+        } catch (\Exception $e) {
+          Log::error('Error while printing order');
+        }
         $order->print()->firstOrCreate();
       }
     }
