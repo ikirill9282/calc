@@ -32,8 +32,10 @@ class WriteSheet extends Command
         ->sheet("Лист1")
         ->range('')
         ;
+      $orders = Order::whereDoesntHave('print')->get();
+      dd($orders);
       
-      foreach (Order::where('id', '>', 100720)->get() as $order) {
+      foreach ($orders as $order) {
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
         $order->print()->firstOrCreate();
