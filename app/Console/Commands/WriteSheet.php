@@ -33,8 +33,7 @@ class WriteSheet extends Command
         ->range('')
         ;
       $orders = Order::whereDoesntHave('print')->get();
-      dd($orders);
-      
+
       foreach ($orders as $order) {
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
