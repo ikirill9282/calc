@@ -36,7 +36,7 @@ class WriteSheet extends Command
       foreach (Order::all() as $order) {
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
-        $this->print()->firstOrCreate();
+        $order->print()->firstOrCreate();
       }
     }
 }
