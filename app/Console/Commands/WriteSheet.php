@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Order;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Revolution\Google\Sheets\Facades\Sheets;
 use Illuminate\Support\Facades\Log;
 
@@ -33,7 +34,9 @@ class WriteSheet extends Command
         ->sheet("Лист1")
         ->range('')
         ;
-      $orders = Order::whereDoesntHave('print')->get();
+      $orders = Order::whereDoesntHave('print')
+        ->where('created_at', '<', Carbon::now()->modify('-1 minue'))
+        ->get();
 
       foreach ($orders as $order) {
         $data = $order->prepareSheetData();
