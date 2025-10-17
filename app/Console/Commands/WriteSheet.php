@@ -35,13 +35,14 @@ class WriteSheet extends Command
         ->range('')
         ;
       $orders = Order::whereDoesntHave('print')
-        ->where('created_at', '<', Carbon::now()->modify('-1 minute'))
+        // ->where('created_at', '<', Carbon::now()->modify('-1 minute'))
         ->get();
 
       foreach ($orders as $order) {
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
         $order->print()->firstOrCreate();
+        Log::debug('Order printed in sheet', ['order' => $order]);
       }
     }
 }
