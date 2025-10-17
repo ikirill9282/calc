@@ -35,7 +35,7 @@ class WriteSheet extends Command
         ->range('')
         ;
       $orders = Order::whereDoesntHave('print')
-        ->where('created_at', '<', Carbon::now()->modify('-1 minue'))
+        ->where('created_at', '<', Carbon::now()->modify('-1 minue')->format('Y-m-d H:i:s'))
         ->get();
 
       foreach ($orders as $order) {
