@@ -39,6 +39,9 @@ class WriteSheet extends Command
         ->get();
 
       foreach ($orders as $order) {
+        if ($order->print()->exists()) {
+          continue;
+        }
         $data = $order->prepareSheetData();
         $sheet->append($data, 'USER_ENTERED');
         $order->print()->firstOrCreate();
