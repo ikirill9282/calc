@@ -23,6 +23,11 @@ return [
     'scopes' => [\Google\Service\Sheets::DRIVE, \Google\Service\Sheets::SPREADSHEETS],
     'access_type' => 'online',
     'approval_prompt' => 'auto',
+    'http' => [
+      'retry_enabled' => false,
+      'max_retry_attempts' => 0,
+    ],
+
 
     /*
     |----------------------------------------------------------------------------
