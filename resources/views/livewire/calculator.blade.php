@@ -6,10 +6,10 @@
             <div class="flex gap-4 flex-col md:flex-row bg-inherit">
                 <x-form.dropdown :items="\App\Models\Agent::where('user_id', auth()->user()?->id)
                     ->where('disabled', 0)
-                    ->get()" label="Контрагент" name="agent_id" placeholder="Выберите контрагента..."
+                    ->get()" label="Контрагент" name="agent_id" placeholder="Выбрать свое ИП или ООО"
                     wire:model="fields.agent_id" optionLabel="title" optionValue="id" />
                 <x-button wire:click="goToAgents" outlined class="text-nowrap">
-                    Добавить контрагента
+                    Добавить свое ИП или ООО
                 </x-button>
             </div>
 
@@ -95,13 +95,6 @@
                                     <span
                                         class="text-secondary-600 dark:text-secondary-400">{{ $this->getWarehouseAddress() }}</span>
                                 </div>
-                                {{-- <div class="flex flex-col sm:flex-row gap-2">
-                                      <span>Телефон:</span>
-                                      <span class="text-secondary-600 dark:text-secondary-400">
-                                          <a
-                                              href="tel:{{ $this->getWarehousePhone() }}">{{ $this->getWarehousePhone() }}</a>
-                                      </span>
-                                  </div> --}}
                             </div>
 
                             <x-form.datepicker id="datepicker2" name="fields.transfer_method_receive.date"
@@ -109,12 +102,15 @@
 
                             <div
                                 class="cargo-date {{ $this->getField('transfer_method_receive.date') ? 'collapsed' : 'hidden' }}">
-                                <div class="flex justify-start items-center gap-3 w-full p-4 text-white bg-sky-600">
-                                    <span>@include('icons.check', ['width' => 40, 'height' => 40])</span>
-                                    <span class="">Дата отгрузки на склад {{ $this->getCity() }}: <span
-                                            class="date">{{ $this->getField('transfer_method_receive.date') ?? '01.01.2025' }}</span>
-                                        {{-- с 09:00 до 18:00 --}}
-                                    </span>
+                                <div class="w-full p-4 text-white bg-sky-600">
+                                  <div class="flex justify-start items-center gap-3">
+                                    <div>@include('icons.check', ['width' => 40, 'height' => 40])</div>
+                                    <div class="flex flex-col">
+                                      <div class="">Дата отгрузки на склад {{ $this->getCity() }}: <span
+                                            class="date">{{ $this->getField('transfer_method_receive.date') ?? '01.01.2025' }}</span></div>
+                                      <div class="">Прием груза на складе до 16:00</div>
+                                    </div>
+                                  </div>
                                 </div>
                             </div>
 
@@ -129,8 +125,7 @@
                         class="infoblock w-full {{ in_array($this->getField('transfer_method'), ['pick']) ? '' : 'hidden' }}">
                         <div
                             class="flex flex-col justify-start items-stretch gap-6 p-4 md:p-8 w-full bg-primary-50 dark:bg-primary-950 my-4">
-                            {{-- @dump($this->fields['transfer_method_pick']) --}}
-                            {{-- @dump($this->addresses) --}}
+                            
                             <div class="bg-inherit">
                                 <x-form.dropdown id="transfer_method_pick.address" name="transfer_method_pick.address"
                                     label="Укажите адрес для подачи машины"
@@ -140,6 +135,13 @@
                                     empty_text="Начните вводить адрес..." />
                                 <div class="text-xs sm:text-sm mt-2">Если нужно адреса нет в списке, попробуйте ввести
                                     только город и улицу</div>
+
+                                
+                                @error('transfer_method_pick.address')
+                                  <div class="mt-3 text-red-500">
+                                    {{ $message }}
+                                  </div>
+                                @enderror
                             </div>
 
                             <x-form.datepicker id="datepicker3" name="fields.transfer_method_pick.date"
@@ -180,14 +182,26 @@
                         wire:model.live.debounce.350ms="fields.cargo" />
                     <div
                         class="infoblock boxes-item collapsed w-full {{ $this->getField('cargo') == 'pallets' ? '' : 'hidden' }} p-2 sm:p-4 xl:p-8 mt-6 bg-primary-50 dark:bg-primary-950">
-                        <div class="flex flex-col gap-2 w-full bg-inherit">
+                        <div class="flex flex-col gap-6 w-full bg-inherit">
                             <x-form.wrap label="Количество" name="fields.pallets_data.count">
                                 <x-form.input class="input-numeric" name="fields.pallets_data.count"
-                                    wire:model.live="fields.pallets_data.count" />
+                                    wire:model.live.debounce.500ms="fields.pallets_data.count" />
                             </x-form.wrap>
-                            <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производится
+                            <x-form.wrap label="Количество коробок в паллете" name="fields.pallets_data.boxcount">
+                                <x-form.input class="input-numeric" name="fields.pallets_data.boxcount"
+                                    wire:model.live.debounce.500ms="fields.pallets_data.boxcount" />
+                            </x-form.wrap>
+                            <x-form.wrap label="Общий объем паллета" name="fields.pallets_data.volume">
+                                <x-form.input class="input-numeric" name="fields.pallets_data.volume"
+                                    wire:model.live.debounce.500ms="fields.pallets_data.volume" />
+                            </x-form.wrap>
+                            <x-form.wrap label="Общий вес паллета" name="fields.pallets_data.weight">
+                                <x-form.input class="input-numeric" name="fields.pallets_data.weight"
+                                    wire:model.live.debounce.500ms="fields.pallets_data.weight" />
+                            </x-form.wrap>
+                            {{-- <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производится
                                 индивидуально, предварительная стоимость указана при условии, что вес каждой паллеты не
-                                превышает 400кг</div>
+                                превышает 400кг</div> --}}
                         </div>
 
                         <div class="mt-4">
@@ -252,6 +266,7 @@
         </x-form.fieldset>
     </div>
 
+    {{-- DETAILS --}}
     <div class="">
         <x-details :order="$this->prepareOrder()">
             <x-button wire:click.prevent="submit"

@@ -9,6 +9,7 @@
   <x-card class="mb-4 {{ $cardClass }}">
     <form action="" class="flex flex-col justify-center items-stretch gap-4 {{ $formClass }}">
       <h2 class="text-2xl">Предварительная стоимость:</h2>
+      <div class="text-xs">в предварительную стоимость не входит стоимость услуги адресного забора груза и погрузочных работа на адресе забора и такие услуги оплачивается сверх стоимости доставки на склад маркетплейса</div>
       @if($order->individual)
         <p class="text-lg">Расчет индивидуальный</p>
       @else

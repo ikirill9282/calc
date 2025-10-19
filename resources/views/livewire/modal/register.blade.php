@@ -23,21 +23,25 @@
                 name="email"
                 id="reg_email"
                 wire:model.live="register.email"
+                placeholder="email@example.com"
               />
           </x-form.wrap>
         </div>
         <div class="bg-inherit">
             <x-form.wrap label="Номер телефона" name="phone" >
-              <x-form.input
-                type="text" 
-                {{-- placeholder="+7..."  --}}
-                aria-autocomplete="off"
-                autocomplete="off"
+              <x-form.input 
+                wire:model="register.phone" 
                 name="phone"
-                class="input-numeric"
-                {{-- x-mask="+7(999)999-99-99" --}}
-                wire:model.live="register.phone"
-              />
+                x-data
+                x-mask="+7(999)999-99-99" 
+                x-init="elem => console.log(elem)"
+                x-bind:placeholder="'+7(999)999-99-99'"
+                x-init="
+                  setTimeout(() => {
+                    setTimeout(() => $el.dispatchEvent(new Event('focus')), 50)
+                  }, 50)
+                "
+                />
             </x-form.wrap>
         </div>
         <div class="bg-inherit">

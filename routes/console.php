@@ -8,6 +8,8 @@ use App\Mail\OrderSuccess;
 use App\Mail\Reset;
 use App\Models\User;
 use App\Models\Agent;
+use App\Services\GoogleClient;
+use Dadata\DadataClient;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
@@ -15,12 +17,15 @@ use Revolution\Google\Sheets\Facades\Sheets;
 
 if (!env('APP_LOCAL', false)) {
   Schedule::command('app:load-sheet')->everyFifteenMinutes();
-  Schedule::command('app:write-sheet')->everyFiveMinutes();
+  // Schedule::command('app:write-sheet')->everyFiveMinutes();
 }
 // Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
-  
+  foreach (Order::all() as $order) {
+    $data = $order->prepareSheetData();
+    GoogleClient::write($data[0]);
+  }
 });
 
 Artisan::command('ttm', function() {

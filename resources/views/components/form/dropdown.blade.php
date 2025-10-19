@@ -10,7 +10,8 @@
   'empty_text' => 'Нет доступных адресов',
   'searchable' => false,
   'name' => '',
-  'rp' => 'fields.'
+  'rp' => 'fields.',
+  'readonly' => false,
 ])
 @php
   $fieldName = str_ireplace($rp, '', $attributes->get('wire:model'));

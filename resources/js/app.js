@@ -133,12 +133,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     Livewire.on("deliveryDates", (data) => {
-        // available_delivery_dates = data[0];
-        // let el1 = document.getElementById("datepicker");
-        // el1.setAttribute('data-initiated', true);
-        // let clone1 = el1.cloneNode(true);
-        // el1.parentNode.replaceChild(clone1, el1);
-        // if (!el1.getAttribute('data-initiated')) {
         datepicker1 = new AirDatepicker("#datepicker", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
@@ -177,16 +171,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 datepicker.hide();
             },
         });
-        // el1.setAttribute('data-initiated', true);
-        // }
     });
 
     Livewire.on("deliveryPickDates", (data) => {
-        // available_delivery_dates = data[0];
-        // let el2 = document.getElementById("datepicker2");
-        // let clone2 = el2.cloneNode(true);
-        // el2.parentNode.replaceChild(clone2, el2);
-
         datepicker2 = new AirDatepicker("#datepicker2", {
             onSelect: ({ date, formattedDate, datepicker }) => {
                 const elem = $(datepicker.$el)
@@ -239,11 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     Livewire.on("pickDates", (data) => {
-        
-        // let el3 = document.getElementById("datepicker3");
-        // let clone3 = el3.cloneNode(true);
-        // el3.parentNode.replaceChild(clone3, el3);
-
         datepicker3 = new AirDatepicker("#datepicker3", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();

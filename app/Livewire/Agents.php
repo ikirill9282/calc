@@ -83,6 +83,12 @@ class Agents extends Component
       if ($name == 'form.address') {
         $this->getAddresses();
       }
+
+      if ($name == 'title') {
+        $this->clearField('address');
+        $this->clearField('inn');
+        $this->clearField('ogrn');
+      }
     }
 
     #[On('clearMessages')]
@@ -129,7 +135,7 @@ class Agents extends Component
           'address' => 'required|string',
           'name' => 'required|string',
           'phone' => 'required|string',
-          'email' => 'required|string',
+          'email' => 'required|string|email:dns',
         ],
         [
           'title.required' => 'Необходимо заполнить поле',
@@ -147,6 +153,8 @@ class Agents extends Component
           'name.string' => 'Поле должно быть текстом',
           'phone.string' => 'Поле должно быть текстом',
           'email.string' => 'Поле должно быть текстом',
+
+          'email.string' => 'Поле должно быть Email адресом',
         ]
       );
 

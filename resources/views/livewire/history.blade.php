@@ -25,7 +25,9 @@
               @if($order->individual)
                 Расчет индивидуальный
               @else
-                Предварительная&nbsp;стоимость: {{ \Illuminate\Support\Number::currency($order->total ?? 0, 'RUB', locale: 'ru') }}
+                <span class="inline-block">Предварительная&nbsp;стоимость:</span>
+                <span class="text-xs inline-block my-2">в предварительную стоимость не входит стоимость услуги адресного забора груза и погрузочных работа на адресе забора и такие услуги оплачивается сверх стоимости доставки на склад маркетплейса</span>
+                <span class="inline-block my-2">{{ \Illuminate\Support\Number::currency($order->total ?? 0, 'RUB', locale: 'ru') }}</span>
               @endif
               
               <p class="text-xs">

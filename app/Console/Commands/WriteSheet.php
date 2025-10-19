@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Revolution\Google\Sheets\Facades\Sheets;
 use Illuminate\Support\Facades\Log;
+use App\Services\GoogleClient;
 
 
 class WriteSheet extends Command
@@ -43,7 +44,7 @@ class WriteSheet extends Command
           continue;
         }
         $data = $order->prepareSheetData();
-        $sheet->append($data, 'USER_ENTERED');
+        GoogleClient::write($data[0]);
         $order->print()->firstOrCreate();
         Log::debug('Order printed in sheet', ['order' => $order]);
       }

@@ -1,5 +1,6 @@
 @props([
   'show_password' => false,
+  'disabled' => false,
 ])
 
 @php
@@ -16,6 +17,7 @@
       hover:border-secondary-600 darkhover:border-secondary-400
       focus:border-secondary-600 dark:focus:border-secondary-400
       group-has-focus/input:border-secondary-400 dark:group-has-focus/input:border-secondary-600
+      {{ $disabled  ? 'pointer-events-none' : '' }}
       "
     >
     <legend 

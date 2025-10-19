@@ -22,11 +22,7 @@
       </div>
       <div>
           <x-card>
-              {{-- @dump($this->form) --}}
               <form wire:submit.prevent="submit" action="{{ url('/agents/create') }}" class="flex flex-col gap-4 bg-inherit">
-                  {{-- <x-form.wrap label="Название" name="title" >
-                    <x-form.input wire:model="form.title" name="title" />
-                  </x-form.wrap> --}}
                   <x-form.dropdown 
                     id="title"
                     name="title"
@@ -45,27 +41,22 @@
                     empty_text="Введите название или ИНН"
                   />
 
-                  <x-form.wrap label="ИНН/КПП" name="inn" >
-                    <x-form.input wire:model="form.inn" name="inn" class="input-numeric" />
+                  <x-form.wrap label="ИНН/КПП" name="inn" :disabled="true" >
+                    <x-form.input wire:model="form.inn" name="inn" class="input-numeric" readonly />
                   </x-form.wrap>
 
-                  <x-form.wrap label="ОГРН/ОГРНИП" name="ogrn" >
-                    <x-form.input wire:model="form.ogrn" name="ogrn" class="input-numeric" />
+                  <x-form.wrap label="ОГРН/ОГРНИП" name="ogrn" :disabled="true" >
+                    <x-form.input wire:model="form.ogrn" name="ogrn" class="input-numeric" readonly />
                   </x-form.wrap>
 
-                  <x-form.dropdown 
-                    id="address"
-                    name="address"
-                    label="Юридический адрес"
-                    :items="$this->addresses"
-                    wire:model="form.address"
-                    optionLabel="wh"
-                    optionValue="wh"
-                    :searchable="true"
-                    autocomplete="off"
-                    aria-autocomplete="off"
-                    rp="form."
-                  />
+                  <div class="bg-inherit">
+                    
+                    <x-form.wrap label="Юридический адрес" name="address" :disabled="true">
+                      <div x-data="{ v: @entangle('form.address') }" class="">
+                        <div x-html="v" class="mt-1.5"></div>
+                      </div>
+                    </x-form.wrap>
+                  </div>
 
                   <x-form.wrap label="ФИО" name="name" >
                     <x-form.input wire:model="form.name" name="name" />
@@ -75,12 +66,25 @@
                     <x-form.input 
                       wire:model="form.phone" 
                       name="phone"
-                      {{-- x-mask="+7(999)999-99-99"  --}}
+                      x-data="{}"
+                      x-mask="+7(999)999-99-99"
+                      x-init="
+                        setTimeout(() => {
+                          setTimeout(() => $el.dispatchEvent(new Event('focus')), 50)
+                        }, 50)
+                      "
+                      placeholder="+7(999)999-99-99"
                      />
                   </x-form.wrap>
 
                   <x-form.wrap label="Email" name="email">
-                    <x-form.input wire:model="form.email" name="email" />
+                    <x-form.input 
+                      wire:model="form.email"
+                      type="email"
+                      name="email" 
+                      x-data="{}"
+                      placeholder="email@example.com"
+                    />
                   </x-form.wrap>
 
                   <x-button type="submit">{{ $this->edit_mode ? 'Сохранить' : 'Добавить' }}</x-button>

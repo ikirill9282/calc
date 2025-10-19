@@ -141,7 +141,7 @@ class Modal extends Component
     {
       $validator = Validator::make($this->register, [
           'name' => 'required|string',
-          'email' => 'required|string|email',
+          'email' => 'required|string|email:dns',
           'phone' => 'sometimes|nullable|string',
           'password' => 'required|string',
           'password_confirm' => 'required|string',
@@ -154,6 +154,7 @@ class Modal extends Component
       }
 
       $valid = $validator->validated();
+      dd($valid);
 
       if (User::where('email', $valid['email'])->exists()) {
         $this->addError('email', 'Адрес электронной почты уже используется.');
