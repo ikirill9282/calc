@@ -17,7 +17,7 @@ use Revolution\Google\Sheets\Facades\Sheets;
 
 if (!env('APP_LOCAL', false)) {
   Schedule::command('app:load-sheet')->everyFifteenMinutes();
-  // Schedule::command('app:write-sheet')->everyFiveMinutes();
+  Schedule::command('app:write-sheet')->everyFiveMinutes();
 }
 // Schedule::command('tts')->everyMinute();
 
