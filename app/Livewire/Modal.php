@@ -154,7 +154,6 @@ class Modal extends Component
       }
 
       $valid = $validator->validated();
-      dd($valid);
 
       if (User::where('email', $valid['email'])->exists()) {
         $this->addError('email', 'Адрес электронной почты уже используется.');
