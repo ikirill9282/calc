@@ -44,7 +44,7 @@ class WriteSheet extends Command
         $data = $order->prepareSheetData();
         GoogleClient::write($data[0]);
         $order->print()->firstOrCreate();
-        Log::debug('Order printed in sheet ' . $order->id, ['order' => $order]);
+        // Log::debug('Order printed in sheet ' . $order->id, ['order' => $order]);
       }
     }
 }
