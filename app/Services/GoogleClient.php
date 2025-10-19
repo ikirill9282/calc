@@ -7,6 +7,7 @@ use Google\Client;
 use Google\Service\Sheets;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Order;
 
 class GoogleClient
 {
@@ -20,7 +21,7 @@ class GoogleClient
 
     $service = new Sheets($client);
 
-    $spreadsheetId = '1xfxBNfib6KYC3td31rEDru5OhI2Yn--N5VF4ilVKx9I';
+    $spreadsheetId = '1RCZPm9Q-A-1osteZkMlwYYCkuLJ0em1zKpKZGOnC6is';
     $sheetName = 'Лист1';
 
     $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
@@ -46,6 +47,8 @@ class GoogleClient
         $params
       );
       Log::debug("Order wtited {$data[1]}", ['order' => $data, 'result' => $result]);
+    } else {
+      Order::find($data[1])->print()->firstOrCreate();
     }
   }
 }

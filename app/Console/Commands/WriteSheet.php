@@ -31,13 +31,11 @@ class WriteSheet extends Command
      */
     public function handle()
     {
-      $sheet = Sheets::spreadsheet('1RCZPm9Q-A-1osteZkMlwYYCkuLJ0em1zKpKZGOnC6is')
-        ->sheet("Лист1")
-        ->range('')
-        ;
-      $orders = Order::whereDoesntHave('print')
-        // ->where('created_at', '<', Carbon::now()->modify('-1 minute'))
-        ->get();
+      // $sheet = Sheets::spreadsheet('1RCZPm9Q-A-1osteZkMlwYYCkuLJ0em1zKpKZGOnC6is')
+      //   ->sheet("Лист1")
+      //   ->range('')
+      //   ;
+      $orders = Order::whereDoesntHave('print')->limit(60)->get();
 
       foreach ($orders as $order) {
         if ($order->print()->exists()) {

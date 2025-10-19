@@ -22,7 +22,8 @@ if (!env('APP_LOCAL', false)) {
 // Schedule::command('tts')->everyMinute();
 
 Artisan::command('tt', function() {
-  foreach (Order::all() as $order) {
+  $orders = Order::whereDoesntHave('print')->get();
+  foreach ($orders as $order) {
     $data = $order->prepareSheetData();
     GoogleClient::write($data[0]);
   }
