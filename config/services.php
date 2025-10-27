@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+'dadata' => [
+        'api_key' => env('DADATA_API'),
+        'secret' => env('DADATA_SECRET'),
+    ],
 ];
