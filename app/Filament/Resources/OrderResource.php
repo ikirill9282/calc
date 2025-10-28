@@ -64,12 +64,12 @@ class OrderResource extends Resource
 										->date('d.m.Y')
 										->sortable(),
 								
-								Tables\Columns\TextColumn::make('distributor_center_id')
+								Tables\Columns\TextColumn::make('distributor_id')
 										->label('РЦ')
 										->searchable()
 										->sortable(),
 								
-								Tables\Columns\TextColumn::make('warehouse_id')
+								Tables\Columns\TextColumn::make('distributor_center_id')
 										->label('Адрес РЦ')
 										->searchable()
 										->limit(40)
