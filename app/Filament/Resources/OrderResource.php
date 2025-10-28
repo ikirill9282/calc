@@ -47,35 +47,41 @@ class OrderResource extends Resource
 										->label('Отправитель (ФИО/ИП/ООО)')
 										->searchable()
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								// Контактное лицо из таблицы agents
 								Tables\Columns\TextColumn::make('agent.name')
 										->label('Контактное лицо')
 										->searchable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								// Номер телефона из таблицы agents
 								Tables\Columns\TextColumn::make('agent.phone')
 										->label('Номер телефона')
 										->searchable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('delivery_date')
 										->label('Дата поставки на РЦ')
 										->date('d.m.Y')
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('distributor_id')
 										->label('РЦ')
 										->searchable()
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('distributor_center_id')
 										->label('Адрес РЦ')
 										->searchable()
 										->limit(40)
-										->tooltip(fn ($state) => $state),
+										->tooltip(fn ($state) => $state)
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('payment_method')
 										->label('Способ оплаты')
@@ -84,12 +90,14 @@ class OrderResource extends Resource
 												'bill' => 'Безналичный',
 												default => $state
 										})
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\IconColumn::make('individual')
 										->label('Индивид.')
 										->boolean()
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								// Груз
 								Tables\Columns\TextColumn::make('cargo')
@@ -99,21 +107,24 @@ class OrderResource extends Resource
 												'pallets' => 'Палеты',
 												default => $state
 										})
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Кол-во палет
 								Tables\Columns\TextColumn::make('pallets_count')
 										->label('Кол-во палет')
 										->numeric()
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Кол-во коробов в палете
 								Tables\Columns\TextColumn::make('pallets_boxcount')
 										->label('Коробов в палете')
 										->numeric()
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Вес палет
 								Tables\Columns\TextColumn::make('pallets_weight')
@@ -121,7 +132,8 @@ class OrderResource extends Resource
 										->numeric()
 										->suffix(' кг')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Объем палет
 								Tables\Columns\TextColumn::make('pallets_volume')
@@ -129,14 +141,16 @@ class OrderResource extends Resource
 										->numeric()
 										->suffix(' м³')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Кол-во коробов
 								Tables\Columns\TextColumn::make('boxes_count')
 										->label('Кол-во коробов')
 										->numeric()
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Объем коробов
 								Tables\Columns\TextColumn::make('boxes_volume')
@@ -144,7 +158,8 @@ class OrderResource extends Resource
 										->numeric()
 										->suffix(' м³')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Вес коробов
 								Tables\Columns\TextColumn::make('boxes_weight')
@@ -152,7 +167,8 @@ class OrderResource extends Resource
 										->numeric()
 										->suffix(' кг')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Вес коробов
 								Tables\Columns\TextColumn::make('boxes_weight')
@@ -160,49 +176,56 @@ class OrderResource extends Resource
 										->numeric()
 										->suffix(' кг')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Палетирование (да/нет)
 								Tables\Columns\IconColumn::make('has_palletizing')
 										->label('Палетирование')
 										->boolean()
 										->getStateUsing(fn ($record) => $record->palletizing_count > 0)
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Паллетирование кол-во
 								Tables\Columns\TextColumn::make('palletizing_count')
 										->label('Палетирование кол-во')
 										->numeric()
 										->sortable()
-										->default(0),
+										->default(0)
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Забор груза (да/нет)
 								Tables\Columns\IconColumn::make('has_pickup')
 										->label('Забор груза')
 										->boolean()
 										->getStateUsing(fn ($record) => $record->transfer_method === 'pick')
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Дата привоза клиентом
 								Tables\Columns\TextColumn::make('transfer_method_receive_date')
 										->label('Дата привоза клиентом')
 										->date('d.m.Y H:i')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Оплата за забор груза
 								Tables\Columns\TextColumn::make('pick')
 										->label('Оплата за забор')
 										->money('RUB')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Дата забора груза
 								Tables\Columns\TextColumn::make('transfer_method_pick_date')
 										->label('Дата забора груза')
 										->date('d.m.Y H:i')
 										->sortable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 
 								// Адрес забора груза
 								Tables\Columns\TextColumn::make('transfer_method_pick_address')
@@ -210,42 +233,50 @@ class OrderResource extends Resource
 										->searchable()
 										->limit(30)
 										->tooltip(fn ($state) => $state)
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('delivery')
 										->label('Доставка')
 										->money('RUB')
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('additional')
 										->label('Палетирование')
 										->money('RUB')
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('total')
 										->label('Предварительная сумма')
 										->money('RUB')
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('cargo_comment')
 										->label('Комментарий')
 										->limit(30)
-										->tooltip(fn ($state) => $state),
+										->tooltip(fn ($state) => $state)
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('agent.email')
 										->label('Email')
 										->searchable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('agent.inn')
 										->label('ИНН')
 										->searchable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('agent.ogrn')
 										->label('ОГРН')
 										->searchable()
-										->default('—'),
+										->default('—')
+										->toggleable(isToggledHiddenByDefault: false),
 						])
 						->filters([
 								Tables\Filters\SelectFilter::make('payment_method')
