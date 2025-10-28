@@ -210,11 +210,6 @@ class OrderResource extends Resource
 										->tooltip(fn ($state) => $state)
 										->default('—'),
 								
-								Tables\Columns\TextColumn::make('pick')
-										->label('Забор')
-										->money('RUB')
-										->sortable(),
-								
 								Tables\Columns\TextColumn::make('delivery')
 										->label('Доставка')
 										->money('RUB')
