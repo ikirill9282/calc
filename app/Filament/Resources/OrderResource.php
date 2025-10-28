@@ -221,7 +221,7 @@ class OrderResource extends Resource
 										->sortable(),
 								
 								Tables\Columns\TextColumn::make('total')
-										->label('Итого')
+										->label('Предварительная сумма')
 										->money('RUB')
 										->sortable(),
 								
