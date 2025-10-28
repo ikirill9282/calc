@@ -189,15 +189,11 @@ class OrderResource extends Resource
 										->default('—'),
 
 								// Оплата за забор груза
-								Tables\Columns\TextColumn::make('payment_method')
+								Tables\Columns\TextColumn::make('pick')
 										->label('Оплата за забор')
-										->formatStateUsing(fn ($state) => match($state) {
-												'cash' => 'Наличные',
-												'bill' => 'Безналичный',
-												default => $state
-										})
-										->sortable(),
-								
+										->money('RUB')
+										->sortable()
+										->default('—'),
 
 								// Дата забора груза
 								Tables\Columns\TextColumn::make('transfer_method_pick_date')
