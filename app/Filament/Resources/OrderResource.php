@@ -152,6 +152,63 @@ class OrderResource extends Resource
 										->sortable()
 										->default('—'),
 
+								// Вес коробов
+								Tables\Columns\TextColumn::make('boxes_weight')
+										->label('Вес коробов, кг')
+										->numeric()
+										->suffix(' кг')
+										->sortable()
+										->default('—'),
+
+								// Палетирование (да/нет)
+								Tables\Columns\IconColumn::make('has_palletizing')
+										->label('Палетирование')
+										->boolean()
+										->getStateUsing(fn ($record) => $record->palletizing_count > 0)
+										->sortable(),
+
+								// Паллетирование кол-во
+								Tables\Columns\TextColumn::make('palletizing_count')
+										->label('Палетирование кол-во')
+										->numeric()
+										->sortable()
+										->default(0),
+
+								// Забор груза (да/нет)
+								Tables\Columns\IconColumn::make('has_pickup')
+										->label('Забор груза')
+										->boolean()
+										->getStateUsing(fn ($record) => $record->transfer_method === 'pick')
+										->sortable(),
+
+								// Дата привоза клиентом
+								Tables\Columns\TextColumn::make('transfer_method_receive_date')
+										->label('Дата привоза клиентом')
+										->date('d.m.Y H:i')
+										->sortable()
+										->default('—'),
+
+								// Оплата за забор груза
+								Tables\Columns\TextColumn::make('pick')
+										->label('Оплата за забор')
+										->money('RUB')
+										->sortable()
+										->default('—'),
+
+								// Дата забора груза
+								Tables\Columns\TextColumn::make('transfer_method_pick_date')
+										->label('Дата забора груза')
+										->date('d.m.Y H:i')
+										->sortable()
+										->default('—'),
+
+								// Адрес забора груза
+								Tables\Columns\TextColumn::make('transfer_method_pick_address')
+										->label('Адрес забора')
+										->searchable()
+										->limit(30)
+										->tooltip(fn ($state) => $state)
+										->default('—'),
 								
 								Tables\Columns\TextColumn::make('pick')
 										->label('Забор')
