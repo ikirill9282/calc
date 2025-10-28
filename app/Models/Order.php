@@ -51,6 +51,11 @@ class Order extends Model
   {
     return $this->hasOne(OrderPrint::class);
   }
+	public function agent()
+	{
+			return $this->belongsTo(Agent::class);
+	}
+
 
   // public function writeSheet()
   // {
