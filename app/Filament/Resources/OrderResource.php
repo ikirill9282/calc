@@ -189,7 +189,7 @@ class OrderResource extends Resource
 										->default('—'),
 
 								// Оплата за забор груза
-								Tables\Columns\TextColumn::make('pick')
+								Tables\Columns\TextColumn::make('transfer_method')
 										->label('Оплата за забор')
 										->money('RUB')
 										->sortable()
