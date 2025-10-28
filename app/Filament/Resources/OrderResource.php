@@ -33,12 +33,14 @@ class OrderResource extends Resource
 								Tables\Columns\TextColumn::make('id')
 										->label('№ заявки')
 										->sortable()
-										->searchable(),
+										->searchable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('created_at')
 										->label('Дата и время')
 										->dateTime('d.m.Y H:i')
-										->sortable(),
+										->sortable()
+										->toggleable(isToggledHiddenByDefault: false),
 								
 								// Отправитель из таблицы agents
 								Tables\Columns\TextColumn::make('agent.title')
