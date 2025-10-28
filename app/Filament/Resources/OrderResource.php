@@ -89,6 +89,7 @@ class OrderResource extends Resource
 										->boolean()
 										->sortable(),
 								
+								// Груз
 								Tables\Columns\TextColumn::make('cargo')
 										->label('Груз')
 										->formatStateUsing(fn ($state) => match($state) {
@@ -97,30 +98,60 @@ class OrderResource extends Resource
 												default => $state
 										})
 										->sortable(),
-								
+
+								// Кол-во палет
 								Tables\Columns\TextColumn::make('pallets_count')
 										->label('Кол-во палет')
 										->numeric()
 										->sortable()
-										->default(0),
-								
+										->default('—'),
+
+								// Кол-во коробов в палете
+								Tables\Columns\TextColumn::make('pallets_boxcount')
+										->label('Коробов в палете')
+										->numeric()
+										->sortable()
+										->default('—'),
+
+								// Вес палет
+								Tables\Columns\TextColumn::make('pallets_weight')
+										->label('Вес палет, кг')
+										->numeric()
+										->suffix(' кг')
+										->sortable()
+										->default('—'),
+
+								// Объем палет
+								Tables\Columns\TextColumn::make('pallets_volume')
+										->label('Объем палет, м³')
+										->numeric()
+										->suffix(' м³')
+										->sortable()
+										->default('—'),
+
+								// Кол-во коробов
 								Tables\Columns\TextColumn::make('boxes_count')
 										->label('Кол-во коробов')
 										->numeric()
 										->sortable()
-										->default(0),
-								
-								Tables\Columns\TextColumn::make('boxes_weight')
-										->label('Вес коробов, кг')
-										->numeric()
-										->sortable()
-										->default(0),
-								
+										->default('—'),
+
+								// Объем коробов
 								Tables\Columns\TextColumn::make('boxes_volume')
 										->label('Объем коробов, м³')
 										->numeric()
+										->suffix(' м³')
 										->sortable()
-										->default(0),
+										->default('—'),
+
+								// Вес коробов
+								Tables\Columns\TextColumn::make('boxes_weight')
+										->label('Вес коробов, кг')
+										->numeric()
+										->suffix(' кг')
+										->sortable()
+										->default('—'),
+
 								
 								Tables\Columns\TextColumn::make('pick')
 										->label('Забор')
