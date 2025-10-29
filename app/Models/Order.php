@@ -11,12 +11,20 @@ use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 
 class Order extends Model
 {
+  protected $casts = [
+    'changed_fields' => 'array',
+  ];
 
   public static function boot()
   {
     parent::boot();
 
     static::saving(function($model) {
+      $dirty = array_keys($model->getDirty());
+      $ignore = ['created_at', 'updated_at', 'changed_fields'];
+      $changed = array_values(array_diff($dirty, $ignore));
+      $model->changed_fields = empty($changed) ? null : $changed;
+
       if ($model->transfer_method == 'pick') {
         $model->transfer_method_receive_date = null;
       } elseif ($model->transfer_method == 'receive') {
@@ -55,6 +63,21 @@ class Order extends Model
 	{
 			return $this->belongsTo(Agent::class);
 	}
+
+  public function hasChanged(string ...$fields): bool
+  {
+    if (empty($this->changed_fields)) {
+      return false;
+    }
+
+    foreach ($fields as $field) {
+      if (in_array($field, $this->changed_fields, true)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
 
   // public function writeSheet()
