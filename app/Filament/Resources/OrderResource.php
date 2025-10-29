@@ -295,7 +295,7 @@ class OrderResource extends Resource
 										]),
 						])
 						->actions([
-								Tables\Actions\ViewAction::make(),
+								Tables\Actions\ViewAction::make()
 										->modalHeading('Информация о заявке')
 										->modalWidth('7xl'), // Большая ширина модального окна
 								Tables\Actions\EditAction::make(),
