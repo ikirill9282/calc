@@ -10,7 +10,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 
 class OrderResource extends Resource
 {
@@ -302,7 +303,10 @@ class OrderResource extends Resource
 										Tables\Actions\DeleteBulkAction::make(),
 								]),
 						])
-						->defaultSort('created_at', 'desc');
+						->defaultSort('created_at', 'desc')
+						->recordUrl(
+							fn (Order $record): string => Pages\ViewOrder::getUrl([$record->id]),
+						);
 		}
 
 
@@ -377,6 +381,184 @@ class OrderResource extends Resource
             //
         ];
     }
+
+		public static function infolist(Infolist $infolist): Infolist
+		{
+				return $infolist
+						->schema([
+								Infolists\Components\Section::make('Основная информация')
+										->schema([
+												Infolists\Components\TextEntry::make('id')
+														->label('№ заявки'),
+												
+												Infolists\Components\TextEntry::make('created_at')
+														->label('Дата и время создания')
+														->dateTime('d.m.Y H:i'),
+												
+												Infolists\Components\TextEntry::make('agent.title')
+														->label('Отправитель')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('agent.name')
+														->label('Контактное лицо')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('agent.phone')
+														->label('Номер телефона')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('agent.email')
+														->label('Email')
+														->default('—'),
+										])
+										->columns(2),
+								
+								Infolists\Components\Section::make('Информация о доставке')
+										->schema([
+												Infolists\Components\TextEntry::make('delivery_date')
+														->label('Дата поставки на РЦ')
+														->date('d.m.Y'),
+												
+												Infolists\Components\TextEntry::make('distributor_id')
+														->label('РЦ'),
+												
+												Infolists\Components\TextEntry::make('distributor_center_id')
+														->label('Адрес РЦ'),
+												
+												Infolists\Components\TextEntry::make('warehouse_id')
+														->label('Склад'),
+										])
+										->columns(2),
+								
+								Infolists\Components\Section::make('Груз')
+										->schema([
+												Infolists\Components\TextEntry::make('cargo')
+														->label('Тип груза')
+														->formatStateUsing(fn ($state) => match($state) {
+																'boxes' => 'Коробки',
+																'pallets' => 'Палеты',
+																default => $state
+														}),
+												
+												Infolists\Components\TextEntry::make('pallets_count')
+														->label('Кол-во палет')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('pallets_boxcount')
+														->label('Коробов в палете')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('pallets_weight')
+														->label('Вес палет, кг')
+														->suffix(' кг')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('pallets_volume')
+														->label('Объем палет, м³')
+														->suffix(' м³')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('boxes_count')
+														->label('Кол-во коробов')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('boxes_weight')
+														->label('Вес коробов, кг')
+														->suffix(' кг')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('boxes_volume')
+														->label('Объем коробов, м³')
+														->suffix(' м³')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('cargo_comment')
+														->label('Комментарий')
+														->default('—')
+														->columnSpanFull(),
+										])
+										->columns(3),
+								
+								Infolists\Components\Section::make('Стоимость')
+										->schema([
+												Infolists\Components\TextEntry::make('payment_method')
+														->label('Способ оплаты')
+														->formatStateUsing(fn ($state) => match($state) {
+																'cash' => 'Наличные',
+																'bill' => 'Безналичный',
+																default => $state
+														}),
+												
+												Infolists\Components\IconEntry::make('individual')
+														->label('Индивидуальный расчет')
+														->boolean(),
+												
+												Infolists\Components\TextEntry::make('pick')
+														->label('Забор груза')
+														->money('RUB'),
+												
+												Infolists\Components\TextEntry::make('delivery')
+														->label('Доставка')
+														->money('RUB'),
+												
+												Infolists\Components\TextEntry::make('additional')
+														->label('Палетирование')
+														->money('RUB'),
+												
+												Infolists\Components\TextEntry::make('total')
+														->label('Итого')
+														->money('RUB')
+														->weight('bold'),
+										])
+										->columns(3),
+								
+								Infolists\Components\Section::make('Забор груза')
+										->schema([
+												Infolists\Components\TextEntry::make('transfer_method')
+														->label('Способ передачи')
+														->formatStateUsing(fn ($state) => match($state) {
+																'pick' => 'Забор',
+																'receive' => 'Привоз клиентом',
+																default => $state
+														}),
+												
+												Infolists\Components\TextEntry::make('transfer_method_pick_date')
+														->label('Дата забора груза')
+														->dateTime('d.m.Y H:i')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('transfer_method_pick_address')
+														->label('Адрес забора груза')
+														->default('—')
+														->columnSpanFull(),
+												
+												Infolists\Components\TextEntry::make('transfer_method_receive_date')
+														->label('Дата привоза клиентом')
+														->dateTime('d.m.Y H:i')
+														->default('—'),
+										])
+										->columns(2),
+								
+								Infolists\Components\Section::make('Реквизиты')
+										->schema([
+												Infolists\Components\TextEntry::make('agent.inn')
+														->label('ИНН')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('agent.ogrn')
+														->label('ОГРН')
+														->default('—'),
+												
+												Infolists\Components\TextEntry::make('agent.address')
+														->label('Адрес')
+														->default('—')
+														->columnSpanFull(),
+										])
+										->columns(2)
+										->collapsed(),
+						]);
+		}
+
 
     public static function getPages(): array
     {
