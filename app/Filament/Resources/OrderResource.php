@@ -315,67 +315,149 @@ class OrderResource extends Resource
 
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Основная информация')
-                    ->schema([
-                        Forms\Components\TextInput::make('id')
-                            ->label('№ заявки')
-                            ->disabled(),
-                        
-                        Forms\Components\Select::make('user_id')
-                            ->label('Пользователь')
-                            ->relationship('user', 'name')
-                            ->required(),
-                        
-                        Forms\Components\DateTimePicker::make('delivery_date')
-                            ->label('Дата поставки')
-                            ->required(),
-                        
-                        Forms\Components\TextInput::make('distributor_id')
-                            ->label('Дистрибьютор')
-                            ->required(),
-                        
-                        Forms\Components\TextInput::make('distributor_center_id')
-                            ->label('РЦ')
-                            ->required(),
-                        
-                        Forms\Components\Select::make('payment_method')
-                            ->label('Способ оплаты')
-                            ->options([
-                                'cash' => 'Наличными',
-                                'bill' => 'По счету',
-                            ])
-                            ->required(),
-                    ])
-                    ->columns(2),
-                
-                Forms\Components\Section::make('Груз')
-                    ->schema([
-                        Forms\Components\Select::make('cargo')
-                            ->label('Тип груза')
-                            ->options([
-                                'boxes' => 'Коробки',
-                                'pallets' => 'Палеты',
-                            ])
-                            ->required(),
-                        
-                        Forms\Components\TextInput::make('boxes_count')
-                            ->label('Количество коробок')
-                            ->numeric(),
-                        
-                        Forms\Components\TextInput::make('pallets_count')
-                            ->label('Количество палет')
-                            ->numeric(),
-                        
-                        Forms\Components\Textarea::make('cargo_comment')
-                            ->label('Комментарий')
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(3),
-            ]);
-    }
+		{
+				return $form->schema([
+						Forms\Components\Section::make('Основная информация')
+								->schema([
+										Forms\Components\TextInput::make('id')
+												->label('№ заявки')
+												->disabled(),
+										Forms\Components\Select::make('user_id')
+												->label('Пользователь')
+												->relationship('user', 'name')
+												->searchable()
+												->required(),
+										Forms\Components\Select::make('agent_id')
+												->label('Отправитель')
+												->relationship('agent', 'title')
+												->searchable()
+												->required(),
+										Forms\Components\Select::make('transfer_method')
+												->label('Способ передачи')
+												->options([
+														'receive' => 'Привоз клиентом',
+														'pick'    => 'Забор грузополучателем',
+												])
+												->required(),
+										Forms\Components\Select::make('payment_method')
+												->label('Способ оплаты')
+												->options([
+														'cash' => 'Наличные',
+														'bill' => 'Безналичный',
+												])
+												->required(),
+										Forms\Components\Select::make('payment_method_pick')
+												->label('Оплата за забор')
+												->options([
+														'cash' => 'Наличные',
+														'bill' => 'Безналичный',
+												]),
+										Forms\Components\Toggle::make('individual')
+												->label('Индивидуальный расчет'),
+										Forms\Components\DateTimePicker::make('delivery_date')
+												->label('Дата поставки')
+												->required(),
+										Forms\Components\DateTimePicker::make('post_date')
+												->label('Дата публикации'),
+								])
+								->columns(3),
+
+						Forms\Components\Section::make('Локации')
+								->schema([
+										Forms\Components\TextInput::make('warehouse_id')
+												->label('Склад')
+												->required(),
+										Forms\Components\TextInput::make('distributor_id')
+												->label('Дистрибьютор')
+												->required(),
+										Forms\Components\TextInput::make('distributor_center_id')
+												->label('Адрес РЦ')
+												->required(),
+								])
+								->columns(3),
+
+						Forms\Components\Section::make('Груз')
+								->schema([
+										Forms\Components\Select::make('cargo')
+												->label('Тип груза')
+												->options([
+														'boxes'   => 'Коробки',
+														'pallets' => 'Палеты',
+												])
+												->required(),
+										Forms\Components\TextInput::make('cargo_type')
+												->label('Описание груза'),
+										Forms\Components\TextInput::make('boxes_count')
+												->label('Кол-во коробов')
+												->numeric(),
+										Forms\Components\TextInput::make('boxes_weight')
+												->label('Вес коробов, кг')
+												->numeric(),
+										Forms\Components\TextInput::make('boxes_volume')
+												->label('Объем коробов, м³')
+												->numeric(),
+										Forms\Components\TextInput::make('pallets_count')
+												->label('Кол-во палет')
+												->numeric(),
+										Forms\Components\TextInput::make('pallets_boxcount')
+												->label('Коробов в палете')
+												->numeric(),
+										Forms\Components\TextInput::make('pallets_weight')
+												->label('Вес палет, кг')
+												->numeric(),
+										Forms\Components\TextInput::make('pallets_volume')
+												->label('Объем палет, м³')
+												->numeric(),
+										Forms\Components\Select::make('palletizing_type')
+												->label('Тип палетирования')
+												->options([
+														'single' => 'Палетирование',
+														'pallet' => 'Поддон + палетирование',
+												]),
+										Forms\Components\TextInput::make('palletizing_count')
+												->label('Кол-во палетирования')
+												->numeric(),
+										Forms\Components\Textarea::make('cargo_comment')
+												->label('Комментарий')
+												->columnSpanFull(),
+								])
+								->columns(3),
+
+						Forms\Components\Section::make('Получение/забор')
+								->schema([
+										Forms\Components\DateTimePicker::make('transfer_method_receive_date')
+												->label('Дата привоза клиентом'),
+										Forms\Components\DateTimePicker::make('transfer_method_pick_date')
+												->label('Дата забора'),
+										Forms\Components\Textarea::make('transfer_method_pick_address')
+												->label('Адрес забора')
+												->columnSpanFull(),
+								])
+								->columns(2),
+
+						Forms\Components\Section::make('Стоимость')
+								->schema([
+										Forms\Components\TextInput::make('pick')
+												->label('Забор, ₽')
+												->numeric()
+												->prefix('₽'),
+										Forms\Components\TextInput::make('delivery')
+												->label('Доставка, ₽')
+												->numeric()
+												->prefix('₽'),
+										Forms\Components\TextInput::make('additional')
+												->label('Палетирование, ₽')
+												->numeric()
+												->prefix('₽'),
+										Forms\Components\TextInput::make('total')
+												->label('Итого, ₽')
+												->numeric()
+												->prefix('₽'),
+								])
+								->columns(4),
+				]);
+		}
+
 
     public static function getRelations(): array
     {
