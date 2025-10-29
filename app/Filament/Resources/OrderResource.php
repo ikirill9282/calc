@@ -297,7 +297,8 @@ class OrderResource extends Resource
 						->actions([
 								Tables\Actions\ViewAction::make()
 										->modalHeading('Информация о заявке')
-										->modalWidth('7xl'), // Большая ширина модального окна
+										->modalWidth('7xl') // Большая ширина модального окна
+										->infolist(fn (Infolists\Infolist $infolist) => static::infolist($infolist)),
 								Tables\Actions\EditAction::make(),
 						])
 						->bulkActions([
@@ -306,7 +307,8 @@ class OrderResource extends Resource
 								]),
 						])
 						->defaultSort('created_at', 'desc')
-						->recordAction(Tables\Actions\ViewAction::class);
+						->recordAction(Tables\Actions\ViewAction::class)
+						->recordUrl(null);
 		}
 
 
@@ -565,7 +567,7 @@ class OrderResource extends Resource
         return [
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
-            'view' => Pages\ViewOrder::route('/{record}'),
+            // 'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
