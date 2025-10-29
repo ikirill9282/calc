@@ -296,6 +296,8 @@ class OrderResource extends Resource
 						])
 						->actions([
 								Tables\Actions\ViewAction::make(),
+										->modalHeading('Информация о заявке')
+										->modalWidth('7xl'), // Большая ширина модального окна
 								Tables\Actions\EditAction::make(),
 						])
 						->bulkActions([
@@ -304,9 +306,7 @@ class OrderResource extends Resource
 								]),
 						])
 						->defaultSort('created_at', 'desc')
-						->recordUrl(
-							fn (Order $record): string => Pages\ViewOrder::getUrl([$record->id]),
-						);
+						->recordAction(Tables\Actions\ViewAction::class);
 		}
 
 
