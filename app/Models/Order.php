@@ -20,11 +20,6 @@ class Order extends Model
     parent::boot();
 
     static::saving(function($model) {
-      $dirty = array_keys($model->getDirty());
-      $ignore = ['created_at', 'updated_at', 'changed_fields'];
-      $changed = array_values(array_diff($dirty, $ignore));
-      $model->changed_fields = empty($changed) ? null : $changed;
-
       if ($model->transfer_method == 'pick') {
         $model->transfer_method_receive_date = null;
       } elseif ($model->transfer_method == 'receive') {
@@ -46,6 +41,29 @@ class Order extends Model
         $model->delivery = null;
         $model->additional = null;
         $model->total = null;
+      }
+
+      if (!$model->exists) {
+        return;
+      }
+
+      $dirty = array_keys($model->getDirty());
+      $ignore = ['created_at', 'updated_at', 'changed_fields'];
+      $changed = array_values(array_diff($dirty, $ignore));
+
+      $previous = $model->getOriginal('changed_fields') ?? [];
+      if (!is_array($previous)) {
+        $previous = (array) $previous;
+      }
+
+      $merged = array_values(array_unique(array_merge($previous, $changed)));
+
+      if (!empty($merged)) {
+        $model->changed_fields = $merged;
+      } elseif (!empty($previous)) {
+        $model->changed_fields = $previous;
+      } else {
+        $model->changed_fields = null;
       }
     });
   }
