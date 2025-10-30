@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\Carbon;
 
 class OrderResource extends Resource
 {
@@ -460,8 +461,29 @@ class OrderResource extends Resource
 												->label('Дата привоза клиентом'),
 										Forms\Components\DateTimePicker::make('transfer_method_pick_date')
 												->label('Дата забора')
-												->default(null)
-												->nullable(),
+												->nullable()
+												->dehydrated(function ($state, ?Order $record) {
+														if (! $record) {
+																return filled($state);
+														}
+
+														if (blank($state)) {
+																return ! blank($record->transfer_method_pick_date);
+														}
+
+														try {
+																$incoming = Carbon::parse($state);
+														} catch (\Throwable $e) {
+																return true;
+														}
+
+														$current = $record->transfer_method_pick_date
+																? Carbon::parse($record->transfer_method_pick_date)
+																: null;
+
+														return ! $current || ! $incoming->equalTo($current);
+												})
+												->dehydrateStateUsing(fn ($state) => blank($state) ? null : Carbon::parse($state)->format('Y-m-d H:i:s')),
 										Forms\Components\Textarea::make('transfer_method_pick_address')
 												->label('Адрес забора')
 												->columnSpanFull(),
