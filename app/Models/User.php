@@ -17,6 +17,12 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public const ROLES = [
+        'admin' => 'Администратор',
+        'manager' => 'Менеджер',
+        'user' => 'Пользователь',
+    ];
+
     protected $hidden = [
         'password',
         'remember_token',
