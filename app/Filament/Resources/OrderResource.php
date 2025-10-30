@@ -459,7 +459,9 @@ class OrderResource extends Resource
 										Forms\Components\DateTimePicker::make('transfer_method_receive_date')
 												->label('Дата привоза клиентом'),
 										Forms\Components\DateTimePicker::make('transfer_method_pick_date')
-												->label('Дата забора'),
+												->label('Дата забора')
+												->default(null)
+												->nullable(),
 										Forms\Components\Textarea::make('transfer_method_pick_address')
 												->label('Адрес забора')
 												->columnSpanFull(),
