@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 use Revolution\Google\Sheets\Facades\Sheets;
-use DateTimeInterface;
+use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 
 class Order extends Model
 {
@@ -440,38 +439,21 @@ class Order extends Model
   public function deliveryDate(): Attribute
   {
     return Attribute::make(
-      set: fn($val) => $this->formatDateForStorage($val),
+      set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s'),
     );
   }
 
   public function transferMethodReceiveDate(): Attribute
   {
     return Attribute::make(
-      set: fn($val) => $this->formatDateForStorage($val),
+      set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s')
     );
   }
 
   public function transferMethodPickDate(): Attribute
   {
     return Attribute::make(
-      set: fn($val) => $this->formatDateForStorage($val),
+      set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s')
     );
-  }
-
-  private function formatDateForStorage($value): ?string
-  {
-    if ($value instanceof DateTimeInterface) {
-      return $value->format('Y-m-d H:i:s');
-    }
-
-    if (is_string($value)) {
-      $value = trim($value);
-    }
-
-    if ($value === null || $value === '') {
-      return null;
-    }
-
-    return Carbon::parse($value)->format('Y-m-d H:i:s');
   }
 }
