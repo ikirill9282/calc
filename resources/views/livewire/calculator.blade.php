@@ -187,15 +187,15 @@
                                 <x-form.input class="input-numeric" name="fields.pallets_data.count"
                                     wire:model.live.debounce.500ms="fields.pallets_data.count" />
                             </x-form.wrap>
-                            <x-form.wrap label="Количество коробок в паллете" name="fields.pallets_data.boxcount">
+                            <x-form.wrap label="Количество коробок" name="fields.pallets_data.boxcount">
                                 <x-form.input class="input-numeric" name="fields.pallets_data.boxcount"
                                     wire:model.live.debounce.500ms="fields.pallets_data.boxcount" />
                             </x-form.wrap>
-                            <x-form.wrap label="Общий объем паллета" name="fields.pallets_data.volume">
+                            <x-form.wrap label="Общий объем " name="fields.pallets_data.volume">
                                 <x-form.input class="input-numeric" name="fields.pallets_data.volume"
                                     wire:model.live.debounce.500ms="fields.pallets_data.volume" />
                             </x-form.wrap>
-                            <x-form.wrap label="Общий вес паллета" name="fields.pallets_data.weight">
+                            <x-form.wrap label="Общий вес" name="fields.pallets_data.weight">
                                 <x-form.input class="input-numeric" name="fields.pallets_data.weight"
                                     wire:model.live.debounce.500ms="fields.pallets_data.weight" />
                             </x-form.wrap>

@@ -26,7 +26,7 @@
                 Расчет индивидуальный
               @else
                 <span class="inline-block">Предварительная&nbsp;стоимость:</span>
-                <span class="text-xs inline-block my-2">в предварительную стоимость не входит стоимость услуги адресного забора груза и погрузочных работа на адресе забора и такие услуги оплачивается сверх стоимости доставки на склад маркетплейса</span>
+                <span class="text-xs inline-block my-2">В предварительный расчет не входит стоимость услуги адресного забора груза и погрузочных работ на адресе забора. Такие услуги оплачиваются сверх стоимости доставки на склад маркетплейса.</span>
                 <span class="inline-block my-2">{{ \Illuminate\Support\Number::currency($order->total ?? 0, 'RUB', locale: 'ru') }}</span>
               @endif
               
@@ -39,7 +39,7 @@
           <div class="order-details-view py-6 mt-6 border-t hidden border-primary-500/50">
 
             <div class="font-medium text-lg p-4 border mb-4 inline-block text-secondary-400 dark:text-secondary-600 border-secondary-400 dark:border-secondary-600">
-              Важно! Дата доставки в РЦ может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
+              Важно! Дата доставки в РЦ WILDBERRIES может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
             </div>
 
 

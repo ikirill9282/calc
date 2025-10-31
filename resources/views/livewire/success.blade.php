@@ -29,7 +29,7 @@
               <li>- дата отправления (выезд со склада)</li>
               <li>- дата выгрузки на складе (РЦ маркетплейса) назначения</li>
             </ul>
-            <p>Просим клеит упаковочный лист на торце коробов.</p>
+            <p>Просим клеить упаковочный лист на торце коробов.</p>
           </div>
         </div>
         <x-form.fieldset :title="false" :set_description="false" set_class="order-details !pb-14 sm:!pb-14 !border-none">
@@ -52,7 +52,7 @@
 
 
           <div class="font-medium text-lg p-4 border mt-4 inline-block text-secondary-400 dark:text-secondary-600 border-secondary-400 dark:border-secondary-600">
-            Важно! Дата доставки в РЦ может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
+            Важно! Дата доставки в РЦ WILDBERRIES может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
           </div>
 
           <div class="py-6 mt-6 border-t border-primary-500/50">
