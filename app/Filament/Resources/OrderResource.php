@@ -314,6 +314,7 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('agent_id') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 						])
+						->recordClasses(fn (Order $record): array => static::resolveHighlightClasses($record->highlight_color))
 						->filters([
 								Filter::make('id')
 										->label('№ заявки')
@@ -865,6 +866,25 @@ class OrderResource extends Resource
 										}),
 						])
 						->actions([
+								Tables\Actions\Action::make('highlight')
+										->label('Выделить')
+										->icon('heroicon-o-swatch')
+										->color('warning')
+										->form([
+												Forms\Components\Select::make('highlight_color')
+														->label('Цвет')
+														->options(static::getHighlightColorOptions())
+														->required(),
+										])
+										->fillForm(fn (Order $record): array => [
+												'highlight_color' => $record->highlight_color ?? 'none',
+										])
+										->action(function (Order $record, array $data): void {
+												$color = $data['highlight_color'] ?? null;
+
+												$record->highlight_color = $color === 'none' ? null : $color;
+												$record->save();
+										}),
 								Tables\Actions\ViewAction::make()
 										->modalHeading('Информация о заявке')
 										->modalWidth('7xl') // Большая ширина модального окна
@@ -879,6 +899,28 @@ class OrderResource extends Resource
 						->defaultSort('created_at', 'desc')
 						->recordAction(Tables\Actions\ViewAction::class)
 						->recordUrl(null);
+		}
+
+		protected static function getHighlightColorOptions(): array
+		{
+				return [
+						'none' => 'Без цвета',
+						'yellow' => 'Жёлтый',
+						'red' => 'Красный',
+						'green' => 'Зелёный',
+						'blue' => 'Синий',
+				];
+		}
+
+		protected static function resolveHighlightClasses(?string $color): array
+		{
+				return match ($color) {
+						'yellow' => ['bg-yellow-50', 'text-yellow-900', 'hover:bg-yellow-100'],
+						'red' => ['bg-red-50', 'text-red-900', 'hover:bg-red-100'],
+						'green' => ['bg-green-50', 'text-green-900', 'hover:bg-green-100'],
+						'blue' => ['bg-blue-50', 'text-blue-900', 'hover:bg-blue-100'],
+						default => [],
+				};
 		}
 
 

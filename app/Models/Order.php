@@ -13,6 +13,7 @@ class Order extends Model
 {
   protected $casts = [
     'changed_fields' => 'array',
+    'highlight_color' => 'string',
   ];
 
   public static function boot()
