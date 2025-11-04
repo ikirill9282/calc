@@ -161,7 +161,7 @@ class OrderResource extends Resource
 
 								// Кол-во коробов
 								Tables\Columns\TextColumn::make('boxes_count')
-										->label('Кол-во коробов')
+										->label('Кол-во коробов1')
 										->numeric()
 										->sortable()
 										->default('—')
