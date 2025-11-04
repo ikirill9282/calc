@@ -890,7 +890,8 @@ class OrderResource extends Resource
 						])
 						->defaultSort('created_at', 'desc')
 						->recordAction(Tables\Actions\ViewAction::class)
-						->recordUrl(null);
+						->recordUrl(null)
+						->paginated(false);
 		}
 
 		protected static function getHighlightColorOptions(): array
