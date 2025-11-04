@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Models\User;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -42,7 +41,6 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
-            ->auth(fn (?User $user): bool => $user !== null && in_array($user->role, ['admin', 'manager'], true))
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn () => view('components.filament-styles'),
