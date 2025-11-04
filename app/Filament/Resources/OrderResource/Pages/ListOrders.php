@@ -7,6 +7,7 @@ use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListOrders extends ListRecords
@@ -117,8 +118,8 @@ class ListOrders extends ListRecords
     protected function formatExportValue(Order $record, string $column): string
     {
         return match ($column) {
-            'created_at' => $record->created_at?->format('d.m.Y H:i') ?? '',
-            'delivery_date' => $record->delivery_date?->format('d.m.Y') ?? '',
+            'created_at' => $this->formatDateTimeValue($record->created_at),
+            'delivery_date' => $this->formatDateValue($record->delivery_date),
             'payment_method' => $this->getPaymentMethodLabel($record->payment_method),
             'individual' => $this->booleanToLabel((bool) $record->individual),
             'cargo' => $this->getCargoLabel($record->cargo),
@@ -126,23 +127,20 @@ class ListOrders extends ListRecords
             'has_palletizing' => $this->booleanToLabel(($record->palletizing_count ?? 0) > 0),
             'palletizing_count' => $this->numericToString($record->palletizing_count),
             'has_pickup' => $this->booleanToLabel($record->transfer_method === 'pick'),
-            'transfer_method_receive_date' => $this->formatDateTime($record->transfer_method_receive_date),
-            'transfer_method_pick_date' => $this->formatDateTime($record->transfer_method_pick_date),
+            'transfer_method_receive_date' => $this->formatDateTimeValue($record->transfer_method_receive_date),
+            'transfer_method_pick_date' => $this->formatDateTimeValue($record->transfer_method_pick_date),
             default => $this->stringify(data_get($record, $column)),
         };
     }
 
-    protected function formatDateTime(mixed $value): string
+    protected function formatDateTimeValue(mixed $value): string
     {
-        if ($value === null) {
-            return '';
-        }
+        return $this->formatDateGeneric($value, 'd.m.Y H:i');
+    }
 
-        if ($value instanceof \DateTimeInterface) {
-            return $value->format('d.m.Y H:i');
-        }
-
-        return (string) $value;
+    protected function formatDateValue(mixed $value): string
+    {
+        return $this->formatDateGeneric($value, 'd.m.Y');
     }
 
     protected function booleanToLabel(bool $value): string
@@ -190,5 +188,41 @@ class ListOrders extends ListRecords
         }
 
         return (string) $value;
+    }
+
+    protected function formatDateGeneric(mixed $value, string $format): string
+    {
+        $date = $this->asCarbon($value);
+
+        return $date?->format($format) ?? '';
+    }
+
+    protected function asCarbon(mixed $value): ?Carbon
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return Carbon::instance($value);
+        }
+
+        if (is_numeric($value)) {
+            return Carbon::createFromTimestamp((int) $value);
+        }
+
+        if (is_string($value)) {
+            try {
+                return Carbon::parse($value);
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+
+        return null;
     }
 }
