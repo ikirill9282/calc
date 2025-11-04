@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
             ])
             ->renderHook(
-                PanelsRenderHook::HEAD,
+                PanelsRenderHook::HEAD_END,
                 fn () => view('components.filament-styles'),
             )
             ->middleware([
