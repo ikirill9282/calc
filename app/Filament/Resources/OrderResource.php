@@ -13,6 +13,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Carbon;
+use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 
 class OrderResource extends Resource
 {
@@ -312,6 +318,111 @@ class OrderResource extends Resource
 										->toggleable(isToggledHiddenByDefault: false),
 						])
 						->filters([
+								QueryBuilder::make()
+										->constraints([
+												NumberConstraint::make('id')
+														->label('№ заявки')
+														->integer(),
+												DateConstraint::make('created_at')
+														->label('Дата и время'),
+												TextConstraint::make('agent_title')
+														->label('Отправитель (ФИО/ИП/ООО)')
+														->attribute('agent.title'),
+												TextConstraint::make('agent_name')
+														->label('Контактное лицо')
+														->attribute('agent.name'),
+												TextConstraint::make('agent_phone')
+														->label('Номер телефона')
+														->attribute('agent.phone'),
+												DateConstraint::make('delivery_date')
+														->label('Дата поставки на РЦ'),
+												TextConstraint::make('distributor_id')
+														->label('РЦ'),
+												TextConstraint::make('distributor_center_id')
+														->label('Адрес РЦ'),
+												SelectConstraint::make('payment_method')
+														->label('Способ оплаты')
+														->options([
+																'cash' => 'Наличные',
+																'bill' => 'Безналичный',
+														])
+														->nullable(),
+												BooleanConstraint::make('individual')
+														->label('Индивидуальный расчет'),
+												SelectConstraint::make('cargo')
+														->label('Груз')
+														->options([
+																'boxes' => 'Коробки',
+																'pallets' => 'Палеты',
+														]),
+												NumberConstraint::make('pallets_count')
+														->label('Кол-во палет')
+														->integer()
+														->nullable(),
+												NumberConstraint::make('pallets_boxcount')
+														->label('Коробов в палете')
+														->integer()
+														->nullable(),
+												NumberConstraint::make('pallets_weight')
+														->label('Вес палет, кг')
+														->nullable(),
+												NumberConstraint::make('pallets_volume')
+														->label('Объем палет, м³')
+														->nullable(),
+												NumberConstraint::make('boxes_count')
+														->label('Кол-во коробов')
+														->integer()
+														->nullable(),
+												NumberConstraint::make('boxes_volume')
+														->label('Объем коробов, м³')
+														->nullable(),
+												NumberConstraint::make('boxes_weight')
+														->label('Вес коробов, кг')
+														->nullable(),
+												NumberConstraint::make('palletizing_count')
+														->label('Палетирование кол-во')
+														->integer()
+														->nullable(),
+												SelectConstraint::make('transfer_method')
+														->label('Способ передачи')
+														->options([
+																'receive' => 'Привоз клиентом',
+																'pick' => 'Забор грузополучателем',
+														]),
+												DateConstraint::make('transfer_method_receive_date')
+														->label('Дата привоза клиентом')
+														->nullable(),
+												NumberConstraint::make('pick')
+														->label('Оплата за забор, ₽')
+														->nullable(),
+												DateConstraint::make('transfer_method_pick_date')
+														->label('Дата забора груза')
+														->nullable(),
+												TextConstraint::make('transfer_method_pick_address')
+														->label('Адрес забора')
+														->nullable(),
+												NumberConstraint::make('delivery')
+														->label('Доставка, ₽')
+														->nullable(),
+												NumberConstraint::make('additional')
+														->label('Палетирование, ₽')
+														->nullable(),
+												NumberConstraint::make('total')
+														->label('Предварительная сумма, ₽')
+														->nullable(),
+												TextConstraint::make('cargo_comment')
+														->label('Комментарий')
+														->nullable(),
+												TextConstraint::make('agent_email')
+														->label('Email')
+														->attribute('agent.email'),
+												TextConstraint::make('agent_inn')
+														->label('ИНН')
+														->attribute('agent.inn'),
+												TextConstraint::make('agent_ogrn')
+														->label('ОГРН')
+														->attribute('agent.ogrn'),
+										]),
 								Tables\Filters\SelectFilter::make('payment_method')
 										->label('Способ оплаты')
 										->options([
