@@ -879,12 +879,14 @@ class OrderResource extends Resource
 										->fillForm(fn (Order $record): array => [
 												'highlight_color' => $record->highlight_color ?? 'none',
 										])
-										->action(function (Order $record, array $data): void {
+										->action(function (Order $record, array $data, Pages\ListOrders $livewire): void {
 												$color = $data['highlight_color'] ?? null;
 
 												$record->highlight_color = $color === 'none' ? null : $color;
 												$record->save();
-										}),
+												$livewire->flushCachedTableRecords();
+										})
+										->after(fn (Pages\ListOrders $livewire) => $livewire->dispatch('refresh')),
 								Tables\Actions\ViewAction::make()
 										->modalHeading('Информация о заявке')
 										->modalWidth('7xl') // Большая ширина модального окна
