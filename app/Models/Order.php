@@ -98,6 +98,21 @@ class Order extends Model
     return false;
   }
 
+  public function distributionLabel(): string
+  {
+    $parts = array_filter([
+      $this->distributor_id,
+      $this->distributor_center_id,
+    ], fn ($value) => filled($value));
+
+    return implode(' - ', $parts);
+  }
+
+  public function getDistributionLabelAttribute(): string
+  {
+    return $this->distributionLabel();
+  }
+
 
   // public function writeSheet()
   // {

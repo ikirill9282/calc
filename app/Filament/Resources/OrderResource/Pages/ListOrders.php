@@ -56,8 +56,7 @@ class ListOrders extends ListRecords
             'agent.name' => 'Контактное лицо',
             'agent.phone' => 'Номер телефона',
             'delivery_date' => 'Дата поставки на РЦ',
-            'distributor_id' => 'РЦ',
-            'distributor_center_id' => 'Адрес РЦ',
+            'distribution' => 'РЦ и адрес',
             'payment_method' => 'Способ оплаты',
             'individual' => 'Индивидуальный расчет',
             'cargo' => 'Груз',
@@ -120,6 +119,7 @@ class ListOrders extends ListRecords
         return match ($column) {
             'created_at' => $this->formatDateTimeValue($record->created_at),
             'delivery_date' => $this->formatDateValue($record->delivery_date),
+            'distribution' => $record->distribution_label,
             'payment_method' => $this->getPaymentMethodLabel($record->payment_method),
             'individual' => $this->booleanToLabel((bool) $record->individual),
             'cargo' => $this->getCargoLabel($record->cargo),

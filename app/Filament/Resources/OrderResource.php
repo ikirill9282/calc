@@ -79,19 +79,16 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('delivery_date') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 								
-								Tables\Columns\TextColumn::make('distributor_id')
-										->label('РЦ')
-										->searchable()
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('distributor_id') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-								
-								Tables\Columns\TextColumn::make('distributor_center_id')
-										->label('Адрес РЦ')
-										->searchable()
-										->limit(40)
-										->tooltip(fn ($state) => $state)
-										->color(fn (Order $record) => $record->hasChanged('distributor_center_id') ? 'warning' : null)
+								Tables\Columns\TextColumn::make('distribution')
+										->label('РЦ и адрес')
+										->getStateUsing(fn (Order $record) => $record->distribution_label ?: '—')
+										->limit(60)
+										->tooltip(fn (Order $record) => blank($record->distribution_label) ? null : $record->distribution_label)
+										->searchable(['distributor_id', 'distributor_center_id'])
+										->sortable(query: fn (Builder $query, string $direction) => $query
+												->orderBy('distributor_id', $direction)
+												->orderBy('distributor_center_id', $direction))
+										->color(fn (Order $record) => $record->hasChanged('distributor_id', 'distributor_center_id') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('payment_method')
@@ -420,30 +417,23 @@ class OrderResource extends Resource
 																fn (Builder $query, $date): Builder => $query->whereDate('delivery_date', '<=', $date),
 														);
 										}),
-								Filter::make('distributor_id')
-										->label('РЦ')
+								Filter::make('distribution')
+										->label('РЦ / Адрес')
 										->form([
 												Forms\Components\TextInput::make('value')
-														->label('РЦ')
+														->label('Значение')
 														->placeholder('Введите значение'),
 										])
 										->query(function (Builder $query, array $data): Builder {
 												return $query->when(
 														$data['value'] ?? null,
-														fn (Builder $query, $value): Builder => $query->where('distributor_id', 'like', '%' . $value . '%'),
-												);
-										}),
-								Filter::make('distributor_center_id')
-										->label('Адрес РЦ')
-										->form([
-												Forms\Components\TextInput::make('value')
-														->label('Адрес РЦ')
-														->placeholder('Введите значение'),
-										])
-										->query(function (Builder $query, array $data): Builder {
-												return $query->when(
-														$data['value'] ?? null,
-														fn (Builder $query, $value): Builder => $query->where('distributor_center_id', 'like', '%' . $value . '%'),
+														fn (Builder $query, $value): Builder => $query->where(function (Builder $subQuery) use ($value): Builder {
+																$like = '%' . $value . '%';
+
+																return $subQuery
+																		->where('distributor_id', 'like', $like)
+																		->orWhere('distributor_center_id', 'like', $like);
+														}),
 												);
 										}),
 								SelectFilter::make('payment_method')
