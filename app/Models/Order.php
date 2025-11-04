@@ -6,11 +6,50 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Revolution\Google\Sheets\Facades\Sheets;
 use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 
 class Order extends Model
 {
+  public const FIELD_LABELS = [
+    'id' => '№ заявки',
+    'created_at' => 'Дата создания',
+    'updated_at' => 'Дата изменения',
+    'user_id' => 'Пользователь',
+    'agent_id' => 'Отправитель',
+    'delivery_date' => 'Дата поставки на РЦ',
+    'post_date' => 'Дата публикации',
+    'warehouse_id' => 'Склад',
+    'distributor_id' => 'РЦ',
+    'distributor_center_id' => 'Адрес РЦ',
+    'payment_method' => 'Способ оплаты',
+    'payment_method_pick' => 'Оплата за забор',
+    'individual' => 'Индивидуальный расчет',
+    'cargo' => 'Тип груза',
+    'cargo_type' => 'Описание груза',
+    'boxes_count' => 'Кол-во коробов',
+    'boxes_weight' => 'Вес коробов, кг',
+    'boxes_volume' => 'Объем коробов, м³',
+    'pallets_count' => 'Кол-во палет',
+    'pallets_boxcount' => 'Коробов в палете',
+    'pallets_weight' => 'Вес палет, кг',
+    'pallets_volume' => 'Объем палет, м³',
+    'palletizing_type' => 'Тип палетирования',
+    'palletizing_count' => 'Палетирование кол-во',
+    'has_pickup' => 'Забор груза',
+    'transfer_method' => 'Способ передачи',
+    'transfer_method_receive_date' => 'Дата привоза клиентом',
+    'transfer_method_pick_date' => 'Дата забора груза',
+    'transfer_method_pick_address' => 'Адрес забора',
+    'pick' => 'Оплата за забор, ₽',
+    'delivery' => 'Доставка, ₽',
+    'additional' => 'Палетирование, ₽',
+    'total' => 'Предварительная сумма, ₽',
+    'cargo_comment' => 'Комментарий',
+    'highlight_color' => 'Цвет подсветки',
+  ];
+
   protected $casts = [
     'changed_fields' => 'array',
     'highlight_color' => 'string',
@@ -111,6 +150,19 @@ class Order extends Model
   public function getDistributionLabelAttribute(): string
   {
     return $this->distributionLabel();
+  }
+
+  public static function getFieldLabel(string $field): string
+  {
+    if (array_key_exists($field, self::FIELD_LABELS)) {
+      return self::FIELD_LABELS[$field];
+    }
+
+    return Str::of($field)
+      ->replace('_', ' ')
+      ->squish()
+      ->lower()
+      ->ucfirst();
   }
 
 
