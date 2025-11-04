@@ -13,12 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Carbon;
-use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 
 class OrderResource extends Resource
 {
@@ -318,124 +315,554 @@ class OrderResource extends Resource
 										->toggleable(isToggledHiddenByDefault: false),
 						])
 						->filters([
-								QueryBuilder::make()
-										->constraints([
-												NumberConstraint::make('id')
+								Filter::make('id')
+										->label('№ заявки')
+										->form([
+												Forms\Components\TextInput::make('value')
 														->label('№ заявки')
-														->integer(),
-												DateConstraint::make('created_at')
-														->label('Дата и время'),
-												TextConstraint::make('agent_title')
-														->label('Отправитель (ФИО/ИП/ООО)')
-														->attribute('agent.title'),
-												TextConstraint::make('agent_name')
+														->numeric()
+														->placeholder('Введите №'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->where('id', (int) $value),
+												);
+										}),
+								Filter::make('created_at')
+										->label('Дата и время')
+										->form([
+												Forms\Components\DatePicker::make('from')
+														->label('С')
+														->placeholder('С'),
+												Forms\Components\DatePicker::make('until')
+														->label('По')
+														->placeholder('По'),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['from'] ?? null,
+																fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+														)
+														->when(
+																$data['until'] ?? null,
+																fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+														);
+										}),
+								Filter::make('agent_title')
+										->label('Отправитель (ФИО/ИП/ООО)')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('Отправитель')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->whereHas(
+																'agent',
+																fn (Builder $agentQuery) => $agentQuery->where('title', 'like', '%' . $value . '%'),
+														),
+												);
+										}),
+								Filter::make('agent_name')
+										->label('Контактное лицо')
+										->form([
+												Forms\Components\TextInput::make('value')
 														->label('Контактное лицо')
-														->attribute('agent.name'),
-												TextConstraint::make('agent_phone')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->whereHas(
+																'agent',
+																fn (Builder $agentQuery) => $agentQuery->where('name', 'like', '%' . $value . '%'),
+														),
+												);
+										}),
+								Filter::make('agent_phone')
+										->label('Номер телефона')
+										->form([
+												Forms\Components\TextInput::make('value')
 														->label('Номер телефона')
-														->attribute('agent.phone'),
-												DateConstraint::make('delivery_date')
-														->label('Дата поставки на РЦ'),
-												TextConstraint::make('distributor_id')
-														->label('РЦ'),
-												TextConstraint::make('distributor_center_id')
-														->label('Адрес РЦ'),
-												SelectConstraint::make('payment_method')
-														->label('Способ оплаты')
-														->options([
-																'cash' => 'Наличные',
-																'bill' => 'Безналичный',
-														])
-														->nullable(),
-												BooleanConstraint::make('individual')
-														->label('Индивидуальный расчет'),
-												SelectConstraint::make('cargo')
-														->label('Груз')
-														->options([
-																'boxes' => 'Коробки',
-																'pallets' => 'Палеты',
-														]),
-												NumberConstraint::make('pallets_count')
-														->label('Кол-во палет')
-														->integer()
-														->nullable(),
-												NumberConstraint::make('pallets_boxcount')
-														->label('Коробов в палете')
-														->integer()
-														->nullable(),
-												NumberConstraint::make('pallets_weight')
-														->label('Вес палет, кг')
-														->nullable(),
-												NumberConstraint::make('pallets_volume')
-														->label('Объем палет, м³')
-														->nullable(),
-												NumberConstraint::make('boxes_count')
-														->label('Кол-во коробов')
-														->integer()
-														->nullable(),
-												NumberConstraint::make('boxes_volume')
-														->label('Объем коробов, м³')
-														->nullable(),
-												NumberConstraint::make('boxes_weight')
-														->label('Вес коробов, кг')
-														->nullable(),
-												NumberConstraint::make('palletizing_count')
-														->label('Палетирование кол-во')
-														->integer()
-														->nullable(),
-												SelectConstraint::make('transfer_method')
-														->label('Способ передачи')
-														->options([
-																'receive' => 'Привоз клиентом',
-																'pick' => 'Забор грузополучателем',
-														]),
-												DateConstraint::make('transfer_method_receive_date')
-														->label('Дата привоза клиентом')
-														->nullable(),
-												NumberConstraint::make('pick')
-														->label('Оплата за забор, ₽')
-														->nullable(),
-												DateConstraint::make('transfer_method_pick_date')
-														->label('Дата забора груза')
-														->nullable(),
-												TextConstraint::make('transfer_method_pick_address')
-														->label('Адрес забора')
-														->nullable(),
-												NumberConstraint::make('delivery')
-														->label('Доставка, ₽')
-														->nullable(),
-												NumberConstraint::make('additional')
-														->label('Палетирование, ₽')
-														->nullable(),
-												NumberConstraint::make('total')
-														->label('Предварительная сумма, ₽')
-														->nullable(),
-												TextConstraint::make('cargo_comment')
-														->label('Комментарий')
-														->nullable(),
-												TextConstraint::make('agent_email')
-														->label('Email')
-														->attribute('agent.email'),
-												TextConstraint::make('agent_inn')
-														->label('ИНН')
-														->attribute('agent.inn'),
-												TextConstraint::make('agent_ogrn')
-														->label('ОГРН')
-														->attribute('agent.ogrn'),
-										]),
-								Tables\Filters\SelectFilter::make('payment_method')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->whereHas(
+																'agent',
+																fn (Builder $agentQuery) => $agentQuery->where('phone', 'like', '%' . $value . '%'),
+														),
+												);
+										}),
+								Filter::make('delivery_date')
+										->label('Дата поставки на РЦ')
+										->form([
+												Forms\Components\DatePicker::make('from')
+														->label('С'),
+												Forms\Components\DatePicker::make('until')
+														->label('По'),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['from'] ?? null,
+																fn (Builder $query, $date): Builder => $query->whereDate('delivery_date', '>=', $date),
+														)
+														->when(
+																$data['until'] ?? null,
+																fn (Builder $query, $date): Builder => $query->whereDate('delivery_date', '<=', $date),
+														);
+										}),
+								Filter::make('distributor_id')
+										->label('РЦ')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('РЦ')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->where('distributor_id', 'like', '%' . $value . '%'),
+												);
+										}),
+								Filter::make('distributor_center_id')
+										->label('Адрес РЦ')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('Адрес РЦ')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->where('distributor_center_id', 'like', '%' . $value . '%'),
+												);
+										}),
+								SelectFilter::make('payment_method')
 										->label('Способ оплаты')
 										->options([
 												'cash' => 'Наличные',
 												'bill' => 'Безналичный',
 										]),
-								
-								Tables\Filters\SelectFilter::make('cargo')
+								TernaryFilter::make('individual')
+										->label('Индивидуальный расчет')
+										->queries(
+												true: fn (Builder $query): Builder => $query->where('individual', true),
+												false: fn (Builder $query): Builder => $query->where('individual', false),
+										),
+								SelectFilter::make('cargo')
 										->label('Тип груза')
 										->options([
 												'boxes' => 'Коробки',
 												'pallets' => 'Палеты',
 										]),
+								Filter::make('pallets_count')
+										->label('Кол-во палет')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_count', '>=', (int) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_count', '<=', (int) $value),
+														);
+										}),
+								Filter::make('pallets_boxcount')
+										->label('Коробов в палете')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_boxcount', '>=', (int) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_boxcount', '<=', (int) $value),
+														);
+										}),
+								Filter::make('pallets_weight')
+										->label('Вес палет, кг')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_weight', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_weight', '<=', (float) $value),
+														);
+										}),
+								Filter::make('pallets_volume')
+										->label('Объем палет, м³')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_volume', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pallets_volume', '<=', (float) $value),
+														);
+										}),
+								Filter::make('boxes_count')
+										->label('Кол-во коробов')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('boxes_count', '>=', (int) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('boxes_count', '<=', (int) $value),
+														);
+										}),
+								Filter::make('boxes_volume')
+										->label('Объем коробов, м³')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('boxes_volume', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('boxes_volume', '<=', (float) $value),
+														);
+										}),
+								Filter::make('boxes_weight')
+										->label('Вес коробов, кг')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('boxes_weight', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('boxes_weight', '<=', (float) $value),
+														);
+										}),
+								TernaryFilter::make('has_palletizing')
+										->label('Палетирование')
+										->queries(
+												true: fn (Builder $query): Builder => $query->where('palletizing_count', '>', 0),
+												false: fn (Builder $query): Builder => $query->where(
+														fn (Builder $inner): Builder => $inner
+																->whereNull('palletizing_count')
+																->orWhere('palletizing_count', '<=', 0),
+												),
+										),
+								Filter::make('palletizing_count')
+										->label('Палетирование кол-во')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('palletizing_count', '>=', (int) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('palletizing_count', '<=', (int) $value),
+														);
+										}),
+								TernaryFilter::make('has_pickup')
+										->label('Забор груза')
+										->queries(
+												true: fn (Builder $query): Builder => $query->where('transfer_method', 'pick'),
+												false: fn (Builder $query): Builder => $query->where('transfer_method', '!=', 'pick'),
+										),
+								SelectFilter::make('transfer_method')
+										->label('Способ передачи')
+										->options([
+												'receive' => 'Привоз клиентом',
+												'pick' => 'Забор грузополучателем',
+										]),
+								Filter::make('transfer_method_receive_date')
+										->label('Дата привоза клиентом')
+										->form([
+												Forms\Components\DateTimePicker::make('from')
+														->label('С'),
+												Forms\Components\DateTimePicker::make('until')
+														->label('По'),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['from'] ?? null,
+																fn (Builder $query, $date): Builder => $query->where('transfer_method_receive_date', '>=', $date),
+														)
+														->when(
+																$data['until'] ?? null,
+																fn (Builder $query, $date): Builder => $query->where('transfer_method_receive_date', '<=', $date),
+														);
+										}),
+								Filter::make('pick')
+										->label('Оплата за забор, ₽')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pick', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('pick', '<=', (float) $value),
+														);
+										}),
+								Filter::make('transfer_method_pick_date')
+										->label('Дата забора груза')
+										->form([
+												Forms\Components\DateTimePicker::make('from')
+														->label('С'),
+												Forms\Components\DateTimePicker::make('until')
+														->label('По'),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['from'] ?? null,
+																fn (Builder $query, $date): Builder => $query->where('transfer_method_pick_date', '>=', $date),
+														)
+														->when(
+																$data['until'] ?? null,
+																fn (Builder $query, $date): Builder => $query->where('transfer_method_pick_date', '<=', $date),
+														);
+										}),
+								Filter::make('transfer_method_pick_address')
+										->label('Адрес забора')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('Адрес')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->where('transfer_method_pick_address', 'like', '%' . $value . '%'),
+												);
+										}),
+								Filter::make('delivery')
+										->label('Доставка, ₽')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('delivery', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('delivery', '<=', (float) $value),
+														);
+										}),
+								Filter::make('additional')
+										->label('Палетирование, ₽')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('additional', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('additional', '<=', (float) $value),
+														);
+										}),
+								Filter::make('total')
+										->label('Предварительная сумма, ₽')
+										->form([
+												Forms\Components\TextInput::make('min')
+														->label('Мин')
+														->numeric(),
+												Forms\Components\TextInput::make('max')
+														->label('Макс')
+														->numeric(),
+										])
+										->columns(2)
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when(
+																$data['min'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('total', '>=', (float) $value),
+														)
+														->when(
+																$data['max'] ?? null,
+																fn (Builder $query, $value): Builder => $query->where('total', '<=', (float) $value),
+														);
+										}),
+								Filter::make('cargo_comment')
+										->label('Комментарий')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('Комментарий')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->where('cargo_comment', 'like', '%' . $value . '%'),
+												);
+										}),
+								Filter::make('agent_email')
+										->label('Email')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('Email')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->whereHas(
+																'agent',
+																fn (Builder $agentQuery) => $agentQuery->where('email', 'like', '%' . $value . '%'),
+														),
+												);
+										}),
+								Filter::make('agent_inn')
+										->label('ИНН')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('ИНН')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->whereHas(
+																'agent',
+																fn (Builder $agentQuery) => $agentQuery->where('inn', 'like', '%' . $value . '%'),
+														),
+												);
+										}),
+								Filter::make('agent_ogrn')
+										->label('ОГРН')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('ОГРН')
+														->placeholder('Введите значение'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query->when(
+														$data['value'] ?? null,
+														fn (Builder $query, $value): Builder => $query->whereHas(
+																'agent',
+																fn (Builder $agentQuery) => $agentQuery->where('ogrn', 'like', '%' . $value . '%'),
+														),
+												);
+										}),
 						])
 						->actions([
 								Tables\Actions\ViewAction::make()
