@@ -890,9 +890,10 @@ class OrderResource extends Resource
 						])
 						->defaultSort('created_at', 'desc')
 						->recordUrl(null)
+						->recordAction(null)
 						->paginated()
 						->paginationPageOptions([25, 50, 100, 200])
-						->defaultPaginationPageOption(100);
+						->defaultPaginationPageOption(25);
 		}
 
 		protected static function getHighlightColorOptions(): array
