@@ -51,6 +51,7 @@ class ListOrders extends ListRecords
     {
         return [
             'id' => '№ заявки',
+            'send_date' => 'Дата отправки',
             'created_at' => 'Дата и время',
             'agent.title' => 'Отправитель (ФИО/ИП/ООО)',
             'agent.name' => 'Контактное лицо',
@@ -118,6 +119,7 @@ class ListOrders extends ListRecords
     {
         return match ($column) {
             'created_at' => $this->formatDateTimeValue($record->created_at),
+            'send_date' => $this->formatDateValue($record->send_date),
             'delivery_date' => $this->formatDateValue($record->delivery_date),
             'distribution' => $record->distribution_label,
             'payment_method' => $this->getPaymentMethodLabel($record->payment_method),

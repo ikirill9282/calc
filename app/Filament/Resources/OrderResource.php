@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -39,6 +40,14 @@ class OrderResource extends Resource
 										->label('№ заявки')
 										->sortable()
 										->searchable()
+										->toggleable(isToggledHiddenByDefault: false),
+								
+								Tables\Columns\TextColumn::make('send_date')
+										->label('Дата отправки')
+										->date('d.m.Y')
+										->placeholder('—')
+										->sortable()
+										->color(fn (Order $record) => $record->hasChanged('send_date') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('created_at')
@@ -349,6 +358,14 @@ class OrderResource extends Resource
 																fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
 														);
 										}),
+								Filter::make('send_date_set')
+										->label('С датой отправки')
+										->toggle()
+										->query(fn (Builder $query): Builder => $query->whereNotNull('send_date')),
+								Filter::make('send_date_missing')
+										->label('Без даты отправки')
+										->toggle()
+										->query(fn (Builder $query): Builder => $query->whereNull('send_date')),
 								Filter::make('agent_title')
 										->label('Отправитель (ФИО/ИП/ООО)')
 										->form([
@@ -885,6 +902,26 @@ class OrderResource extends Resource
 						])
 						->bulkActions([
 								Tables\Actions\BulkActionGroup::make([
+										Tables\Actions\BulkAction::make('setSendDate')
+												->label('Привязать дату')
+												->icon('heroicon-o-calendar')
+												->form([
+														Forms\Components\DatePicker::make('send_date')
+																->label('Дата отправки')
+																->displayFormat('d.m.Y')
+																->required(),
+												])
+												->action(function (Collection $records, array $data, Pages\ListOrders $livewire): void {
+														$date = Carbon::parse($data['send_date'])->toDateString();
+
+														$records->each(function (Order $order) use ($date): void {
+																$order->send_date = $date;
+																$order->save();
+														});
+
+														$livewire->dispatch('refresh');
+												})
+												->deselectRecordsAfterCompletion(),
 										Tables\Actions\DeleteBulkAction::make(),
 								]),
 						])

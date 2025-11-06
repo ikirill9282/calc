@@ -19,6 +19,7 @@ class Order extends Model
     'user_id' => 'Пользователь',
     'agent_id' => 'Отправитель',
     'delivery_date' => 'Дата поставки на РЦ',
+    'send_date' => 'Дата отправки',
     'post_date' => 'Дата публикации',
     'warehouse_id' => 'Склад',
     'distributor_id' => 'РЦ',
@@ -53,6 +54,7 @@ class Order extends Model
   protected $casts = [
     'changed_fields' => 'array',
     'highlight_color' => 'string',
+    'send_date' => 'date',
   ];
 
   public static function boot()
