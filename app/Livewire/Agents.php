@@ -102,9 +102,10 @@ class Agents extends Component
       $this->agents = Agent::where('user_id', Auth::user()->id)->where('disabled', 0)->get();
     }
 
-    public function getAddresses(string $query = 'г Москва')
+    public function getAddresses(?string $query = 'г Москва')
     {
       $query = empty($this->form['address']) ? $query : $this->form['address'];
+      $query = $query ?: 'г Москва';
       $client = new DadataClient();
       $addresses = $client->suggest('address', $query);
       $addresses = array_column($addresses, 'value');
@@ -304,7 +305,7 @@ class Agents extends Component
         $this->form['address'] = $company['address'];
         $this->company = $company;
         $this->getCompanies($company['name']);
-        $this->getAddresses($company['address']);
+        $this->getAddresses($company['address'] ?? null);
         unset($this->dropdownOpen[$name]);
         unset($this->dropdownOpen['form.address']);
       }
