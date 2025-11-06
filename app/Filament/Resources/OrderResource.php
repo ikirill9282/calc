@@ -321,6 +321,27 @@ class OrderResource extends Resource
 										->toggleable(isToggledHiddenByDefault: false),
 						])
 						->recordClasses(fn (Order $record): array => static::resolveHighlightClasses($record->highlight_color))
+						->headerActions([
+								Tables\Actions\Action::make('toggleSendDateToday')
+										->label('Отгрузка сегодня')
+										->icon('heroicon-o-calendar-days')
+										->color('primary')
+										->action(function (Pages\ListOrders $livewire): void {
+												$filters = $livewire->tableFilters ?? [];
+												$isActive = $filters['send_date_today']['isActive'] ?? false;
+
+												unset($filters['send_date_set'], $filters['send_date_missing']);
+
+												if ($isActive) {
+														unset($filters['send_date_today']);
+												} else {
+														$filters['send_date_today'] = ['isActive' => true];
+												}
+
+												$livewire->tableFilters = empty($filters) ? null : $filters;
+												$livewire->updatedTableFilters();
+										}),
+						])
 						->filters([
 								Filter::make('id')
 										->label('№ заявки')
@@ -358,6 +379,10 @@ class OrderResource extends Resource
 																fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
 														);
 										}),
+								Filter::make('send_date_today')
+										->label('Отгрузка сегодня')
+										->toggle()
+										->query(fn (Builder $query): Builder => $query->whereDate('send_date', Carbon::today())),
 								Filter::make('send_date_set')
 										->label('С датой отправки')
 										->toggle()
