@@ -102,10 +102,10 @@
     body.sidebar-collapsed .fi-main {
         max-width: 100% !important;
     }
-		.fi-table-header-cell-delivery-date{
-			width: 10px;
-			
-		}
+    .fi-ta-filters-modal .fi-modal-window {
+        width: 500px !important;
+        max-width: calc(100vw - 2rem);
+    }
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
