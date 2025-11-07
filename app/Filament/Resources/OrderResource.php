@@ -45,9 +45,6 @@ class OrderResource extends Resource
         'payment_method',
         'cargo',
         'pallets_count',
-        'pallets_boxcount',
-        'pallets_weight',
-        'pallets_volume',
         'boxes_count',
         'boxes_volume',
         'boxes_weight',
@@ -173,39 +170,11 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('pallets_count') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 
-								// Кол-во коробов в палете
-								Tables\Columns\TextColumn::make('pallets_boxcount')
-										->label('Коробов в палете')
-										->numeric()
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('pallets_boxcount') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-
-								// Вес палет
-								Tables\Columns\TextColumn::make('pallets_weight')
-										->label('Вес палет, кг')
-										->numeric()
-										->suffix(' кг')
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('pallets_weight') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-
-								// Объем палет
-								Tables\Columns\TextColumn::make('pallets_volume')
-										->label('Объем палет, м³')
-										->numeric()
-										->suffix(' м³')
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('pallets_volume') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-
 								// Кол-во коробов
 								Tables\Columns\TextColumn::make('boxes_count')
 										->label('Общ. кол-во коробов')
 										->numeric()
+                                        ->getStateUsing(fn (Order $record) => $record->boxes_count ?: $record->pallets_count ?: null)
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_count') ? 'warning' : null)
@@ -216,6 +185,7 @@ class OrderResource extends Resource
 										->label('Объем коробов, м³')
 										->numeric()
 										->suffix(' м³')
+                                        ->getStateUsing(fn (Order $record) => $record->boxes_volume ?: $record->pallets_volume ?: null)
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_volume') ? 'warning' : null)
@@ -226,6 +196,7 @@ class OrderResource extends Resource
 										->label('Вес коробов, кг')
 										->numeric()
 										->suffix(' кг')
+                                        ->getStateUsing(fn (Order $record) => $record->boxes_weight ?: $record->pallets_weight ?: null)
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
