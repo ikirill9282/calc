@@ -206,15 +206,7 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 
-								// Вес коробов
-								Tables\Columns\TextColumn::make('boxes_weight')
-										->label('Вес коробов, кг')
-										->numeric()
-										->suffix(' кг')
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+								
 
 								// Палетирование (да/нет)
 								Tables\Columns\IconColumn::make('has_palletizing')
