@@ -8,7 +8,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListOrders extends ListRecords
 {
@@ -22,26 +21,7 @@ class ListOrders extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\Action::make('exportExcel')
-                ->label('Экспорт в Excel')
-                ->icon('heroicon-o-arrow-down-tray')
-                ->color('gray')
-                ->action(fn () => $this->exportExcel()),
         ];
-    }
-
-    public function exportExcel(): StreamedResponse
-    {
-        $columns = $this->getExportColumns();
-        $records = $this->getRecordsForExport();
-
-        $fileName = 'orders-' . now()->format('Y-m-d_H-i-s') . '.xls';
-
-        return response()->streamDownload(function () use ($columns, $records): void {
-            $this->outputExcelTable($columns, $records);
-        }, $fileName, [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-        ]);
     }
 
     /**
