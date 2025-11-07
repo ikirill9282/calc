@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Revolution\Google\Sheets\Facades\Sheets;
 use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
+use App\Models\SheetData;
 
 class Order extends Model
 {
@@ -139,14 +139,36 @@ class Order extends Model
     return false;
   }
 
+  protected static array $distributorCenterNameCache = [];
+
   public function distributionLabel(): string
   {
     $parts = array_filter([
       $this->distributor_id,
-      $this->distributor_center_id,
+      $this->resolveDistributorCenterName() ?? $this->distributor_center_id,
     ], fn ($value) => filled($value));
 
     return implode(' - ', $parts);
+  }
+
+  protected function resolveDistributorCenterName(): ?string
+  {
+    if (blank($this->distributor_center_id) || blank($this->distributor_id)) {
+      return null;
+    }
+
+    $cacheKey = $this->distributor_id . '|' . $this->distributor_center_id;
+
+    if (array_key_exists($cacheKey, static::$distributorCenterNameCache)) {
+      return static::$distributorCenterNameCache[$cacheKey];
+    }
+
+    $centerName = SheetData::query()
+      ->where('distributor', $this->distributor_id)
+      ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->distributor_center_id)
+      ->value('distributor_center');
+
+    return static::$distributorCenterNameCache[$cacheKey] = $centerName;
   }
 
   public function getDistributionLabelAttribute(): string
