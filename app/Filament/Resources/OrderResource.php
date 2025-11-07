@@ -196,7 +196,7 @@ class OrderResource extends Resource
 										->label('Вес коробов, кг')
 										->numeric()
 										->suffix(' кг')
-										->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
+										->formatStateUsing(fn ($state, Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
@@ -1147,7 +1147,7 @@ class OrderResource extends Resource
 														->label('Вес коробов, кг')
 														->suffix(' кг')
 														->default('—')
-														->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
+														->formatStateUsing(fn ($state, Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('boxes_volume')
