@@ -33,11 +33,7 @@ class ListOrders extends ListRecords
     public function exportExcel(): StreamedResponse
     {
         $columns = $this->getExportColumns();
-
-        $query = clone $this->getTableQueryForExport();
-        $records = $query
-            ->with(['agent'])
-            ->get();
+        $records = $this->getRecordsForExport();
 
         $fileName = 'orders-' . now()->format('Y-m-d_H-i-s') . '.xls';
 
@@ -201,6 +197,24 @@ class ListOrders extends ListRecords
         $date = $this->asCarbon($value);
 
         return $date?->format($format) ?? '';
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    protected function getRecordsForExport(): Collection
+    {
+        $selected = $this->getSelectedTableRecords();
+
+        if ($selected->isNotEmpty()) {
+            return $selected->load('agent');
+        }
+
+        $query = clone $this->getTableQueryForExport();
+
+        return $query
+            ->with(['agent'])
+            ->get();
     }
 
     protected function asCarbon(mixed $value): ?Carbon
