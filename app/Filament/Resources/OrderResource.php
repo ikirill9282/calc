@@ -1024,7 +1024,13 @@ class OrderResource extends Resource
 
 		protected static function resolveInlineFieldTarget(Order $record, string $field): string
 		{
-				if (! static::shouldUsePalletMetrics($record)) {
+				$usePalletMetrics = static::shouldUsePalletMetrics($record);
+
+				if ($field === 'boxes_weight' && ! static::isEmptyValue($record->pallets_weight)) {
+						return 'pallets_weight';
+				}
+
+				if (! $usePalletMetrics) {
 						return $field;
 				}
 
@@ -1047,9 +1053,9 @@ class OrderResource extends Resource
 						'boxes_volume' => $usePalletMetrics
 								? ($record->pallets_volume ?? $record->boxes_volume)
 								: $record->boxes_volume,
-						'boxes_weight' => $usePalletMetrics
-								? ($record->pallets_weight ?? $record->boxes_weight)
-								: $record->boxes_weight,
+						'boxes_weight' => static::isEmptyValue($record->pallets_weight)
+								? $record->boxes_weight
+								: $record->pallets_weight,
 						default => data_get($record, $field),
 				};
 		}
