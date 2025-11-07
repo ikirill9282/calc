@@ -1118,12 +1118,10 @@ class OrderResource extends Resource
 						]);
 		}
 
-		protected static function makeInfolistHeading(string $label, string $key): Infolists\Components\TextEntry
+		protected static function makeInfolistHeading(string $label, string $key): Infolists\Components\HtmlEntry
 		{
-				return Infolists\Components\TextEntry::make("heading_{$key}")
-						->label('')
-						->state($label)
-						->extraAttributes(['class' => 'fi-order-heading'])
+				return Infolists\Components\HtmlEntry::make("heading_{$key}")
+						->html('<div class="fi-order-heading">' . e($label) . '</div>')
 						->columnSpanFull();
 		}
 
