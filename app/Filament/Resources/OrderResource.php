@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
@@ -196,7 +197,10 @@ class OrderResource extends Resource
 										->label('Вес коробов, кг')
 										->numeric()
 										->suffix(' кг')
-										->formatStateUsing(fn ($state, Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
+										->formatStateUsing(fn (TextColumn $column, $state): mixed => static::resolveDisplayValue(
+												$column->getRecord(),
+												'boxes_weight',
+										))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
@@ -1158,7 +1162,10 @@ class OrderResource extends Resource
 														->label('Вес коробов, кг')
 														->suffix(' кг')
 														->default('—')
-														->formatStateUsing(fn ($state, Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
+														->formatStateUsing(fn (Infolists\Components\TextEntry $entry, $state) => static::resolveDisplayValue(
+																$entry->getRecord(),
+																'boxes_weight'
+														))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('boxes_volume')
