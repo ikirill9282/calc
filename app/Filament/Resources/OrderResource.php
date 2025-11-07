@@ -88,7 +88,7 @@ class OrderResource extends Resource
 										->label('Дата поставки на РЦ')
 										->date('d.m.Y')
 										->extraAttributes([
-												'style' => 'width:5.5rem;max-width:5.5rem;',
+												'style' => 'width:50.5rem;max-width:50.5rem;',
 										])
 										->sortable()
 										->color(fn (Order $record) => $record->hasChanged('delivery_date') ? 'warning' : null)
