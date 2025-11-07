@@ -9,6 +9,14 @@
     .fi-ta-table tbody td:last-child {
         border-right: none;
     }
+		.fi-ta-table .py-4{
+			padding-top: 0!important;
+			padding-bottom: 0!important;
+		}
+		.fi-ta-table .px-3 {
+			padding-left: .2rem !important;
+			padding-right: .2rem!important;
+		}
 
     .copy-toast {
         position: fixed;
