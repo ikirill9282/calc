@@ -1024,51 +1024,28 @@ class OrderResource extends Resource
 
 		protected static function resolveInlineFieldTarget(Order $record, string $field): string
 		{
-				$usePalletMetrics = static::shouldUsePalletMetrics($record);
-
-				if ($field === 'boxes_weight' && ! static::isEmptyValue($record->pallets_weight)) {
-						return 'pallets_weight';
-				}
-
-				if (! $usePalletMetrics) {
-						return $field;
-				}
-
 				return match ($field) {
-						'boxes_count' => 'pallets_boxcount',
-						'boxes_volume' => 'pallets_volume',
-						'boxes_weight' => 'pallets_weight',
+						'boxes_count' => static::isEmptyValue($record->pallets_count) ? 'boxes_count' : 'pallets_boxcount',
+						'boxes_volume' => static::isEmptyValue($record->pallets_volume) ? 'boxes_volume' : 'pallets_volume',
+						'boxes_weight' => static::isEmptyValue($record->pallets_weight) ? 'boxes_weight' : 'pallets_weight',
 						default => $field,
 				};
 		}
 
 		protected static function resolveDisplayValue(Order $record, string $field): mixed
 		{
-				$usePalletMetrics = static::shouldUsePalletMetrics($record);
-
 				return match ($field) {
-						'boxes_count' => $usePalletMetrics
-								? ($record->pallets_boxcount ?? $record->boxes_count)
-								: $record->boxes_count,
-						'boxes_volume' => $usePalletMetrics
-								? ($record->pallets_volume ?? $record->boxes_volume)
-								: $record->boxes_volume,
-						'boxes_weight' => $usePalletMetrics
-								? ($record->pallets_weight ?? $record->boxes_weight)
-								: $record->boxes_weight,
+						'boxes_count' => static::isEmptyValue($record->pallets_count)
+								? $record->boxes_count
+								: ($record->pallets_boxcount ?? $record->boxes_count),
+						'boxes_volume' => static::isEmptyValue($record->pallets_volume)
+								? $record->boxes_volume
+								: $record->pallets_volume,
+						'boxes_weight' => static::isEmptyValue($record->pallets_weight)
+								? $record->boxes_weight
+								: $record->pallets_weight,
 						default => data_get($record, $field),
 				};
-		}
-
-		protected static function shouldUsePalletMetrics(Order $record): bool
-		{
-				if (filled($record->cargo) && strtolower((string) $record->cargo) === 'pallets') {
-						return true;
-				}
-
-				$value = $record->pallets_count;
-
-				return ! static::isEmptyValue($value);
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
