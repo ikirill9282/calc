@@ -174,10 +174,7 @@ class OrderResource extends Resource
 								Tables\Columns\TextColumn::make('boxes_count')
 										->label('Общ. кол-во коробов')
 										->numeric()
-										->getStateUsing(fn (Order $record) => static::fallbackValue(
-												$record->boxes_count,
-												$record->pallets_count
-										))
+										->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_count'))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_count') ? 'warning' : null)
@@ -188,10 +185,7 @@ class OrderResource extends Resource
 										->label('Объем коробов, м³')
 										->numeric()
 										->suffix(' м³')
-										->getStateUsing(fn (Order $record) => static::fallbackValue(
-												$record->boxes_volume,
-												$record->pallets_volume
-										))
+										->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_volume'))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_volume') ? 'warning' : null)
@@ -202,10 +196,7 @@ class OrderResource extends Resource
 										->label('Вес коробов, кг')
 										->numeric()
 										->suffix(' кг')
-										->getStateUsing(fn (Order $record) => static::fallbackWeightValue(
-												$record->boxes_weight,
-												$record->pallets_weight
-										))
+										->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
@@ -949,6 +940,7 @@ class OrderResource extends Resource
 						$label = $column->getLabel();
 
 						$column->extraCellAttributes(function (Order $record) use ($field, $label): array {
+								$targetField = static::resolveInlineFieldTarget($record, $field);
 								$value = static::resolveInlineFieldValue($record, $field);
 
 								if ($value instanceof \DateTimeInterface) {
@@ -961,7 +953,7 @@ class OrderResource extends Resource
 
 								return [
 										'data-inline-editable' => '1',
-										'data-inline-field' => $field,
+										'data-inline-field' => $targetField,
 										'data-inline-label' => is_string($label) ? $label : (string) $label,
 										'data-inline-record' => (string) $record->getKey(),
 										'data-inline-value' => (string) $value,
@@ -1027,12 +1019,46 @@ class OrderResource extends Resource
 
 		protected static function resolveInlineFieldValue(Order $record, string $field): mixed
 		{
+				return static::resolveDisplayValue($record, $field);
+		}
+
+		protected static function resolveInlineFieldTarget(Order $record, string $field): string
+		{
+				if (! static::shouldUsePalletMetrics($record)) {
+						return $field;
+				}
+
 				return match ($field) {
-						'boxes_count' => static::fallbackValue($record->boxes_count, $record->pallets_count),
-						'boxes_volume' => static::fallbackValue($record->boxes_volume, $record->pallets_volume),
-						'boxes_weight' => static::fallbackWeightValue($record->boxes_weight, $record->pallets_weight),
+						'boxes_count' => 'pallets_boxcount',
+						'boxes_volume' => 'pallets_volume',
+						'boxes_weight' => 'pallets_weight',
+						default => $field,
+				};
+		}
+
+		protected static function resolveDisplayValue(Order $record, string $field): mixed
+		{
+				$usePalletMetrics = static::shouldUsePalletMetrics($record);
+
+				return match ($field) {
+						'boxes_count' => $usePalletMetrics
+								? ($record->pallets_boxcount ?? $record->boxes_count)
+								: $record->boxes_count,
+						'boxes_volume' => $usePalletMetrics
+								? ($record->pallets_volume ?? $record->boxes_volume)
+								: $record->boxes_volume,
+						'boxes_weight' => $usePalletMetrics
+								? ($record->pallets_weight ?? $record->boxes_weight)
+								: $record->boxes_weight,
 						default => data_get($record, $field),
 				};
+		}
+
+		protected static function shouldUsePalletMetrics(Order $record): bool
+		{
+				$value = $record->pallets_count;
+
+				return ! static::isEmptyValue($value);
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
@@ -1124,33 +1150,24 @@ class OrderResource extends Resource
 														->default('—')
 														->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_volume') ? ['class' => 'text-orange-500'] : []),
 												
-								Infolists\Components\TextEntry::make('boxes_count')
-										->label('Кол-во коробов')
-										->default('—')
-										->state(fn (Order $record) => static::fallbackValue(
-												$record->boxes_count,
-												$record->pallets_count,
-										))
-										->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
-										
+												Infolists\Components\TextEntry::make('boxes_count')
+														->label('Кол-во коробов')
+														->default('—')
+														->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_count'))
+														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
+												
 												Infolists\Components\TextEntry::make('boxes_weight')
 														->label('Вес коробов, кг')
 														->suffix(' кг')
 														->default('—')
-														->state(fn (Order $record) => static::fallbackWeightValue(
-																$record->boxes_weight,
-																$record->pallets_weight,
-														))
-												->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
+														->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_weight'))
+														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('boxes_volume')
 														->label('Объем коробов, м³')
 														->suffix(' м³')
 														->default('—')
-														->state(fn (Order $record) => static::fallbackValue(
-																$record->boxes_volume,
-																$record->pallets_volume,
-														))
+														->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_volume'))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_volume') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('cargo_comment')
