@@ -1053,9 +1053,9 @@ class OrderResource extends Resource
 						'boxes_volume' => $usePalletMetrics
 								? ($record->pallets_volume ?? $record->boxes_volume)
 								: $record->boxes_volume,
-						'boxes_weight' => static::isEmptyValue($record->pallets_weight)
-								? $record->boxes_weight
-								: $record->pallets_weight,
+						'boxes_weight' => $usePalletMetrics
+								? ($record->pallets_weight ?? $record->boxes_weight)
+								: $record->boxes_weight,
 						default => data_get($record, $field),
 				};
 		}
