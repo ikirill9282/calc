@@ -232,8 +232,12 @@ class ListOrders extends ListRecords
         return null;
     }
 
-    public function handleInlineEditCell(array $payload): void
+    public function handleInlineEditCell($payload): void
     {
+        if (! is_array($payload)) {
+            return;
+        }
+
         $recordId = $payload['recordId'] ?? null;
         $field = $payload['field'] ?? null;
 
