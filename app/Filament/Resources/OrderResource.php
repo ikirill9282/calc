@@ -1056,6 +1056,10 @@ class OrderResource extends Resource
 
 		protected static function shouldUsePalletMetrics(Order $record): bool
 		{
+				if (filled($record->cargo) && strtolower((string) $record->cargo) === 'pallets') {
+						return true;
+				}
+
 				$value = $record->pallets_count;
 
 				return ! static::isEmptyValue($value);
