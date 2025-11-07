@@ -204,13 +204,15 @@ class ListOrders extends ListRecords
      */
     protected function getRecordsForExport(): Collection
     {
-        $selected = $this->getSelectedTableRecords();
-
-        if ($selected->isNotEmpty()) {
-            return $selected->load('agent');
-        }
+        $selectedKeys = collect($this->selectedTableRecords ?? [])
+            ->filter(fn ($key) => filled($key))
+            ->all();
 
         $query = clone $this->getTableQueryForExport();
+
+        if (! empty($selectedKeys)) {
+            $query->whereKey($selectedKeys);
+        }
 
         return $query
             ->with(['agent'])
