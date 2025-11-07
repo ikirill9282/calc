@@ -97,6 +97,10 @@
     body.sidebar-collapsed .fi-main {
         max-width: 100% !important;
     }
+		.fi-table-header-cell-delivery-date{
+			width: 10px;
+			
+		}
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
