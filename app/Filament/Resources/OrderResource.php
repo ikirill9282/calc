@@ -323,7 +323,6 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('agent_id') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 						])
-						->recordClasses(fn (Order $record): array => static::resolveHighlightClasses($record->highlight_color))
 						->headerActions([
 								Tables\Actions\Action::make('toggleSendDateToday')
 										->label('Отправки сегодня')
@@ -936,27 +935,6 @@ class OrderResource extends Resource
 										}),
 						])
 						->actions([
-								Tables\Actions\Action::make('highlight')
-										->label('Выделить')
-										->icon('heroicon-o-swatch')
-										->color('warning')
-										->form([
-												Forms\Components\Select::make('highlight_color')
-														->label('Цвет')
-														->options(static::getHighlightColorOptions())
-														->required(),
-										])
-										->fillForm(fn (Order $record): array => [
-												'highlight_color' => $record->highlight_color ?? 'none',
-										])
-										->action(function (Order $record, array $data, Pages\ListOrders $livewire): void {
-												$color = $data['highlight_color'] ?? null;
-
-												$record->highlight_color = $color === 'none' ? null : $color;
-												$record->save();
-												$livewire->flushCachedTableRecords();
-										})
-										->after(fn (Pages\ListOrders $livewire) => $livewire->dispatch('refresh')),
 								Tables\Actions\ViewAction::make()
 										->modalHeading('Информация о заявке')
 										->modalWidth('7xl') // Большая ширина модального окна
@@ -994,28 +972,6 @@ class OrderResource extends Resource
 						->paginated()
 						->paginationPageOptions([25, 50, 100, 200])
 						->defaultPaginationPageOption(25);
-		}
-
-		protected static function getHighlightColorOptions(): array
-		{
-				return [
-						'none' => 'Без цвета',
-						'yellow' => 'Жёлтый',
-						'red' => 'Красный',
-						'green' => 'Зелёный',
-						'blue' => 'Синий',
-				];
-		}
-
-		protected static function resolveHighlightClasses(?string $color): array
-		{
-				return match ($color) {
-						'yellow' => ['bg-yellow-50', 'text-yellow-900', 'hover:bg-yellow-100'],
-						'red' => ['bg-red-50', 'text-red-900', 'hover:bg-red-100'],
-						'green' => ['bg-green-50', 'text-green-900', 'hover:bg-green-100'],
-						'blue' => ['bg-blue-50', 'text-blue-900', 'hover:bg-blue-100'],
-						default => [],
-				};
 		}
 
 		protected static function getRuleFilterFields(): array
