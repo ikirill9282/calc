@@ -174,7 +174,10 @@ class OrderResource extends Resource
 								Tables\Columns\TextColumn::make('boxes_count')
 										->label('Общ. кол-во коробов')
 										->numeric()
-                                        ->getStateUsing(fn (Order $record) => $record->boxes_count ?: $record->pallets_count ?: null)
+										->getStateUsing(fn (Order $record) => static::fallbackValue(
+												$record->boxes_count,
+												$record->pallets_count
+										))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_count') ? 'warning' : null)
@@ -185,7 +188,10 @@ class OrderResource extends Resource
 										->label('Объем коробов, м³')
 										->numeric()
 										->suffix(' м³')
-                                        ->getStateUsing(fn (Order $record) => $record->boxes_volume ?: $record->pallets_volume ?: null)
+										->getStateUsing(fn (Order $record) => static::fallbackValue(
+												$record->boxes_volume,
+												$record->pallets_volume
+										))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_volume') ? 'warning' : null)
@@ -196,7 +202,10 @@ class OrderResource extends Resource
 										->label('Вес коробов, кг')
 										->numeric()
 										->suffix(' кг')
-                                        ->getStateUsing(fn (Order $record) => $record->boxes_weight ?: $record->pallets_weight ?: null)
+										->getStateUsing(fn (Order $record) => static::fallbackValue(
+												$record->boxes_weight,
+												$record->pallets_weight
+										))
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
@@ -971,6 +980,36 @@ class OrderResource extends Resource
 				}
 
 				return in_array($field, static::$inlineEditableFields, true);
+		}
+
+		protected static function fallbackValue(mixed $primary, mixed $fallback): mixed
+		{
+				if (static::isEmptyValue($primary)) {
+						return static::isEmptyValue($fallback) ? null : $fallback;
+				}
+
+				return $primary;
+		}
+
+		protected static function isEmptyValue(mixed $value): bool
+		{
+				if ($value === null) {
+						return true;
+				}
+
+				if (is_string($value)) {
+						$value = trim($value);
+
+						if ($value === '') {
+								return true;
+						}
+				}
+
+				if (is_numeric($value)) {
+						return (float) $value === 0.0;
+				}
+
+				return false;
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
