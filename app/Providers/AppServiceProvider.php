@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Opcodes\LogViewer\Facades\LogViewer;
 use App\Models\Order;
 use App\Observers\OrderObserver;
+use Filament\Infolists\Components\TextEntry;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (! TextEntry::hasMacro('labelHidden')) {
+            TextEntry::macro('labelHidden', function (): TextEntry {
+                /** @var TextEntry $this */
+                $this->label('');
+                return $this;
+            });
+        }
+
         Model::unguard();
         Order::observe(OrderObserver::class);
         LogViewer::auth(function ($request) {
