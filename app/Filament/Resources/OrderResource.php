@@ -202,7 +202,7 @@ class OrderResource extends Resource
 										->label('Вес коробов, кг')
 										->numeric()
 										->suffix(' кг')
-										->getStateUsing(fn (Order $record) => static::fallbackValue(
+										->getStateUsing(fn (Order $record) => static::fallbackWeightValue(
 												$record->boxes_weight,
 												$record->pallets_weight
 										))
@@ -991,6 +991,19 @@ class OrderResource extends Resource
 				return $primary;
 		}
 
+		protected static function fallbackWeightValue(mixed $primary, mixed $fallback): mixed
+		{
+				if ($primary === null) {
+						return static::isEmptyValue($fallback) ? null : $fallback;
+				}
+
+				if (is_numeric($primary) && (float) $primary === 0.0) {
+						return static::isEmptyValue($fallback) ? 0 : $fallback;
+				}
+
+				return $primary;
+		}
+
 		protected static function isEmptyValue(mixed $value): bool
 		{
 				if ($value === null) {
@@ -1110,14 +1123,14 @@ class OrderResource extends Resource
 										))
 										->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
 										
-										Infolists\Components\TextEntry::make('boxes_weight')
-												->label('Вес коробов, кг')
-												->suffix(' кг')
-												->default('—')
-												->state(fn (Order $record) => static::fallbackValue(
-														$record->boxes_weight,
-														$record->pallets_weight,
-												))
+												Infolists\Components\TextEntry::make('boxes_weight')
+														->label('Вес коробов, кг')
+														->suffix(' кг')
+														->default('—')
+														->state(fn (Order $record) => static::fallbackWeightValue(
+																$record->boxes_weight,
+																$record->pallets_weight,
+														))
 												->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('boxes_volume')
