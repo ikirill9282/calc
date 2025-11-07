@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Html;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -1118,9 +1119,9 @@ class OrderResource extends Resource
 						]);
 		}
 
-		protected static function makeInfolistHeading(string $label, string $key): Infolists\Components\HtmlEntry
+		protected static function makeInfolistHeading(string $label, string $key): Html
 		{
-				return Infolists\Components\HtmlEntry::make("heading_{$key}")
+				return Html::make("heading_{$key}")
 						->html('<div class="fi-order-heading">' . e($label) . '</div>')
 						->columnSpanFull();
 		}

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -55,6 +56,23 @@ class Order extends Model
     'changed_fields' => 'array',
     'highlight_color' => 'string',
     'send_date' => 'date',
+  ];
+
+  /**
+   * @var array<string>
+   */
+  protected array $dateAttributes = [
+    'send_date',
+  ];
+
+  /**
+   * @var array<string>
+   */
+  protected array $dateTimeAttributes = [
+    'delivery_date',
+    'post_date',
+    'transfer_method_receive_date',
+    'transfer_method_pick_date',
   ];
 
   public static function boot()
@@ -488,19 +506,75 @@ class Order extends Model
           if ($field == 'pallets_data') {
             $k = 'pallets_'.$key;
           }
-          $this->setAttribute($k, $val);
+          $this->setAttribute($k, $this->normalizeFieldValue($k, $val));
         }
         continue;
       }
 
       try {
-        $this->setAttribute($field, $value);
+        $this->setAttribute($field, $this->normalizeFieldValue($field, $value));
       } catch (\Exception $e) {
         // dd($fields, $field, $value, $e->getMessage());
       } catch (\Error $e) {
         // dd($fields, $field, $value, $e->getMessage());
       };
     }
+  }
+
+  protected function normalizeFieldValue(string $field, mixed $value): mixed
+  {
+    if (! is_string($value)) {
+      return $value;
+    }
+
+    $trimmed = trim($value);
+
+    if ($trimmed === '' || $trimmed === '?') {
+      return null;
+    }
+
+    if (in_array($field, $this->dateAttributes, true)) {
+      return $this->parseDateString($trimmed)?->toDateString() ?? $value;
+    }
+
+    if (in_array($field, $this->dateTimeAttributes, true)) {
+      $dateTime = $this->parseDateTimeString($trimmed)
+        ?? $this->parseDateString($trimmed)?->startOfDay();
+
+      return $dateTime?->format('Y-m-d H:i:s') ?? $value;
+    }
+
+    return $value;
+  }
+
+  protected function parseDateString(string $value): ?Carbon
+  {
+    foreach (['d.m.Y', 'Y-m-d'] as $format) {
+      try {
+        return Carbon::createFromFormat($format, $value);
+      } catch (\Throwable $e) {
+        // continue
+      }
+    }
+
+    try {
+      return Carbon::parse($value);
+    } catch (\Throwable $e) {
+      return null;
+    }
+  }
+
+  protected function parseDateTimeString(string $value): ?Carbon
+  {
+    foreach (['d.m.Y H:i', 'd.m.Y H:i:s', 'Y-m-d H:i', 'Y-m-d H:i:s'] as $format) {
+      try {
+        return Carbon::createFromFormat($format, $value);
+      } catch (\Throwable $e) {
+        // continue
+      }
+    }
+
+    return $this->parseDateString($value);
   }
 
   public static function prepareOrder(array $fields): static
