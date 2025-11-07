@@ -87,6 +87,7 @@ class OrderResource extends Resource
 								Tables\Columns\TextColumn::make('delivery_date')
 										->label('Дата поставки на РЦ')
 										->date('d.m.Y')
+										->width('6rem')
 										->sortable()
 										->color(fn (Order $record) => $record->hasChanged('delivery_date') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
