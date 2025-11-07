@@ -1024,28 +1024,37 @@ class OrderResource extends Resource
 
 		protected static function resolveInlineFieldTarget(Order $record, string $field): string
 		{
+				$hasPallets = static::recordHasPallets($record);
+
 				return match ($field) {
-						'boxes_count' => static::isEmptyValue($record->pallets_count) ? 'boxes_count' : 'pallets_boxcount',
-						'boxes_volume' => static::isEmptyValue($record->pallets_volume) ? 'boxes_volume' : 'pallets_volume',
-						'boxes_weight' => static::isEmptyValue($record->pallets_weight) ? 'boxes_weight' : 'pallets_weight',
+						'boxes_count' => $hasPallets ? 'pallets_boxcount' : 'boxes_count',
+						'boxes_volume' => $hasPallets ? 'pallets_volume' : 'boxes_volume',
+						'boxes_weight' => $hasPallets ? 'pallets_weight' : 'boxes_weight',
 						default => $field,
 				};
 		}
 
 		protected static function resolveDisplayValue(Order $record, string $field): mixed
 		{
+				$hasPallets = static::recordHasPallets($record);
+
 				return match ($field) {
-						'boxes_count' => static::isEmptyValue($record->pallets_count)
-								? $record->boxes_count
-								: ($record->pallets_boxcount ?? $record->boxes_count),
-						'boxes_volume' => static::isEmptyValue($record->pallets_volume)
-								? $record->boxes_volume
-								: $record->pallets_volume,
-						'boxes_weight' => static::isEmptyValue($record->pallets_weight)
-								? $record->boxes_weight
-								: $record->pallets_weight,
+						'boxes_count' => $hasPallets
+								? ($record->pallets_boxcount ?? $record->boxes_count)
+								: $record->boxes_count,
+						'boxes_volume' => $hasPallets
+								? ($record->pallets_volume ?? $record->boxes_volume)
+								: $record->boxes_volume,
+						'boxes_weight' => $hasPallets
+								? $record->pallets_weight
+								: $record->boxes_weight,
 						default => data_get($record, $field),
 				};
+		}
+
+		protected static function recordHasPallets(Order $record): bool
+		{
+				return ! static::isEmptyValue($record->pallets_count);
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
