@@ -41,6 +41,11 @@
         transform: translateY(0);
     }
 
+    .fi-ta-header-cell-label {
+        font-size: 0.75rem;
+        line-height: 1rem;
+    }
+
     .fi-sidebar-toggle {
         display: none;
         align-items: center;
