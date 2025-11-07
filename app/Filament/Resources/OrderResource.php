@@ -1121,7 +1121,7 @@ class OrderResource extends Resource
 		protected static function makeInfolistHeading(string $label, string $key): Infolists\Components\TextEntry
 		{
 				return Infolists\Components\TextEntry::make("heading_{$key}")
-						->labelHidden()
+						->label('')
 						->state($label)
 						->extraAttributes(['class' => 'fi-order-heading'])
 						->columnSpanFull();
