@@ -102,6 +102,27 @@
     body.sidebar-collapsed .fi-main {
         max-width: 100% !important;
     }
+
+    .fi-modal-content {
+        padding: 1rem !important;
+    }
+
+    .fi-modal-content .fi-in-grid {
+        gap: 0.5rem !important;
+    }
+
+    .fi-modal-content .fi-in-entry {
+        padding: 0.15rem 0 !important;
+    }
+
+    .fi-order-heading {
+        margin: 0.75rem 0 0.25rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #475569;
+    }
+
     .fi-dropdown-panel {
         width: 500px !important;
         max-width: calc(100vw - 2rem)!important;
