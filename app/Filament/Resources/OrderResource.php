@@ -949,7 +949,7 @@ class OrderResource extends Resource
 						$label = $column->getLabel();
 
 						$column->extraCellAttributes(function (Order $record) use ($field, $label): array {
-								$value = data_get($record, $field);
+								$value = static::resolveInlineFieldValue($record, $field);
 
 								if ($value instanceof \DateTimeInterface) {
 										$value = $value->format('Y-m-d H:i:s');
@@ -1023,6 +1023,16 @@ class OrderResource extends Resource
 				}
 
 				return false;
+		}
+
+		protected static function resolveInlineFieldValue(Order $record, string $field): mixed
+		{
+				return match ($field) {
+						'boxes_count' => static::fallbackValue($record->boxes_count, $record->pallets_count),
+						'boxes_volume' => static::fallbackValue($record->boxes_volume, $record->pallets_volume),
+						'boxes_weight' => static::fallbackWeightValue($record->boxes_weight, $record->pallets_weight),
+						default => data_get($record, $field),
+				};
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
