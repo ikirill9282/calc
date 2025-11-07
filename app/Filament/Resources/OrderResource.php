@@ -6,6 +6,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,7 +15,9 @@ use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 
@@ -392,6 +395,40 @@ class OrderResource extends Resource
 										->label('Без даты отправки')
 										->toggle()
 										->query(fn (Builder $query): Builder => $query->whereNull('send_date')),
+								Filter::make('advanced_rules')
+										->label('Фильтр по правилам')
+										->form([
+												Forms\Components\Repeater::make('rules')
+														->label('Правила')
+														->schema([
+																Forms\Components\Select::make('field')
+																		->label('Поле')
+																		->options(static::getRuleFilterFieldOptions())
+																		->required()
+																		->reactive()
+																		->searchable(),
+																Forms\Components\Select::make('operator')
+																		->label('Условие')
+																		->options(fn (Get $get): array => static::getRuleOperatorOptions($get('field')))
+																		->required()
+																		->reactive(),
+																Forms\Components\TextInput::make('value')
+																		->label('Значение')
+																		->placeholder(fn (Get $get): ?string => static::getRuleValuePlaceholder($get('field')))
+																		->helperText(fn (Get $get): ?string => static::getRuleValueHelperText($get('field')))
+																		->visible(fn (Get $get): bool => static::ruleOperatorRequiresValue($get('operator')))
+																		->required(fn (Get $get): bool => static::ruleOperatorRequiresValue($get('operator'))),
+														])
+														->addActionLabel('Добавить правило')
+														->columnSpanFull()
+														->columns(3)
+														->collapsed()
+														->defaultItems(1)
+														->minItems(1)
+														->maxItems(5),
+										])
+										->query(fn (Builder $query, array $data): Builder => static::applyRulesFilter($query, $data['rules'] ?? []))
+										->indicateUsing(fn (array $state): array => static::getRuleFilterIndicators($state['rules'] ?? [])),
 								Filter::make('agent_title')
 										->label('Отправитель (ФИО/ИП/ООО)')
 										->form([
@@ -979,6 +1016,323 @@ class OrderResource extends Resource
 						'blue' => ['bg-blue-50', 'text-blue-900', 'hover:bg-blue-100'],
 						default => [],
 				};
+		}
+
+		protected static function getRuleFilterFields(): array
+		{
+				return [
+						'id' => [
+								'label' => '№ заявки',
+								'column' => 'id',
+								'type' => 'number',
+						],
+						'send_date' => [
+								'label' => 'Дата отправки',
+								'column' => 'send_date',
+								'type' => 'date',
+						],
+						'delivery_date' => [
+								'label' => 'Дата поставки на РЦ',
+								'column' => 'delivery_date',
+								'type' => 'date',
+						],
+						'created_at' => [
+								'label' => 'Дата создания',
+								'column' => 'created_at',
+								'type' => 'datetime',
+						],
+						'payment_method' => [
+								'label' => 'Способ оплаты',
+								'column' => 'payment_method',
+								'type' => 'enum',
+								'options' => [
+										'cash' => 'Наличные',
+										'bill' => 'Безналичный',
+								],
+						],
+						'transfer_method' => [
+								'label' => 'Способ передачи',
+								'column' => 'transfer_method',
+								'type' => 'enum',
+								'options' => [
+										'receive' => 'Привоз клиентом',
+										'pick' => 'Забор грузополучателем',
+								],
+						],
+						'cargo' => [
+								'label' => 'Тип груза',
+								'column' => 'cargo',
+								'type' => 'enum',
+								'options' => [
+										'boxes' => 'Коробки',
+										'pallets' => 'Палеты',
+								],
+						],
+						'individual' => [
+								'label' => 'Индивидуальный расчет',
+								'column' => 'individual',
+								'type' => 'boolean',
+						],
+						'pallets_count' => [
+								'label' => 'Кол-во палет',
+								'column' => 'pallets_count',
+								'type' => 'number',
+						],
+						'boxes_count' => [
+								'label' => 'Кол-во коробов',
+								'column' => 'boxes_count',
+								'type' => 'number',
+						],
+						'agent_title' => [
+								'label' => 'Отправитель (ФИО/ИП/ООО)',
+								'column' => 'agent.title',
+								'type' => 'string',
+						],
+						'agent_name' => [
+								'label' => 'Контактное лицо',
+								'column' => 'agent.name',
+								'type' => 'string',
+						],
+						'agent_phone' => [
+								'label' => 'Телефон отправителя',
+								'column' => 'agent.phone',
+								'type' => 'string',
+						],
+						'agent_email' => [
+								'label' => 'Email отправителя',
+								'column' => 'agent.email',
+								'type' => 'string',
+						],
+				];
+		}
+
+		protected static function getRuleFilterFieldOptions(): array
+		{
+				return collect(static::getRuleFilterFields())
+						->mapWithKeys(fn (array $config, string $key) => [$key => $config['label']])
+						->all();
+		}
+
+		protected static function getRuleOperatorOptions(?string $field): array
+		{
+				return match (static::getRuleFieldType($field)) {
+						'number', 'date', 'datetime' => [
+								'equals' => 'Равно',
+								'not_equals' => 'Не равно',
+								'gt' => 'Больше',
+								'gte' => 'Больше или равно',
+								'lt' => 'Меньше',
+								'lte' => 'Меньше или равно',
+								'is_empty' => 'Пусто',
+								'is_not_empty' => 'Не пусто',
+						],
+						'enum', 'boolean' => [
+								'equals' => 'Равно',
+								'not_equals' => 'Не равно',
+						],
+						default => [
+								'contains' => 'Содержит',
+								'not_contains' => 'Не содержит',
+								'equals' => 'Равно',
+								'not_equals' => 'Не равно',
+								'starts_with' => 'Начинается с',
+								'ends_with' => 'Заканчивается на',
+								'is_empty' => 'Пусто',
+								'is_not_empty' => 'Не пусто',
+						],
+				};
+		}
+
+		protected static function getRuleFieldType(?string $field): ?string
+		{
+				return static::getRuleFilterFields()[$field]['type'] ?? null;
+		}
+
+		protected static function ruleOperatorRequiresValue(?string $operator): bool
+		{
+				return ! in_array($operator, ['is_empty', 'is_not_empty'], true);
+		}
+
+		protected static function getRuleValuePlaceholder(?string $field): ?string
+		{
+				return match (static::getRuleFieldType($field)) {
+						'date' => 'гггг-мм-дд',
+						'datetime' => 'гггг-мм-дд чч:мм',
+						'number' => 'Введите число',
+						default => null,
+				};
+		}
+
+		protected static function getRuleValueHelperText(?string $field): ?string
+		{
+				$config = static::getRuleFilterFields()[$field] ?? null;
+
+				if (! $config) {
+						return null;
+				}
+
+				return match ($config['type']) {
+						'enum' => 'Доступные значения: ' . implode(', ', $config['options'] ?? []),
+						'boolean' => 'Используйте 1/0, true/false или да/нет',
+						default => null,
+				};
+		}
+
+		protected static function applyRulesFilter(Builder $query, array $rules): Builder
+		{
+				foreach ($rules as $rule) {
+						$query = static::applySingleRule($query, $rule);
+				}
+
+				return $query;
+		}
+
+		protected static function applySingleRule(Builder $query, array $rule): Builder
+		{
+				$fieldKey = $rule['field'] ?? null;
+				$operator = $rule['operator'] ?? null;
+				$value = $rule['value'] ?? null;
+
+				if (blank($fieldKey) || blank($operator)) {
+						return $query;
+				}
+
+				$fields = static::getRuleFilterFields();
+				$field = $fields[$fieldKey] ?? null;
+
+				if (! $field) {
+						return $query;
+				}
+
+				if (static::ruleOperatorRequiresValue($operator)) {
+						$value = static::normalizeRuleValue($field, $operator, $value);
+
+						if ($value === null || $value === '') {
+								return $query;
+						}
+				}
+
+				$column = $field['column'];
+				$type = $field['type'];
+
+				if (str_contains($column, '.')) {
+						[$relation, $relatedColumn] = explode('.', $column, 2);
+
+						return $query->whereHas($relation, function (Builder $relationQuery) use ($relatedColumn, $type, $operator, $value): Builder {
+								return static::applyRuleToColumn($relationQuery, $relatedColumn, $type, $operator, $value);
+						});
+				}
+
+				return static::applyRuleToColumn($query, $column, $type, $operator, $value);
+		}
+
+		protected static function applyRuleToColumn(Builder $query, string $column, string $type, string $operator, mixed $value): Builder
+		{
+				return match ($operator) {
+						'contains' => $query->where($column, 'like', '%' . static::escapeLike((string) $value) . '%'),
+						'not_contains' => $query->where(function (Builder $subQuery) use ($column, $value): Builder {
+								return $subQuery
+										->where($column, 'not like', '%' . static::escapeLike((string) $value) . '%')
+										->orWhereNull($column);
+						}),
+						'starts_with' => $query->where($column, 'like', static::escapeLike((string) $value) . '%'),
+						'ends_with' => $query->where($column, 'like', '%' . static::escapeLike((string) $value)),
+						'equals' => $query->where($column, '=', $value),
+						'not_equals' => $query->where($column, '!=', $value),
+						'gt' => $query->where($column, '>', $value),
+						'gte' => $query->where($column, '>=', $value),
+						'lt' => $query->where($column, '<', $value),
+						'lte' => $query->where($column, '<=', $value),
+						'is_empty' => $query->where(function (Builder $subQuery) use ($column): Builder {
+								return $subQuery
+										->whereNull($column)
+										->orWhere($column, '=', '');
+						}),
+						'is_not_empty' => $query->where(function (Builder $subQuery) use ($column): Builder {
+								return $subQuery
+										->whereNotNull($column)
+										->where($column, '!=', '');
+						}),
+						default => $query,
+				};
+		}
+
+		protected static function normalizeRuleValue(array $field, string $operator, ?string $value): mixed
+		{
+				if ($value === null) {
+						return null;
+				}
+
+				$type = $field['type'] ?? 'string';
+				$trimmed = is_string($value) ? trim($value) : $value;
+
+				return match ($type) {
+						'number' => is_numeric($trimmed) ? $trimmed + 0 : null,
+						'date' => blank($trimmed) ? null : static::tryParseDate($trimmed)?->toDateString(),
+						'datetime' => blank($trimmed) ? null : static::tryParseDate($trimmed)?->format('Y-m-d H:i:s'),
+						'enum' => static::normalizeEnumValue($field['options'] ?? [], $trimmed),
+						'boolean' => static::normalizeBooleanValue($trimmed),
+						default => $trimmed,
+				};
+		}
+
+		protected static function normalizeBooleanValue(?string $value): ?bool
+		{
+				if ($value === null) {
+						return null;
+				}
+
+				$normalized = Str::lower(trim((string) $value));
+
+				return match (true) {
+						in_array($normalized, ['1', 'true', 'yes', 'да'], true) => true,
+						in_array($normalized, ['0', 'false', 'no', 'нет'], true) => false,
+						default => null,
+				};
+		}
+
+		protected static function tryParseDate(string $value): ?Carbon
+		{
+				try {
+						return Carbon::parse($value);
+				} catch (\Throwable $e) {
+						return null;
+				}
+		}
+
+		protected static function normalizeEnumValue(array $options, string $value): ?string
+		{
+				foreach ($options as $optionValue => $label) {
+						if ($value === (string) $optionValue) {
+								return (string) $optionValue;
+						}
+
+						if (Str::lower($value) === Str::lower((string) $label)) {
+								return (string) $optionValue;
+						}
+				}
+
+				return null;
+		}
+
+		protected static function escapeLike(string $value): string
+		{
+				return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
+		}
+
+		protected static function getRuleFilterIndicators(array $rules): array
+		{
+				$validRules = collect($rules)
+						->filter(fn (array $rule) => filled($rule['field'] ?? null) && filled($rule['operator'] ?? null))
+						->count();
+
+				if ($validRules === 0) {
+						return [];
+				}
+
+				return [
+						Indicator::make('Правил: ' . $validRules),
+				];
 		}
 
 
