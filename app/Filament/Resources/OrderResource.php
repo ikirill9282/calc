@@ -382,22 +382,7 @@ class OrderResource extends Resource
 										])
 										->query(fn (Builder $query, array $data): Builder => static::applyRulesFilter($query, $data['rules'] ?? []))
 										->indicateUsing(fn (array $state): array => static::getRuleFilterIndicators($state['rules'] ?? [])),
-								Filter::make('agent_title')
-										->label('Отправитель (ФИО/ИП/ООО)')
-										->form([
-												Forms\Components\TextInput::make('value')
-														->label('Отправитель')
-														->placeholder('Введите значение'),
-										])
-										->query(function (Builder $query, array $data): Builder {
-												return $query->when(
-														$data['value'] ?? null,
-														fn (Builder $query, $value): Builder => $query->whereHas(
-																'agent',
-																fn (Builder $agentQuery) => $agentQuery->where('title', 'like', '%' . $value . '%'),
-														),
-												);
-										}),
+								
 								
 						])
 						->actions([
