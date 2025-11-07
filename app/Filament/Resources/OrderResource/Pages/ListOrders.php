@@ -14,6 +14,10 @@ class ListOrders extends ListRecords
 {
     protected static string $resource = OrderResource::class;
 
+    protected $listeners = [
+        'inlineEditCell' => 'handleInlineEditCell',
+    ];
+
     protected function getHeaderActions(): array
     {
         return [
@@ -226,5 +230,40 @@ class ListOrders extends ListRecords
         }
 
         return null;
+    }
+
+    public function handleInlineEditCell(array $payload): void
+    {
+        $recordId = $payload['recordId'] ?? null;
+        $field = $payload['field'] ?? null;
+
+        if (! $recordId || ! $field) {
+            return;
+        }
+
+        if (! in_array($field, OrderResource::getInlineEditableFields(), true)) {
+            return;
+        }
+
+        /** @var Order|null $record */
+        $record = Order::query()->find($recordId);
+
+        if (! $record) {
+            $this->dispatch('inline-edit-cell-error', message: 'Запись не найдена');
+            return;
+        }
+
+        try {
+            $record->fillFields([
+                $field => $payload['value'] ?? null,
+            ]);
+            $record->save();
+
+            $this->resetTable();
+            $this->dispatch('inline-edit-cell-saved', field: $field, recordId: $recordId);
+        } catch (\Throwable $exception) {
+            report($exception);
+            $this->dispatch('inline-edit-cell-error', message: 'Не удалось сохранить значение');
+        }
     }
 }

@@ -16,6 +16,7 @@ use Filament\Infolists\Infolist;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
@@ -35,10 +36,37 @@ class OrderResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    /**
+     * @var array<string>
+     */
+    protected static array $inlineEditableFields = [
+        'send_date',
+        'delivery_date',
+        'payment_method',
+        'cargo',
+        'pallets_count',
+        'pallets_boxcount',
+        'pallets_weight',
+        'pallets_volume',
+        'boxes_count',
+        'boxes_volume',
+        'boxes_weight',
+        'palletizing_count',
+        'transfer_method',
+        'transfer_method_pick_date',
+        'transfer_method_pick_address',
+        'transfer_method_receive_date',
+        'pick',
+        'delivery',
+        'additional',
+        'total',
+        'cargo_comment',
+    ];
+
 		public static function table(Table $table): Table
 		{
 				return $table
-						->columns([
+						->columns(static::applyInlineEditingToColumns([
 								Tables\Columns\TextColumn::make('id')
 										->label('№ заявки')
 										->sortable()
@@ -325,7 +353,7 @@ class OrderResource extends Resource
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('agent_id') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
-						])
+						]))
 						->headerActions([
 								Tables\Actions\Action::make('toggleSendDateToday')
 										->label('Отправки сегодня')
@@ -919,6 +947,60 @@ class OrderResource extends Resource
             //
         ];
     }
+
+		public static function getInlineEditableFields(): array
+		{
+				return static::$inlineEditableFields;
+		}
+
+		protected static function applyInlineEditingToColumns(array $columns): array
+		{
+				return array_map(function ($column) {
+						if (! $column instanceof Column) {
+								return $column;
+						}
+
+						$field = $column->getName();
+
+						if (! static::isInlineEditableField($field)) {
+								return $column;
+						}
+
+						$label = $column->getLabel();
+
+						$column->extraCellAttributes(function (Order $record) use ($field, $label): array {
+								$value = data_get($record, $field);
+
+								if ($value instanceof \DateTimeInterface) {
+										$value = $value->format('Y-m-d H:i:s');
+								} elseif (is_array($value)) {
+										$value = json_encode($value, JSON_UNESCAPED_UNICODE);
+								} elseif ($value === null) {
+										$value = '';
+								}
+
+								return [
+										'data-inline-editable' => '1',
+										'data-inline-field' => $field,
+										'data-inline-label' => is_string($label) ? $label : (string) $label,
+										'data-inline-record' => (string) $record->getKey(),
+										'data-inline-value' => (string) $value,
+										'class' => 'fi-inline-editable-cell',
+								];
+						});
+
+						return $column;
+				}, $columns);
+		}
+
+		protected static function isInlineEditableField(?string $field): bool
+		{
+				if (blank($field)) {
+						return false;
+				}
+
+				return in_array($field, static::$inlineEditableFields, true);
+		}
 
 		public static function infolist(Infolist $infolist): Infolist
 		{

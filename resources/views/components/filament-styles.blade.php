@@ -115,6 +115,10 @@
         padding: 0.15rem 0 !important;
     }
 
+    .fi-inline-editable-cell {
+        cursor: pointer;
+    }
+
     .fi-order-heading {
         margin: 0.75rem 0 0.25rem;
         font-size: 0.75rem;
@@ -130,7 +134,7 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const showCopyToast = (() => {
+        const showToast = (() => {
             let timeoutId;
             let toast;
 
@@ -188,7 +192,7 @@
             }
 
             const preview = text.length > 60 ? `${text.slice(0, 57)}…` : text;
-            showCopyToast(`Скопировано: ${preview}`);
+            showToast(`Скопировано: ${preview}`);
         });
 
         const setupSidebarToggle = () => {
@@ -227,6 +231,50 @@
 
             nav.insertBefore(button, nav.firstChild);
         };
+
+        const handleInlineContextMenu = (event) => {
+            const cell = event.target.closest('[data-inline-editable="1"]');
+
+            if (!cell) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const recordId = cell.getAttribute('data-inline-record');
+            const field = cell.getAttribute('data-inline-field');
+
+            if (!recordId || !field || !window.Livewire?.dispatch) {
+                return;
+            }
+
+            const label = cell.getAttribute('data-inline-label') || 'значение';
+            const currentValue = cell.getAttribute('data-inline-value') ?? cell.innerText.trim();
+            const nextValue = window.prompt(`Изменить «${label}»`, currentValue);
+
+            if (nextValue === null || nextValue === currentValue) {
+                return;
+            }
+
+            cell.setAttribute('data-inline-value', nextValue);
+
+            window.Livewire.dispatch('inlineEditCell', {
+                recordId,
+                field,
+                value: nextValue,
+            });
+        };
+
+        document.addEventListener('contextmenu', handleInlineContextMenu);
+
+        window.addEventListener('inline-edit-cell-saved', () => {
+            showToast('Значение обновлено');
+        });
+
+        window.addEventListener('inline-edit-cell-error', (event) => {
+            const message = event.detail?.message ?? 'Не удалось обновить';
+            showToast(message);
+        });
 
         setupSidebarToggle();
         document.addEventListener('livewire:navigated', setupSidebarToggle);
