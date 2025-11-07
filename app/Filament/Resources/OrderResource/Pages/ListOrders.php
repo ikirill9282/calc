@@ -232,15 +232,8 @@ class ListOrders extends ListRecords
         return null;
     }
 
-    public function handleInlineEditCell($payload = null): void
+    public function handleInlineEditCell($recordId = null, $field = null, $value = null): void
     {
-        if (! is_array($payload)) {
-            return;
-        }
-
-        $recordId = $payload['recordId'] ?? null;
-        $field = $payload['field'] ?? null;
-
         if (! $recordId || ! $field) {
             return;
         }
@@ -259,7 +252,7 @@ class ListOrders extends ListRecords
 
         try {
             $record->fillFields([
-                $field => $payload['value'] ?? null,
+                $field => $value,
             ]);
             $record->save();
 
