@@ -1054,7 +1054,9 @@ class OrderResource extends Resource
 
 		protected static function recordHasPallets(Order $record): bool
 		{
-				return ! static::isEmptyValue($record->pallets_count);
+				$count = $record->pallets_count;
+
+				return $count !== null && (float) $count > 0;
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
