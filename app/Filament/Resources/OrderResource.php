@@ -1101,21 +1101,33 @@ class OrderResource extends Resource
 														->default('—')
 														->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_volume') ? ['class' => 'text-orange-500'] : []),
 												
-												Infolists\Components\TextEntry::make('boxes_count')
-														->label('Кол-во коробов')
-														->default('—')
-														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
-												
-												Infolists\Components\TextEntry::make('boxes_weight')
-														->label('Вес коробов, кг')
-														->suffix(' кг')
-														->default('—')
-														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
+								Infolists\Components\TextEntry::make('boxes_count')
+										->label('Кол-во коробов')
+										->default('—')
+										->state(fn (Order $record) => static::fallbackValue(
+												$record->boxes_count,
+												$record->pallets_count,
+										))
+										->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
+										
+										Infolists\Components\TextEntry::make('boxes_weight')
+												->label('Вес коробов, кг')
+												->suffix(' кг')
+												->default('—')
+												->state(fn (Order $record) => static::fallbackValue(
+														$record->boxes_weight,
+														$record->pallets_weight,
+												))
+												->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('boxes_volume')
 														->label('Объем коробов, м³')
 														->suffix(' м³')
 														->default('—')
+														->state(fn (Order $record) => static::fallbackValue(
+																$record->boxes_volume,
+																$record->pallets_volume,
+														))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_volume') ? ['class' => 'text-orange-500'] : []),
 												
 												Infolists\Components\TextEntry::make('cargo_comment')
