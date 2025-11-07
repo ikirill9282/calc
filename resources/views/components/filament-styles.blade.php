@@ -102,9 +102,9 @@
     body.sidebar-collapsed .fi-main {
         max-width: 100% !important;
     }
-    .fi-ta-filters-modal .fi-modal-window {
+    .fi-dropdown-panel {
         width: 500px !important;
-        max-width: calc(100vw - 2rem);
+        max-width: calc(100vw - 2rem)!important;
     }
 </style>
 <script>
