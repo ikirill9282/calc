@@ -33,41 +33,43 @@
     }
 
     .fi-sidebar-toggle {
-        position: fixed;
-        top: 5.5rem;
-        left: 15.25rem;
-        z-index: 9998;
         display: none;
         align-items: center;
-        gap: 0.35rem;
-        padding: 0.5rem 0.9rem;
-        border-radius: 999px;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.75rem;
         border: 1px solid rgba(148, 163, 184, 0.5);
-        background: rgba(15, 23, 42, 0.85);
-        color: #f8fafc;
-        font-size: 0.85rem;
-        font-weight: 500;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
-        transition: background 150ms ease, transform 150ms ease;
+        background: rgba(15, 23, 42, 0.05);
+        color: #0f172a;
+        transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
     }
 
     .fi-sidebar-toggle:hover {
-        background: rgba(15, 23, 42, 0.95);
+        background: rgba(15, 23, 42, 0.15);
+        border-color: rgba(15, 23, 42, 0.6);
     }
 
     .fi-sidebar-toggle svg {
-        width: 1rem;
-        height: 1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+
+    .dark .fi-sidebar-toggle {
+        background: rgba(248, 250, 252, 0.05);
+        color: #e2e8f0;
+        border-color: rgba(248, 250, 252, 0.3);
+    }
+
+    .dark .fi-sidebar-toggle:hover {
+        background: rgba(248, 250, 252, 0.15);
+        border-color: rgba(248, 250, 252, 0.5);
     }
 
     @media (min-width: 1024px) {
         .fi-sidebar-toggle {
             display: inline-flex;
         }
-    }
-
-    body.sidebar-collapsed .fi-sidebar-toggle {
-        left: 1rem;
     }
 
     body.sidebar-collapsed .fi-sidebar {
@@ -152,29 +154,27 @@
 
         const setupSidebarToggle = () => {
             const STORAGE_KEY = 'filament.sidebarCollapsed';
-            const existingButton = document.querySelector('.fi-sidebar-toggle');
+            const nav = document.querySelector('.fi-topbar nav');
 
-            if (existingButton) {
+            if (!nav || nav.querySelector('.fi-sidebar-toggle')) {
                 return;
             }
 
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'fi-sidebar-toggle';
+            button.setAttribute('aria-label', 'Переключить меню');
             button.innerHTML = `
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="4" y1="7" x2="20" y2="7" />
                     <line x1="4" y1="12" x2="20" y2="12" />
-                    <line x1="4" y1="18" x2="14" y2="18" />
+                    <line x1="4" y1="17" x2="20" y2="17" />
                 </svg>
-                <span class="fi-sidebar-toggle__label">Скрыть меню</span>
             `;
 
-            const label = button.querySelector('.fi-sidebar-toggle__label');
             const applyState = (collapsed) => {
                 document.body.classList.toggle('sidebar-collapsed', collapsed);
                 button.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
-                label.textContent = collapsed ? 'Показать меню' : 'Скрыть меню';
             };
 
             let collapsed = localStorage.getItem(STORAGE_KEY) === '1';
@@ -186,9 +186,10 @@
                 applyState(collapsed);
             });
 
-            document.body.appendChild(button);
+            nav.insertBefore(button, nav.firstChild);
         };
 
         setupSidebarToggle();
+        document.addEventListener('livewire:navigated', setupSidebarToggle);
     });
 </script>
