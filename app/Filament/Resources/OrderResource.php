@@ -323,7 +323,7 @@ class OrderResource extends Resource
 						->recordClasses(fn (Order $record): array => static::resolveHighlightClasses($record->highlight_color))
 						->headerActions([
 								Tables\Actions\Action::make('toggleSendDateToday')
-										->label('Отгрузка сегодня')
+										->label('Отправки сегодня')
 										->icon('heroicon-o-calendar-days')
 										->color('primary')
 										->action(function (Pages\ListOrders $livewire): void {
@@ -380,9 +380,10 @@ class OrderResource extends Resource
 														);
 										}),
 								Filter::make('send_date_today')
-										->label('Отгрузка сегодня')
+										->label('Отправки сегодня')
 										->toggle()
-										->query(fn (Builder $query): Builder => $query->whereDate('send_date', Carbon::today())),
+										->query(fn (Builder $query): Builder => $query
+												->whereDate('send_date', Carbon::today()->toDateString())),
 								Filter::make('send_date_set')
 										->label('С датой отправки')
 										->toggle()
