@@ -232,7 +232,7 @@ class ListOrders extends ListRecords
         return null;
     }
 
-    public function handleInlineEditCell($payload): void
+    public function handleInlineEditCell($payload = null): void
     {
         if (! is_array($payload)) {
             return;
