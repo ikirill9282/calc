@@ -249,6 +249,25 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 
+										
+										// Дата забора груза
+										Tables\Columns\TextColumn::make('transfer_method_pick_date')
+										->label('Дата забора груза')
+										->date('d.m.Y H:i')
+										->sortable()
+										->default('—')
+										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? 'warning' : null)
+										->toggleable(isToggledHiddenByDefault: false),
+										
+										// Адрес забора груза
+										Tables\Columns\TextColumn::make('transfer_method_pick_address')
+										->label('Адрес забора')
+										->searchable()
+										->limit(30)
+										->tooltip(fn ($state) => $state)
+										->default('—')
+										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_address') ? 'warning' : null)
+										->toggleable(isToggledHiddenByDefault: false),
 								// Оплата за забор груза
 								Tables\Columns\TextColumn::make('pick')
 										->label('Оплата за забор')
@@ -257,35 +276,16 @@ class OrderResource extends Resource
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('pick') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
-
-								// Дата забора груза
-								Tables\Columns\TextColumn::make('transfer_method_pick_date')
-										->label('Дата забора груза')
-										->date('d.m.Y H:i')
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-
-								// Адрес забора груза
-								Tables\Columns\TextColumn::make('transfer_method_pick_address')
-										->label('Адрес забора')
-										->searchable()
-										->limit(30)
-										->tooltip(fn ($state) => $state)
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_address') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-								
+										
 								Tables\Columns\TextColumn::make('delivery')
-										->label('Доставка')
+										->label('Стоимость доставки')
 										->money('RUB')
 										->sortable()
 										->color(fn (Order $record) => $record->hasChanged('delivery') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('additional')
-										->label('Палетирование')
+										->label('Стоимость паллетирования')
 										->money('RUB')
 										->sortable()
 										->color(fn (Order $record) => $record->hasChanged('additional') ? 'warning' : null)
