@@ -17,11 +17,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
+use App\Tables\Summarizers\ConditionalSum;
 
 class OrderResource extends Resource
 {
@@ -165,49 +167,86 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('cargo') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 
-								// Кол-во палет
-								Tables\Columns\TextColumn::make('pallets_count')
-										->label('Кол-во палет')
-										->numeric()
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('pallets_count') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Кол-во палет
+				Tables\Columns\TextColumn::make('pallets_count')
+						->label('Кол-во палет')
+						->numeric()
+						->sortable()
+						->default('—')
+						->color(fn (Order $record) => $record->hasChanged('pallets_count') ? 'warning' : null)
+						->summarize(Sum::make()->label('Итого')->numeric())
+						->toggleable(isToggledHiddenByDefault: false),
 
-								// Кол-во коробов
-								Tables\Columns\TextColumn::make('boxes_count')
-										->label('Общ. кол-во коробов')
-										->numeric()
-										->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_count'))
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('boxes_count') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Кол-во коробов
+				Tables\Columns\TextColumn::make('boxes_count')
+						->label('Общ. кол-во коробов')
+						->numeric()
+						->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_count'))
+						->sortable()
+						->default('—')
+						->color(fn (Order $record) => $record->hasChanged('boxes_count', 'pallets_boxcount') ? 'warning' : null)
+						->summarize(
+								ConditionalSum::make('boxes_count_total')
+									->label('')
+									->numeric()
+									->expression(function (string $attribute): string {
+										$parts = explode('.', $attribute);
+										$table = count($parts) > 1 ? $parts[0] : 'orders';
 
-								// Объем коробов
-								Tables\Columns\TextColumn::make('boxes_volume')
-										->label('Объем коробов, м³')
-										->numeric()
-										->suffix(' м³')
-										->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_volume'))
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('boxes_volume') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+										return "CASE WHEN {$table}.pallets_count > 0 THEN COALESCE({$table}.pallets_boxcount, {$table}.boxes_count) ELSE {$table}.boxes_count END";
+									})
+									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_count') ?? 0))
+						)
+						->toggleable(isToggledHiddenByDefault: false),
 
-								// Вес коробов
-								Tables\Columns\TextColumn::make('boxes_weight')
-										->label('Вес коробов, кг')
-										->numeric()
-										->suffix(' кг')
-										->formatStateUsing(fn (TextColumn $column, $state): mixed => static::resolveDisplayValue(
-												$column->getRecord(),
-												'boxes_weight',
-										))
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('boxes_weight') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Объем коробов
+				Tables\Columns\TextColumn::make('boxes_volume')
+						->label('Объем коробов, м³')
+						->numeric()
+						->suffix(' м³')
+						->getStateUsing(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_volume'))
+						->sortable()
+						->default('—')
+						->color(fn (Order $record) => $record->hasChanged('boxes_volume', 'pallets_volume') ? 'warning' : null)
+						->summarize(
+								ConditionalSum::make('boxes_volume_total')
+									->label('')
+									->numeric(decimalPlaces: 2)
+									->expression(function (string $attribute): string {
+										$parts = explode('.', $attribute);
+										$table = count($parts) > 1 ? $parts[0] : 'orders';
+
+										return "CASE WHEN {$table}.pallets_count > 0 THEN COALESCE({$table}.pallets_volume, {$table}.boxes_volume) ELSE {$table}.boxes_volume END";
+									})
+									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_volume') ?? 0))
+						)
+						->toggleable(isToggledHiddenByDefault: false),
+
+				// Вес коробов
+				Tables\Columns\TextColumn::make('boxes_weight')
+						->label('Вес коробов, кг')
+						->numeric()
+						->suffix(' кг')
+						->formatStateUsing(fn (TextColumn $column, $state): mixed => static::resolveDisplayValue(
+								$column->getRecord(),
+								'boxes_weight',
+						))
+						->sortable()
+						->default('—')
+						->color(fn (Order $record) => $record->hasChanged('boxes_weight', 'pallets_weight') ? 'warning' : null)
+						->summarize(
+								ConditionalSum::make('boxes_weight_total')
+									->label('')
+									->numeric(decimalPlaces: 2)
+									->expression(function (string $attribute): string {
+										$parts = explode('.', $attribute);
+										$table = count($parts) > 1 ? $parts[0] : 'orders';
+
+										return "CASE WHEN {$table}.pallets_count > 0 THEN COALESCE({$table}.pallets_weight, {$table}.boxes_weight) ELSE {$table}.boxes_weight END";
+									})
+									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_weight') ?? 0))
+						)
+						->toggleable(isToggledHiddenByDefault: false),
 
 								
 
@@ -220,35 +259,35 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('palletizing_count') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 
-								// Паллетирование кол-во
-								Tables\Columns\TextColumn::make('palletizing_count')
-										->label('Палетирование кол-во')
-										->numeric()
-										->sortable()
-										->default(0)
-										->color(fn (Order $record) => $record->hasChanged('palletizing_count') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Паллетирование кол-во
+				Tables\Columns\TextColumn::make('palletizing_count')
+						->label('Палетирование кол-во')
+						->numeric()
+						->sortable()
+						->default(0)
+						->color(fn (Order $record) => $record->hasChanged('palletizing_count') ? 'warning' : null)
+						->summarize(Sum::make('palletizing_count_total')->label('')->numeric())
+						->toggleable(isToggledHiddenByDefault: false),
 
-								// Забор груза (да/нет)
-								Tables\Columns\IconColumn::make('has_pickup')
-										->label('Забор груза')
-										->boolean()
-										->getStateUsing(fn ($record) => $record->transfer_method === 'pick')
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('transfer_method') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Забор груза (да/нет)
+				Tables\Columns\IconColumn::make('has_pickup')
+						->label('Забор груза')
+						->boolean()
+						->getStateUsing(fn ($record) => $record->transfer_method === 'pick')
+						->sortable()
+						->color(fn (Order $record) => $record->hasChanged('transfer_method') ? 'warning' : null)
+						->toggleable(isToggledHiddenByDefault: false),
 
-								// Дата привоза клиентом
-								Tables\Columns\TextColumn::make('transfer_method_receive_date')
-										->label('Дата привоза клиентом')
-										->date('d.m.Y H:i')
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Дата привоза клиентом
+				Tables\Columns\TextColumn::make('transfer_method_receive_date')
+						->label('Дата привоза клиентом')
+						->date('d.m.Y H:i')
+						->sortable()
+						->default('—')
+						->color(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? 'warning' : null)
+						->toggleable(isToggledHiddenByDefault: false),
 
-										
-										// Дата забора груза
+											// Дата забора груза
 										Tables\Columns\TextColumn::make('transfer_method_pick_date')
 										->label('Дата забора груза')
 										->date('d.m.Y H:i')
@@ -266,35 +305,39 @@ class OrderResource extends Resource
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_address') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
-								// Оплата за забор груза
-								Tables\Columns\TextColumn::make('pick')
-										->label('Оплата за забор')
-										->money('RUB')
-										->sortable()
-										->default('—')
-										->color(fn (Order $record) => $record->hasChanged('pick') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-										
-								Tables\Columns\TextColumn::make('delivery')
-										->label('Стоимость доставки')
-										->money('RUB')
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('delivery') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-								
-								Tables\Columns\TextColumn::make('additional')
-										->label('Стоимость паллетирования')
-										->money('RUB')
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('additional') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-								
-								Tables\Columns\TextColumn::make('total')
-										->label('Предварительная сумма')
-										->money('RUB')
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('total') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
+				// Оплата за забор груза
+				Tables\Columns\TextColumn::make('pick')
+						->label('Оплата за забор')
+						->money('RUB')
+						->sortable()
+						->default('—')
+						->color(fn (Order $record) => $record->hasChanged('pick') ? 'warning' : null)
+						->summarize(Sum::make('pick_total')->label('')->money('RUB'))
+						->toggleable(isToggledHiddenByDefault: false),
+
+				Tables\Columns\TextColumn::make('delivery')
+						->label('Стоимость доставки')
+						->money('RUB')
+						->sortable()
+						->color(fn (Order $record) => $record->hasChanged('delivery') ? 'warning' : null)
+						->summarize(Sum::make('delivery_total')->label('')->money('RUB'))
+						->toggleable(isToggledHiddenByDefault: false),
+
+				Tables\Columns\TextColumn::make('additional')
+						->label('Стоимость паллетирования')
+						->money('RUB')
+						->sortable()
+						->color(fn (Order $record) => $record->hasChanged('additional') ? 'warning' : null)
+						->summarize(Sum::make('additional_total')->label('')->money('RUB'))
+						->toggleable(isToggledHiddenByDefault: false),
+
+				Tables\Columns\TextColumn::make('total')
+						->label('Предварительная сумма')
+						->money('RUB')
+						->sortable()
+						->color(fn (Order $record) => $record->hasChanged('total') ? 'warning' : null)
+						->summarize(Sum::make('total_sum')->label('')->money('RUB'))
+						->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('cargo_comment')
 										->label('Комментарий')
