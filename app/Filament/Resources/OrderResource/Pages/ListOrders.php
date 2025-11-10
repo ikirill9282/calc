@@ -214,12 +214,12 @@ class ListOrders extends ListRecords
 
         $columns = $this->getExportColumns();
 
-        $fileName = 'orders-export-' . now()->format('Y-m-d-H-i-s') . '.tsv';
+        $fileName = 'orders-export-' . now()->format('Y-m-d-H-i-s') . '.xls';
 
         return response()->streamDownload(function () use ($columns, $records): void {
             $this->outputExcelTable($columns, $records);
         }, $fileName, [
-            'Content-Type' => 'text/tab-separated-values; charset=UTF-8',
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
             'Cache-Control' => 'no-store, no-cache, must-revalidate',
         ]);
     }
