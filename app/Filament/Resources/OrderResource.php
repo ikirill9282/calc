@@ -23,7 +23,8 @@ use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Tables\Summarizers\ConditionalSum;
-use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\TextColumn;
 
 class OrderResource extends Resource
 {
@@ -174,17 +175,12 @@ class OrderResource extends Resource
 						->sortable()
 						->default('—')
 						->color(fn (Order $record) => $record->hasChanged('pallets_count') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('pallets_count_selected')
-									->label('Выбрано')
+						->summarize(
+								ConditionalSum::make('pallets_count_total')
+									->label('Итого')
 									->numeric()
 									->recordValueUsing(fn (Order $record): float => (float) ($record->pallets_count ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
-								Sum::make('pallets_count_total')
-									->label('Всего')
-									->numeric()
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				// Кол-во коробов
@@ -195,18 +191,13 @@ class OrderResource extends Resource
 						->sortable()
 						->default('—')
 						->color(fn (Order $record) => $record->hasChanged('boxes_count', 'pallets_boxcount') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('boxes_count_selected')
-									->label('Выбрано')
-									->numeric()
-									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_count') ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
+						->summarize(
 								ConditionalSum::make('boxes_count_total')
-									->label('Всего')
+									->label('Итого')
 									->numeric()
 									->expression(fn (string $attribute): string => static::buildBoxPalletExpression($attribute, 'pallets_boxcount', 'boxes_count'))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_count') ?? 0))
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				// Объем коробов
@@ -218,18 +209,13 @@ class OrderResource extends Resource
 						->sortable()
 						->default('—')
 						->color(fn (Order $record) => $record->hasChanged('boxes_volume', 'pallets_volume') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('boxes_volume_selected')
-									->label('Выбрано')
-									->numeric(decimalPlaces: 2)
-									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_volume') ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
+						->summarize(
 								ConditionalSum::make('boxes_volume_total')
-									->label('Всего')
+									->label('Итого')
 									->numeric(decimalPlaces: 2)
 									->expression(fn (string $attribute): string => static::buildBoxPalletExpression($attribute, 'pallets_volume', 'boxes_volume'))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_volume') ?? 0))
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				// Вес коробов
@@ -244,18 +230,13 @@ class OrderResource extends Resource
 						->sortable()
 						->default('—')
 						->color(fn (Order $record) => $record->hasChanged('boxes_weight', 'pallets_weight') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('boxes_weight_selected')
-									->label('Выбрано')
-									->numeric(decimalPlaces: 2)
-									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_weight') ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
+						->summarize(
 								ConditionalSum::make('boxes_weight_total')
-									->label('Всего')
+									->label('Итого')
 									->numeric(decimalPlaces: 2)
 									->expression(fn (string $attribute): string => static::buildBoxPalletExpression($attribute, 'pallets_weight', 'boxes_weight'))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+									->recordValueUsing(fn (Order $record): float => (float) (static::resolveDisplayValue($record, 'boxes_weight') ?? 0))
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 								
@@ -276,17 +257,12 @@ class OrderResource extends Resource
 						->sortable()
 						->default(0)
 						->color(fn (Order $record) => $record->hasChanged('palletizing_count') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('palletizing_count_selected')
-									->label('Выбрано')
+						->summarize(
+								ConditionalSum::make('palletizing_count_total')
+									->label('Итого')
 									->numeric()
 									->recordValueUsing(fn (Order $record): float => (float) ($record->palletizing_count ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
-								Sum::make('palletizing_count_total')
-									->label('Всего')
-									->numeric()
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				// Забор груза (да/нет)
@@ -332,17 +308,12 @@ class OrderResource extends Resource
 						->sortable()
 						->default('—')
 						->color(fn (Order $record) => $record->hasChanged('pick') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('pick_selected')
-									->label('Выбрано')
+						->summarize(
+								ConditionalSum::make('pick_total')
+									->label('Итого')
 									->money('RUB')
 									->recordValueUsing(fn (Order $record): float => (float) ($record->pick ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
-								Sum::make('pick_total')
-									->label('Всего')
-									->money('RUB')
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				Tables\Columns\TextColumn::make('delivery')
@@ -350,17 +321,12 @@ class OrderResource extends Resource
 						->money('RUB')
 						->sortable()
 						->color(fn (Order $record) => $record->hasChanged('delivery') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('delivery_selected')
-									->label('Выбрано')
+						->summarize(
+								ConditionalSum::make('delivery_total')
+									->label('Итого')
 									->money('RUB')
 									->recordValueUsing(fn (Order $record): float => (float) ($record->delivery ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
-								Sum::make('delivery_total')
-									->label('Всего')
-									->money('RUB')
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				Tables\Columns\TextColumn::make('additional')
@@ -368,17 +334,12 @@ class OrderResource extends Resource
 						->money('RUB')
 						->sortable()
 						->color(fn (Order $record) => $record->hasChanged('additional') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('additional_selected')
-									->label('Выбрано')
+						->summarize(
+								ConditionalSum::make('additional_total')
+									->label('Итого')
 									->money('RUB')
 									->recordValueUsing(fn (Order $record): float => (float) ($record->additional ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
-								Sum::make('additional_total')
-									->label('Всего')
-									->money('RUB')
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 
 				Tables\Columns\TextColumn::make('total')
@@ -386,17 +347,12 @@ class OrderResource extends Resource
 						->money('RUB')
 						->sortable()
 						->color(fn (Order $record) => $record->hasChanged('total') ? 'warning' : null)
-						->summarize([
-								ConditionalSum::make('total_selected')
-									->label('Выбрано')
+						->summarize(
+								ConditionalSum::make('total_sum')
+									->label('Итого')
 									->money('RUB')
 									->recordValueUsing(fn (Order $record): float => (float) ($record->total ?? 0))
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isNotEmpty()),
-								Sum::make('total_sum')
-									->label('Всего')
-									->money('RUB')
-									->visible(fn (Table $table): bool => $table->getLivewire()->getSelectedTableRecords()->isEmpty()),
-						])
+						)
 						->toggleable(isToggledHiddenByDefault: false),
 								
 								Tables\Columns\TextColumn::make('cargo_comment')
