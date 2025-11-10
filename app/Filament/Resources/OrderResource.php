@@ -927,6 +927,8 @@ class OrderResource extends Resource
 								return $column;
 						}
 
+						$column->wrapHeader();
+
 						$field = $column->getName();
 
 						if (! static::isInlineEditableField($field)) {
