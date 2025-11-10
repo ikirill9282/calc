@@ -148,6 +148,20 @@ class Calculator extends Component
         $this->fields['post_date'] = $this->getDeliveryDiff();
       }
 
+      if ($property == 'fields.transfer_method') {
+        if ($value === 'pick' && $this->getField('payment_method')) {
+          $this->fields['payment_method_pick'] = $this->getField('payment_method');
+        }
+
+        if ($value !== 'pick') {
+          $this->fields['payment_method_pick'] = null;
+        }
+      }
+
+      if ($property == 'fields.payment_method' && $this->getField('transfer_method') === 'pick') {
+        $this->fields['payment_method_pick'] = $value;
+      }
+
       $this->checkIndividual();
       Session::put('calc', json_encode($this->fields));
     }
