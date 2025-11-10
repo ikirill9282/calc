@@ -68,6 +68,8 @@ class Agents extends Component
         $this->getAddresses(Arr::get($this->form, str_ireplace('form.', '', $property)));
       }
       if ($property == 'form.title') {
+        $this->form['title'] = preg_replace('/\D+/', '', (string) $this->form['title']);
+
         $this->dropdownOpen[$property] = true;
         $this->getCompanies(Arr::get($this->form, str_ireplace('form.', '', $property)));
       }
@@ -306,6 +308,7 @@ class Agents extends Component
         $this->company = $company;
         $this->getCompanies($company['name']);
         $this->getAddresses($company['address'] ?? null);
+        $this->form['title'] = $company['name'];
         unset($this->dropdownOpen[$name]);
         unset($this->dropdownOpen['form.address']);
       }
