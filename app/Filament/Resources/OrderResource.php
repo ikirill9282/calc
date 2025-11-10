@@ -1065,309 +1065,245 @@ class OrderResource extends Resource
 
 		public static function infolist(Infolist $infolist): Infolist
 		{
-				return $infolist
-						->schema([
-								Infolists\Components\Tabs::make('orderDetails')
-										->tabs([
-												Infolists\Components\Tabs\Tab::make('Основное')
-														->schema([
-																Infolists\Components\Grid::make(6)
-																		->schema([
-																				Infolists\Components\TextEntry::make('id')
-																						->label('№ заявки')
-																						->size('sm')
-																						->columnSpan(2),
+			return $infolist
+					->schema([
+							Infolists\Components\Grid::make(3)
+									->schema([
+											Infolists\Components\Section::make('Основное')
+												->schema([
+														Infolists\Components\TextEntry::make('id')
+															->label('№ заявки')
+															->size('sm'),
+														Infolists\Components\TextEntry::make('created_at')
+															->label('Создана')
+															->dateTime('d.m.Y H:i')
+															->size('sm'),
+														Infolists\Components\TextEntry::make('agent.title')
+															->label('Отправитель')
+															->size('sm')
+															->columnSpan(2)
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('agent.name')
+															->label('Контактное лицо')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->agent?->name))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('agent.phone')
+															->label('Телефон')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->agent?->phone))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('agent.email')
+															->label('Email')
+															->size('sm')
+															->columnSpan(2)
+															->hidden(fn (Order $record) => blank($record->agent?->email))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+												])
+												->columns(2)
+												->compact()
+												->columnSpan(1),
 
-																				Infolists\Components\TextEntry::make('created_at')
-																						->label('Дата и время создания')
-																						->dateTime('d.m.Y H:i')
-																						->size('sm')
-																						->columnSpan(2),
+											Infolists\Components\Section::make('Доставка')
+												->schema([
+														Infolists\Components\TextEntry::make('delivery_date')
+															->label('Поставка на РЦ')
+															->date('d.m.Y')
+															->size('sm')
+															->extraAttributes(fn (Order $record) => $record->hasChanged('delivery_date') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('send_date')
+															->label('Отправка')
+															->date('d.m.Y')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->send_date))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('send_date') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('distribution')
+															->label('РЦ и адрес')
+															->state(fn (Order $record) => $record->distribution_label ?: '—')
+															->size('sm')
+															->columnSpan(2)
+															->extraAttributes(fn (Order $record) => $record->hasChanged('distributor_id', 'distributor_center_id') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('warehouse_id')
+															->label('Склад')
+															->size('sm')
+															->columnSpan(2)
+															->extraAttributes(fn (Order $record) => $record->hasChanged('warehouse_id') ? ['class' => 'text-orange-500'] : []),
+												])
+												->columns(2)
+												->compact()
+												->columnSpan(1),
 
-																				Infolists\Components\TextEntry::make('agent.title')
-																						->label('Отправитель')
-																						->size('sm')
-																						->columnSpan(2)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+											Infolists\Components\Section::make('Груз')
+												->schema([
+														Infolists\Components\TextEntry::make('cargo')
+															->label('Тип')
+															->formatStateUsing(fn ($state) => match ($state) {
+																'boxes' => 'Коробки',
+																'pallets' => 'Палеты',
+																default => $state,
+															})
+															->size('sm')
+															->extraAttributes(fn (Order $record) => $record->hasChanged('cargo') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('boxes_count')
+															->label('Коробов')
+															->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_count'))
+															->size('sm')
+															->hidden(fn (Order $record) => blank(static::resolveDisplayValue($record, 'boxes_count')))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('boxes_weight')
+															->label('Вес коробов, кг')
+															->suffix(' кг')
+															->formatStateUsing(fn (Infolists\Components\TextEntry $entry, $state) => static::resolveDisplayValue(
+																$entry->getRecord(),
+																'boxes_weight',
+															))
+															->size('sm')
+															->hidden(fn (Order $record) => blank(static::resolveDisplayValue($record, 'boxes_weight')))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('boxes_volume')
+															->label('Объем коробов, м³')
+															->suffix(' м³')
+															->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_volume'))
+															->size('sm')
+															->hidden(fn (Order $record) => blank(static::resolveDisplayValue($record, 'boxes_volume')))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_volume') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('pallets_count')
+															->label('Палет')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->pallets_count))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_count') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('pallets_weight')
+															->label('Вес палет, кг')
+															->suffix(' кг')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->pallets_weight))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_weight') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('pallets_volume')
+															->label('Объем палет, м³')
+															->suffix(' м³')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->pallets_volume))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_volume') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('palletizing_count')
+															->label('Палетирование, шт')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->palletizing_count))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('palletizing_count') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('cargo_comment')
+															->label('Комментарий')
+															->size('sm')
+															->columnSpan(2)
+															->hidden(fn (Order $record) => blank($record->cargo_comment))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('cargo_comment') ? ['class' => 'text-orange-500'] : []),
+												])
+												->columns(2)
+												->compact()
+												->columnSpan(1),
 
-																				Infolists\Components\TextEntry::make('agent.name')
-																						->label('Контактное лицо')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->agent?->name))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+											Infolists\Components\Section::make('Стоимость')
+												->schema([
+														Infolists\Components\TextEntry::make('payment_method')
+															->label('Способ оплаты')
+															->formatStateUsing(fn ($state) => match ($state) {
+																'cash' => 'Наличные',
+																'bill' => 'Безналичный',
+																default => $state,
+															})
+															->size('sm')
+															->extraAttributes(fn (Order $record) => $record->hasChanged('payment_method') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\IconEntry::make('individual')
+															->label('Индивидуальный расчет')
+															->boolean()
+															->size('sm')
+															->extraAttributes(fn (Order $record) => $record->hasChanged('individual') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('pick')
+															->label('Забор, ₽')
+															->money('RUB')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->pick))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('pick') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('delivery')
+															->label('Доставка, ₽')
+															->money('RUB')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->delivery))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('delivery') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('additional')
+															->label('Палетирование, ₽')
+															->money('RUB')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->additional))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('additional') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('total')
+															->label('Итого, ₽')
+															->money('RUB')
+															->weight('bold')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->total))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('total') ? ['class' => 'text-orange-500'] : []),
+												])
+												->columns(2)
+												->compact()
+												->columnSpan(1),
 
-																				Infolists\Components\TextEntry::make('agent.phone')
-																						->label('Номер телефона')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->agent?->phone))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+											Infolists\Components\Section::make('Забор груза')
+												->schema([
+														Infolists\Components\TextEntry::make('transfer_method')
+															->label('Способ передачи')
+															->formatStateUsing(fn ($state) => match ($state) {
+																'pick' => 'Забор',
+																'receive' => 'Привоз клиентом',
+																default => $state,
+															})
+															->size('sm')
+															->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('transfer_method_pick_date')
+															->label('Дата забора')
+															->dateTime('d.m.Y H:i')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->transfer_method_pick_date))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('transfer_method_receive_date')
+															->label('Дата привоза')
+															->dateTime('d.m.Y H:i')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->transfer_method_receive_date))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('transfer_method_pick_address')
+															->label('Адрес забора')
+															->size('sm')
+															->columnSpan(2)
+															->hidden(fn (Order $record) => blank($record->transfer_method_pick_address))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_pick_address') ? ['class' => 'text-orange-500'] : []),
+												])
+												->columns(2)
+												->compact()
+												->columnSpan(1),
 
-																				Infolists\Components\TextEntry::make('agent.email')
-																						->label('Email')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->agent?->email))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
-																		]),
-														]),
-
-												Infolists\Components\Tabs\Tab::make('Доставка')
-														->schema([
-																Infolists\Components\Grid::make(6)
-																		->schema([
-																				Infolists\Components\TextEntry::make('delivery_date')
-																						->label('Дата поставки на РЦ')
-																						->date('d.m.Y')
-																						->size('sm')
-																						->columnSpan(2)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('delivery_date') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('send_date')
-																						->label('Дата отправки')
-																						->date('d.m.Y')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->send_date))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('send_date') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('distributor_id')
-																						->label('РЦ')
-																						->size('sm')
-																						->columnSpan(2)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('distributor_id') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('distributor_center_id')
-																						->label('Адрес РЦ')
-																						->size('sm')
-																						->columnSpan(3)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('distributor_center_id') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('warehouse_id')
-																						->label('Склад')
-																						->size('sm')
-																						->columnSpan(3)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('warehouse_id') ? ['class' => 'text-orange-500'] : []),
-																		]),
-														]),
-
-												Infolists\Components\Tabs\Tab::make('Груз')
-														->schema([
-																Infolists\Components\Grid::make(6)
-																		->schema([
-																				Infolists\Components\TextEntry::make('cargo')
-																						->label('Тип груза')
-																						->formatStateUsing(fn ($state) => match ($state) {
-																								'boxes' => 'Коробки',
-																								'pallets' => 'Палеты',
-																								default => $state,
-																						})
-																						->size('sm')
-																						->columnSpan(2)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('cargo') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('pallets_count')
-																						->label('Кол-во палет')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->pallets_count))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_count') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('pallets_boxcount')
-																						->label('Коробов в палете')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->pallets_boxcount))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_boxcount') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('pallets_weight')
-																						->label('Вес палет, кг')
-																						->suffix(' кг')
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank($record->pallets_weight))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_weight') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('pallets_volume')
-																						->label('Объем палет, м³')
-																						->suffix(' м³')
-																						->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->pallets_volume))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('pallets_volume') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('boxes_count')
-																						->label('Кол-во коробов')
-																						->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_count'))
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank(static::resolveDisplayValue($record, 'boxes_count')))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_count') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('boxes_weight')
-																						->label('Вес коробов, кг')
-																						->suffix(' кг')
-																						->formatStateUsing(fn (Infolists\Components\TextEntry $entry, $state) => static::resolveDisplayValue(
-																								$entry->getRecord(),
-																								'boxes_weight',
-																						))
-																						->size('sm')
-																						->columnSpan(2)
-																						->hidden(fn (Order $record) => blank(static::resolveDisplayValue($record, 'boxes_weight')))
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_weight') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('boxes_volume')
-																						->label('Объем коробов, м³')
-								        				->suffix(' м³')
-								        				->state(fn (Order $record) => static::resolveDisplayValue($record, 'boxes_volume'))
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank(static::resolveDisplayValue($record, 'boxes_volume')))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('boxes_volume') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('palletizing_count')
-																						->label('Палетирование кол-во')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->palletizing_count))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('palletizing_count') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('cargo_comment')
-								        				->label('Комментарий')
-								        				->size('sm')
-								        				->columnSpan(6)
-								        				->hidden(fn (Order $record) => blank($record->cargo_comment))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('cargo_comment') ? ['class' => 'text-orange-500'] : []),
-																		]),
-														]),
-
-												Infolists\Components\Tabs\Tab::make('Стоимость')
-														->schema([
-																Infolists\Components\Grid::make(6)
-																		->schema([
-																				Infolists\Components\TextEntry::make('payment_method')
-																						->label('Способ оплаты')
-																						->formatStateUsing(fn ($state) => match ($state) {
-																								'cash' => 'Наличные',
-																								'bill' => 'Безналичный',
-																								default => $state,
-																						})
-																						->size('sm')
-																						->columnSpan(2)
-																						->extraAttributes(fn (Order $record) => $record->hasChanged('payment_method') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\IconEntry::make('individual')
-								        				->label('Индивидуальный расчет')
-								        				->boolean()
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('individual') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('pick')
-								        				->label('Забор, ₽')
-								        				->money('RUB')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->pick))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('pick') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('delivery')
-								        				->label('Доставка, ₽')
-								        				->money('RUB')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->delivery))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('delivery') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('additional')
-								        				->label('Палетирование, ₽')
-								        				->money('RUB')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->additional))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('additional') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('total')
-								        				->label('Итого, ₽')
-								        				->money('RUB')
-								        				->weight('bold')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->total))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('total') ? ['class' => 'text-orange-500'] : []),
-																		]),
-														]),
-
-												Infolists\Components\Tabs\Tab::make('Забор груза')
-														->schema([
-																Infolists\Components\Grid::make(6)
-																		->schema([
-																				Infolists\Components\TextEntry::make('transfer_method')
-								        				->label('Способ передачи')
-								        				->formatStateUsing(fn ($state) => match ($state) {
-																								'pick' => 'Забор',
-																								'receive' => 'Привоз клиентом',
-																								default => $state,
-								        				})
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('transfer_method_pick_date')
-								        				->label('Дата забора груза')
-								        				->dateTime('d.m.Y H:i')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->transfer_method_pick_date))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('transfer_method_receive_date')
-								        				->label('Дата привоза клиентом')
-								        				->dateTime('d.m.Y H:i')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->transfer_method_receive_date))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('transfer_method_pick_address')
-								        				->label('Адрес забора')
-								        				->size('sm')
-								        				->columnSpan(6)
-								        				->hidden(fn (Order $record) => blank($record->transfer_method_pick_address))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_pick_address') ? ['class' => 'text-orange-500'] : []),
-																		]),
-														]),
-
-												Infolists\Components\Tabs\Tab::make('Реквизиты')
-														->schema([
-																Infolists\Components\Grid::make(6)
-																		->schema([
-																				Infolists\Components\TextEntry::make('agent.inn')
-								        				->label('ИНН')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->agent?->inn))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('agent.ogrn')
-								        				->label('ОГРН')
-								        				->size('sm')
-								        				->columnSpan(2)
-								        				->hidden(fn (Order $record) => blank($record->agent?->ogrn))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
-
-																				Infolists\Components\TextEntry::make('agent.address')
-								        				->label('Адрес')
-								        				->size('sm')
-								        				->columnSpan(6)
-								        				->hidden(fn (Order $record) => blank($record->agent?->address))
-								        				->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
-																		]),
-														]),
+											Infolists\Components\Section::make('Реквизиты')
+												->schema([
+														Infolists\Components\TextEntry::make('agent.inn')
+															->label('ИНН')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->agent?->inn))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('agent.ogrn')
+															->label('ОГРН')
+															->size('sm')
+															->hidden(fn (Order $record) => blank($record->agent?->ogrn))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+														Infolists\Components\TextEntry::make('agent.address')
+															->label('Адрес')
+															->size('sm')
+															->columnSpan(2)
+															->hidden(fn (Order $record) => blank($record->agent?->address))
+															->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
+												])
+												->columns(2)
+												->compact()
+												->columnSpan(1),
 										])
-										->contained(false),
-						]);
+								]);
 		}
 
 
