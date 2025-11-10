@@ -72,28 +72,34 @@ class ListOrders extends ListRecords
     protected function outputExcelTable(array $columns, Collection $records): void
     {
         echo "\xEF\xBB\xBF";
-        echo '<table border="1"><thead><tr>';
-
-        foreach ($columns as $label) {
-            echo '<th>' . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</th>';
-        }
-
-        echo '</tr></thead><tbody>';
+        echo $this->implodeExportRow(array_values($columns)) . "\r\n";
 
         /** @var Order $record */
         foreach ($records as $record) {
-            echo '<tr>';
+            $row = [];
 
             foreach (array_keys($columns) as $column) {
-                $value = $this->formatExportValue($record, $column);
-
-                echo '<td>' . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</td>';
+                $row[] = $this->formatExportValue($record, $column);
             }
 
-            echo '</tr>';
+            echo $this->implodeExportRow($row) . "\r\n";
         }
+    }
 
-        echo '</tbody></table>';
+    /**
+     * @param  array<int, string>  $values
+     */
+    protected function implodeExportRow(array $values): string
+    {
+        return implode("\t", array_map(fn ($value): string => $this->sanitizeExportValue((string) $value), $values));
+    }
+
+    protected function sanitizeExportValue(string $value): string
+    {
+        $value = str_replace(["\r\n", "\r", "\n"], ' ', $value);
+        $value = str_replace("\t", ' ', $value);
+
+        return trim($value);
     }
 
     protected function formatExportValue(Order $record, string $column): string
@@ -208,12 +214,12 @@ class ListOrders extends ListRecords
 
         $columns = $this->getExportColumns();
 
-        $fileName = 'orders-export-' . now()->format('Y-m-d-H-i-s') . '.xls';
+        $fileName = 'orders-export-' . now()->format('Y-m-d-H-i-s') . '.tsv';
 
         return response()->streamDownload(function () use ($columns, $records): void {
             $this->outputExcelTable($columns, $records);
         }, $fileName, [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Type' => 'text/tab-separated-values; charset=UTF-8',
             'Cache-Control' => 'no-store, no-cache, must-revalidate',
         ]);
     }
