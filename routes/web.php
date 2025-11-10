@@ -19,6 +19,11 @@ Route::middleware('auth:web')->group(function() {
   Route::get('/success', [SiteController::class, 'success'])->name('success');
 });
 
+Route::middleware(config('filament.middleware.auth'))->group(function () {
+    Route::get('/admin/orders/{order}/download', [\App\Http\Controllers\Filament\OrderExportController::class, 'show'])
+        ->name('filament.resources.orders.export-single');
+});
+
 Route::prefix('auth')->controller(AuthController::class)->group(function() {
   Route::match(['get', 'post'], '/logout', 'logout')->name('logout');
   Route::post('/login', 'login')->name('login');

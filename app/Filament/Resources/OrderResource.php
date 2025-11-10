@@ -445,6 +445,11 @@ class OrderResource extends Resource
 										->modalHeading('Информация о заявке')
 										->modalWidth('full')
 										->infolist(fn (Infolists\Infolist $infolist) => static::infolist($infolist)),
+								Tables\Actions\Action::make('download')
+										->label('Скачать')
+										->icon('heroicon-o-arrow-down-tray')
+										->url(fn (Order $record) => route('filament.resources.orders.export-single', $record))
+										->openUrlInNewTab(),
 								Tables\Actions\EditAction::make(),
 						])
 						->bulkActions([
