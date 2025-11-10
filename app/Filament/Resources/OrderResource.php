@@ -23,8 +23,6 @@ use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Tables\Summarizers\ConditionalSum;
-use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\TextColumn;
 
 class OrderResource extends Resource
 {
