@@ -1022,4 +1022,11 @@ class Calculator extends Component
     {
       return view('livewire.calculator');
     }
+
+    public function getPaymentMethodTitle(): string
+    {
+      return $this->getField('transfer_method') === 'pick'
+        ? 'Способ оплаты доставки и забора груза'
+        : 'Способ оплаты доставки груза';
+    }
 }

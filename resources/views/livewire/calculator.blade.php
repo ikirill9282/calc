@@ -20,36 +20,37 @@
 
         </x-form.fieldset>
 
-        @if ($this->getField('transfer_method') == 'pick')
-            <x-form.fieldset :title="false" set_description="Способ оплаты забора груза" :set_loading="false">
+        <x-form.fieldset :title="false" :set_description="$this->getPaymentMethodTitle()" :set_loading="false">
+            <div class="flex flex-col gap-6">
                 <div class="flex flex-col gap-4">
-                    <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
-                        name="payment_method_pick" value="cash" label="Наличными при отправке"
-                        id="payment_method_pick_cash" :checked="$this->getField('payment_method_pick') == 'cash' ? 'checked' : ''" />
-                    <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
-                        name="payment_method_pick" value="bill" label="По счету" id="payment_method_pick_bill"
-                        :checked="$this->getField('payment_method_pick') == 'bill' ? 'checked' : ''" />
+                    <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
+                        name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash"
+                        :checked="$this->getField('payment_method') == 'cash' ? 'checked' : ''" />
+                    <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
+                        name="payment_method" value="bill" label="По счету" id="payment_method_bill"
+                        :checked="$this->getField('payment_method') == 'bill' ? 'checked' : ''" />
                 </div>
 
-                @error('payment_method_pick')
-                    <span class="text-red-500 mt-4 inline-block">{{ $message }}</span>
+                @error('payment_method')
+                    <span class="text-red-500 inline-block">{{ $message }}</span>
                 @enderror
-            </x-form.fieldset>
-        @endif
 
-        <x-form.fieldset :title="false" set_description="Способ оплаты доставки груза" :set_loading="false">
-            <div class="flex flex-col gap-4">
-                <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
-                    name="payment_method" value="cash" label="Наличными при отправке" id="payment_method_cash"
-                    :checked="$this->getField('payment_method') == 'cash' ? 'checked' : ''" />
-                <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
-                    name="payment_method" value="bill" label="По счету" id="payment_method_bill"
-                    :checked="$this->getField('payment_method') == 'bill' ? 'checked' : ''" />
+                @if ($this->getField('transfer_method') == 'pick')
+                    <div class="flex flex-col gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Оплата забора груза</span>
+                        <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
+                            name="payment_method_pick" value="cash" label="Наличными при отправке"
+                            id="payment_method_pick_cash" :checked="$this->getField('payment_method_pick') == 'cash' ? 'checked' : ''" />
+                        <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
+                            name="payment_method_pick" value="bill" label="По счету" id="payment_method_pick_bill"
+                            :checked="$this->getField('payment_method_pick') == 'bill' ? 'checked' : ''" />
+
+                        @error('payment_method_pick')
+                            <span class="text-red-500 inline-block">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endif
             </div>
-
-            @error('payment_method')
-                <span class="text-red-500 mt-4 inline-block">{{ $message }}</span>
-            @enderror
         </x-form.fieldset>
     </div>
     <div class="{{ $this->checkout ? 'hidden' : 'flex' }} flex-col justify-start items-stretch gap-10">
