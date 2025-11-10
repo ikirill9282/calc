@@ -383,7 +383,7 @@ class OrderResource extends Resource
 						->actions([
 								Tables\Actions\ViewAction::make()
 										->modalHeading('Информация о заявке')
-										->modalWidth('7xl') // Большая ширина модального окна
+										->modalWidth('full')
 										->infolist(fn (Infolists\Infolist $infolist) => static::infolist($infolist)),
 								Tables\Actions\EditAction::make(),
 						])
@@ -1096,7 +1096,8 @@ class OrderResource extends Resource
 														->default('—')
 														->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
 										])
-										->columns(2),
+										->columns(3)
+										->compact(),
 								
 								Infolists\Components\Section::make('Информация о доставке')
 										->schema([
@@ -1117,7 +1118,8 @@ class OrderResource extends Resource
 														->label('Склад')
 														->extraAttributes(fn (Order $record) => $record->hasChanged('warehouse_id') ? ['class' => 'text-orange-500'] : []),
 										])
-										->columns(2),
+										->columns(4)
+										->compact(),
 								
 								Infolists\Components\Section::make('Груз')
 										->schema([
@@ -1181,7 +1183,8 @@ class OrderResource extends Resource
 														->columnSpanFull()
 														->extraAttributes(fn (Order $record) => $record->hasChanged('cargo_comment') ? ['class' => 'text-orange-500'] : []),
 										])
-										->columns(3),
+										->columns(4)
+										->compact(),
 								
 								Infolists\Components\Section::make('Стоимость')
 										->schema([
@@ -1220,7 +1223,8 @@ class OrderResource extends Resource
 														->weight('bold')
 														->extraAttributes(fn (Order $record) => $record->hasChanged('total') ? ['class' => 'text-orange-500'] : []),
 										])
-										->columns(3),
+										->columns(4)
+										->compact(),
 								
 								Infolists\Components\Section::make('Забор груза')
 										->schema([
@@ -1251,7 +1255,8 @@ class OrderResource extends Resource
 														->default('—')
 														->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? ['class' => 'text-orange-500'] : []),
 										])
-										->columns(2),
+										->columns(3)
+										->compact(),
 								
 								Infolists\Components\Section::make('Реквизиты')
 										->schema([
@@ -1271,7 +1276,8 @@ class OrderResource extends Resource
 														->columnSpanFull()
 														->extraAttributes(fn (Order $record) => $record->hasChanged('agent_id') ? ['class' => 'text-orange-500'] : []),
 										])
-										->columns(2)
+										->columns(3)
+										->compact()
 										->collapsed(),
 						]);
 		}
