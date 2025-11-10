@@ -389,6 +389,12 @@ class OrderResource extends Resource
 						])
 						->bulkActions([
 								Tables\Actions\BulkActionGroup::make([
+										Tables\Actions\BulkAction::make('exportSelected')
+												->label('Экспорт')
+												->icon('heroicon-o-arrow-down-tray')
+												->color('primary')
+												->action(fn (Collection $records, Pages\ListOrders $livewire) => $livewire->exportSelectedRecords($records))
+												->deselectRecordsAfterCompletion(),
 										Tables\Actions\BulkAction::make('setSendDate')
 												->label('Привязать дату')
 												->icon('heroicon-o-calendar')
