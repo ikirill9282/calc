@@ -20,7 +20,7 @@
 
         </x-form.fieldset>
 
-        <x-form.fieldset :title="false" :set_description="$this->getPaymentMethodTitle()" :set_loading="false">
+        <x-form.fieldset :title="false" set_description="Способ оплаты доставки груза" :set_loading="false">
             <div class="flex flex-col gap-6">
                 <div class="flex flex-col gap-4">
                     <x-form.radio wire:model.live="fields.payment_method" groupClass="group/radio pm-group"
@@ -36,8 +36,8 @@
                 @enderror
 
                 @if ($this->getField('transfer_method') == 'pick')
-                    <div class="flex flex-col gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Оплата забора груза</span>
+                    <div class="flex flex-col gap-4 pt-6 border-t border-slate-200 dark:border-slate-700">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Способ оплаты забора груза</span>
                         <x-form.radio wire:model.live="fields.payment_method_pick" groupClass="group/radio pm-group"
                             name="payment_method_pick" value="cash" label="Наличными при отправке"
                             id="payment_method_pick_cash" :checked="$this->getField('payment_method_pick') == 'cash' ? 'checked' : ''" />
