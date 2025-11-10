@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListOrders extends ListRecords
 {
@@ -195,6 +196,26 @@ class ListOrders extends ListRecords
         return $query
             ->with(['agent'])
             ->get();
+    }
+
+    public function exportSelectedRecords(Collection $records): StreamedResponse
+    {
+        if ($records->isEmpty()) {
+            $records = $this->getSelectedTableRecords();
+        }
+
+        $records->loadMissing(['agent']);
+
+        $columns = $this->getExportColumns();
+
+        $fileName = 'orders-export-' . now()->format('Y-m-d-H-i-s') . '.xls';
+
+        return response()->streamDownload(function () use ($columns, $records): void {
+            $this->outputExcelTable($columns, $records);
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+        ]);
     }
 
     protected function asCarbon(mixed $value): ?Carbon

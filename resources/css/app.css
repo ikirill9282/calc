@@ -130,6 +130,23 @@
   padding: 0.35rem 0.5rem;
 }
 
+.fi-ta-table thead th {
+  min-width: 0;
+}
+
+.fi-ta-table thead th > span {
+  flex-wrap: wrap;
+  row-gap: 0.15rem;
+}
+
+.fi-ta-table thead th .fi-ta-header-cell-label {
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
 
 .fi-ta-table thead th:last-child,
 .fi-ta-table tbody td:last-child {
