@@ -59,6 +59,9 @@ class OrderResource extends Resource
         'additional',
         'total',
         'cargo_comment',
+        'pallets_boxcount',
+        'pallets_volume',
+        'pallets_weight',
     ];
 
 		public static function table(Table $table): Table
