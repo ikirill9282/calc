@@ -23,6 +23,7 @@ use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Tables\Summarizers\ConditionalSum;
+use Filament\Navigation\NavigationItem;
 
 class OrderResource extends Resource
 {
@@ -1387,5 +1388,18 @@ class OrderResource extends Resource
             // 'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationItems(): array
+    {
+        $items = parent::getNavigationItems();
+
+        $items[] = NavigationItem::make('Ведомость по наличным')
+            ->url(static::getUrl('cash-statement'))
+            ->group(static::$navigationGroup ?? 'Отчеты')
+            ->icon('heroicon-o-banknotes')
+            ->sort((static::$navigationSort ?? 0) + 1);
+
+        return $items;
     }
 }
