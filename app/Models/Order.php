@@ -51,6 +51,7 @@ class Order extends Model
     'total' => 'Предварительная сумма, ₽',
     'cargo_comment' => 'Комментарий',
     'highlight_color' => 'Цвет подсветки',
+    'driver_name' => 'ФИО водителя',
   ];
 
   protected $casts = [

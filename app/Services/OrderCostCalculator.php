@@ -53,6 +53,10 @@ class OrderCostCalculator
         $delivery = $this->calculateDeliveryAmount();
         $additional = $this->calculateAdditionalAmount();
 
+        $pick ??= $this->order->pick;
+        $delivery ??= $this->order->delivery;
+        $additional ??= $this->order->additional;
+
         return [
             'pick' => $pick,
             'delivery' => $delivery,
