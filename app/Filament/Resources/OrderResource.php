@@ -1382,6 +1382,7 @@ class OrderResource extends Resource
     {
         return [
             'index' => Pages\ListOrders::route('/'),
+            'cash-statement' => Pages\CashStatement::route('/cash-statement'),
             'create' => Pages\CreateOrder::route('/create'),
             // 'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),

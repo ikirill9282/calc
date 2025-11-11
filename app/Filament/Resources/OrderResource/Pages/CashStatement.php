@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
-use App\Filament\Resources\OrderResource\Pages\ListOrders;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class CashStatement extends ListOrders
 {
-    protected static string $resource = OrderResource::class;
-
     protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $slug = 'cash-statement';
@@ -19,11 +16,13 @@ class CashStatement extends ListOrders
 
     protected static ?string $navigationLabel = 'Ведомость по наличным';
 
-    protected static ?string $title = 'Ведомость по наличным';
-
     protected static ?string $navigationGroup = 'Отчеты';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 20;
+
+    protected static ?string $title = 'Ведомость по наличным';
+
+    protected static string $resource = OrderResource::class;
 
     protected function getTableQuery(): Builder
     {
