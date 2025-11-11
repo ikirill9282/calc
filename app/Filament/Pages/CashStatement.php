@@ -2,12 +2,16 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Order;
-use Filament\Pages\Page;
-use Illuminate\Database\Eloquent\Collection;
+use App\Filament\Resources\OrderResource\Pages\ListOrders;
+use Filament\Resources\Components\Tab;
+use Illuminate\Database\Eloquent\Builder;
 
-class CashStatement extends Page
+class CashStatement extends ListOrders
 {
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?string $slug = 'cash-statement';
+
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $navigationLabel = 'Ведомость по наличным';
@@ -18,26 +22,30 @@ class CashStatement extends Page
 
     protected static ?int $navigationSort = 6;
 
-    protected static string $view = 'filament.pages.cash-statement';
-
-    public Collection $warehouseCash;
-
-    public Collection $pickupCash;
-
-    public function mount(): void
+    protected function getTableQuery(): Builder
     {
-        $this->warehouseCash = Order::query()
-            ->where('payment_method', 'cash')
-            ->where(fn ($query) => $query->whereNull('transfer_method')->orWhere('transfer_method', '!=', 'pick'))
-            ->latest()
-            ->take(100)
-            ->get();
+        return parent::getTableQuery()
+            ->where('payment_method', 'cash');
+    }
 
-        $this->pickupCash = Order::query()
-            ->where('payment_method', 'cash')
-            ->where('transfer_method', 'pick')
-            ->latest()
-            ->take(100)
-            ->get();
+    public function getTabs(): array
+    {
+        return [
+            'warehouse' => Tab::make('Склад — наличными (забор нет)')
+                ->modifyQueryUsing(function (Builder $query): Builder {
+                    return $query->where(function (Builder $inner): void {
+                        $inner
+                            ->whereNull('transfer_method')
+                            ->orWhere('transfer_method', '!=', 'pick');
+                    });
+                }),
+            'pickup' => Tab::make('Заборы — наличными (забор да)')
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('transfer_method', 'pick')),
+        ];
+    }
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        return 'warehouse';
     }
 }
