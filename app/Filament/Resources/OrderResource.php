@@ -998,14 +998,12 @@ class OrderResource extends Resource
 				return static::$inlineEditableFields;
 		}
 
-		protected static function applyInlineEditingToColumns(array $columns): array
+		public static function applyInlineEditingToColumns(array $columns): array
 		{
 				return array_map(function ($column) {
 						if (! $column instanceof Column) {
 								return $column;
 						}
-
-						$column->wrapHeader();
 
 						$field = $column->getName();
 
