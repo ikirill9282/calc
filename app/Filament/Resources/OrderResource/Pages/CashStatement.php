@@ -87,14 +87,14 @@ class CashStatement extends ListOrders
                         ->money('RUB')
                         ->recordValueUsing(fn ($record): float => (float) ($record->total ?? 0))
                 ),
+            Tables\Columns\TextColumn::make('driver_name')
+                ->label('ФИО водителя')
+                ->placeholder('—')
+                ->color(fn ($record) => $record->hasChanged('driver_name') ? 'warning' : null)
+                ->visible(fn (): bool => $this->activeTab === 'pickup'),
         ];
 
         $columns = OrderResource::applyInlineEditingToColumns($columns);
-
-        $columns[] = Tables\Columns\TextColumn::make('driver_name')
-            ->label('ФИО водителя')
-            ->default('—')
-            ->visible(fn (): bool => $this->activeTab === 'pickup');
 
         return parent::table($table)
             ->columns($columns);

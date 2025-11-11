@@ -64,6 +64,7 @@ class OrderResource extends Resource
         'pallets_boxcount',
         'pallets_volume',
         'pallets_weight',
+        'driver_name',
     ];
 
 		public static function table(Table $table): Table

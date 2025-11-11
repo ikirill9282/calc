@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Revolution\Google\Sheets\Facades\Sheets;
 use Google\Service\Sheets\BatchUpdateSpreadsheetRequest;
 use App\Models\SheetData;
+use App\Services\OrderCostCalculator;
 
 class Order extends Model
 {
@@ -75,6 +76,33 @@ class Order extends Model
     'transfer_method_pick_date',
   ];
 
+  /**
+   * @var array<string>
+   */
+  protected static array $pricingRecalculationFields = [
+    'warehouse_id',
+    'distributor_id',
+    'distributor_center_id',
+    'delivery_date',
+    'transfer_method',
+    'transfer_method_receive_date',
+    'transfer_method_pick_date',
+    'transfer_method_pick_address',
+    'payment_method',
+    'payment_method_pick',
+    'cargo',
+    'boxes_count',
+    'boxes_volume',
+    'boxes_weight',
+    'pallets_count',
+    'pallets_boxcount',
+    'pallets_volume',
+    'pallets_weight',
+    'palletizing_type',
+    'palletizing_count',
+    'individual',
+  ];
+
   public static function boot()
   {
     parent::boot();
@@ -101,6 +129,8 @@ class Order extends Model
         $model->delivery = null;
         $model->additional = null;
         $model->total = null;
+      } elseif ($model->shouldRecalculatePricing()) {
+        $model->recalculatePricing();
       }
 
       if (!$model->exists) {
@@ -582,6 +612,10 @@ class Order extends Model
     $order = new static();
     $order->fillFields($fields);
 
+    if (! $order->individual) {
+      $order->recalculatePricing();
+    }
+
     return $order;
   }
 
@@ -621,5 +655,28 @@ class Order extends Model
     return Attribute::make(
       set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s')
     );
+  }
+
+  protected function shouldRecalculatePricing(): bool
+  {
+    if ($this->individual) {
+      return false;
+    }
+
+    if (! $this->exists) {
+      return true;
+    }
+
+    return $this->isDirty(static::$pricingRecalculationFields);
+  }
+
+  public function recalculatePricing(): void
+  {
+    $pricing = OrderCostCalculator::for($this)->calculate();
+
+    $this->pick = $pricing['pick'];
+    $this->delivery = $pricing['delivery'];
+    $this->additional = $pricing['additional'];
+    $this->total = $pricing['total'];
   }
 }
