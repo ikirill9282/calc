@@ -541,6 +541,7 @@ class OrderResource extends Resource
 								Filter::make('send_date_today')
 										->label('Отправки сегодня')
 										->query(fn (Builder $query): Builder => $query->whereDate('send_date', Carbon::today('Europe/Moscow')->toDateString()))
+										->hidden(fn (?array $state): bool => blank($state['isActive'] ?? null) || $state['isActive'] === false)
 										->indicateUsing(fn (): array => ['Дата отправки: сегодня']),
 								Filter::make('advanced_rules')
 										->label('Фильтр по правилам')
