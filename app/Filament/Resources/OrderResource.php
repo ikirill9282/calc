@@ -165,7 +165,7 @@ class OrderResource extends Resource
 												ConditionalSum::make('individual_cost_total')
 														->label('Итого')
 														->money('RUB')
-														->expression(static fn (string $attribute): string => 'SUM(CASE WHEN individual = 1 THEN COALESCE(total, 0) ELSE 0 END)')
+														->expression(static fn (string $attribute): string => 'CASE WHEN individual = 1 THEN COALESCE(total, 0) ELSE 0 END')
 														->recordValueUsing(fn (Order $record): float => $record->individual ? (float) ($record->total ?? 0) : 0)
 										)
 										->visible(fn () => in_array(optional(auth()->user())->role, ['manager', 'admin'], true))
