@@ -4,6 +4,7 @@ namespace App\Tables\Summarizers;
 
 use Closure;
 use Filament\Tables\Columns\Summarizers\Sum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
@@ -37,11 +38,19 @@ class ConditionalSum extends Sum
                 $sql->orders = [];
                 $sql->unionOrders = [];
 
+                $modelPrototype = $this->getLivewire()->getTableQuery()->getModel();
+
                 $sum = 0.0;
 
                 foreach ($sql->cursor() as $record) {
+                    $recordForEvaluation = $record;
+
+                    if ($modelPrototype && ! $record instanceof Model) {
+                        $recordForEvaluation = $modelPrototype->newFromBuilder((array) $record);
+                    }
+
                     $value = $this->evaluate($this->recordValueResolver, [
-                        'record' => $record,
+                        'record' => $recordForEvaluation,
                     ]);
 
                     $sum += $value === null ? 0.0 : (float) $value;
