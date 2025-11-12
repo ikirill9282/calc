@@ -33,26 +33,18 @@ class ConditionalSum extends Sum
 
         if ($expression === null) {
             if ($this->recordValueResolver !== null) {
+                $sql = $query->cloneWithout(['columns', 'orders'])->cloneWithoutBindings(['order']);
+                $sql->orders = [];
+                $sql->unionOrders = [];
+
                 $sum = 0.0;
 
-                $clone = clone $query;
+                foreach ($sql->cursor() as $record) {
+                    $value = $this->evaluate($this->recordValueResolver, [
+                        'record' => $record,
+                    ]);
 
-                if (method_exists($clone, 'lazy')) {
-                    foreach ($clone->lazy() as $record) {
-                        $value = $this->evaluate($this->recordValueResolver, [
-                            'record' => $record,
-                        ]);
-
-                        $sum += $value === null ? 0.0 : (float) $value;
-                    }
-                } else {
-                    foreach ($clone->cursor() as $record) {
-                        $value = $this->evaluate($this->recordValueResolver, [
-                            'record' => $record,
-                        ]);
-
-                        $sum += $value === null ? 0.0 : (float) $value;
-                    }
+                    $sum += $value === null ? 0.0 : (float) $value;
                 }
 
                 return $sum;
