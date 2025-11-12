@@ -576,7 +576,108 @@ class OrderResource extends Resource
 										])
 										->query(fn (Builder $query, array $data): Builder => static::applyRulesFilter($query, $data['rules'] ?? []))
 										->indicateUsing(fn (array $state): array => static::getRuleFilterIndicators($state['rules'] ?? [])),
-								
+								SelectFilter::make('agent_id')
+										->label('Отправитель')
+										->relationship('agent', 'title')
+										->searchable()
+										->preload()
+										->indicator('Отправитель'),
+								Filter::make('delivery_date')
+										->label('Дата поставки на РЦ')
+										->form([
+												Forms\Components\DatePicker::make('from')
+														->label('С')
+														->displayFormat('d.m.Y'),
+												Forms\Components\DatePicker::make('to')
+														->label('По')
+														->displayFormat('d.m.Y'),
+										])
+										->query(function (Builder $query, array $data): Builder {
+												return $query
+														->when($data['from'] ?? null, fn (Builder $q, $date) => $q->whereDate('delivery_date', '>=', $date))
+														->when($data['to'] ?? null, fn (Builder $q, $date) => $q->whereDate('delivery_date', '<=', $date));
+										})
+										->indicateUsing(function (array $data): array {
+												$indicators = [];
+
+												if ($data['from'] ?? null) {
+														$indicators[] = 'Поставка с ' . Carbon::parse($data['from'])->format('d.m.Y');
+												}
+
+												if ($data['to'] ?? null) {
+														$indicators[] = 'Поставка по ' . Carbon::parse($data['to'])->format('d.m.Y');
+												}
+
+												return $indicators;
+										}),
+								SelectFilter::make('distributor_center_id')
+										->label('РЦ и адреса')
+										->searchable()
+										->preload()
+										->options(fn () => Order::query()
+												->select('distributor_center_id')
+												->whereNotNull('distributor_center_id')
+												->distinct()
+												->orderBy('distributor_center_id')
+												->pluck('distributor_center_id', 'distributor_center_id')
+												->toArray())
+										->indicator('РЦ и адрес'),
+								SelectFilter::make('payment_method')
+										->label('Способ оплаты')
+										->options([
+												'cash' => 'Наличные',
+												'bill' => 'Безналичный',
+										])
+										->indicator('Способ оплаты'),
+								Filter::make('has_pickup')
+										->label('Забор груза')
+										->form([
+												Forms\Components\Toggle::make('value')
+														->label('Забор выполнен')
+														->default(true),
+										])
+										->query(fn (Builder $query, array $data): Builder => $query->when($data['value'] ?? null, fn (Builder $q) => $q->where('transfer_method', 'pick'), fn (Builder $q) => $q->where('transfer_method', '!=', 'pick')))
+										->indicateUsing(fn (array $data): array => [
+												'Забор: ' . (($data['value'] ?? true) ? 'Да' : 'Нет'),
+										]),
+								Filter::make('transfer_method_receive_date')
+										->label('Дата привоза клиентом')
+										->form([
+												Forms\Components\DatePicker::make('from')->label('С')->displayFormat('d.m.Y'),
+												Forms\Components\DatePicker::make('to')->label('По')->displayFormat('d.m.Y'),
+										])
+										->query(fn (Builder $query, array $data): Builder => $query
+												->when($data['from'] ?? null, fn (Builder $q, $date) => $q->whereDate('transfer_method_receive_date', '>=', $date))
+												->when($data['to'] ?? null, fn (Builder $q, $date) => $q->whereDate('transfer_method_receive_date', '<=', $date)))
+										->indicateUsing(fn (array $data): array => array_filter([
+												isset($data['from']) ? 'Привоз с ' . Carbon::parse($data['from'])->format('d.m.Y') : null,
+												isset($data['to']) ? 'Привоз по ' . Carbon::parse($data['to'])->format('d.m.Y') : null,
+										])),
+								Filter::make('transfer_method_pick_date')
+										->label('Дата забора груза')
+										->form([
+												Forms\Components\DatePicker::make('from')->label('С')->displayFormat('d.m.Y'),
+												Forms\Components\DatePicker::make('to')->label('По')->displayFormat('d.m.Y'),
+										])
+										->query(fn (Builder $query, array $data): Builder => $query
+												->when($data['from'] ?? null, fn (Builder $q, $date) => $q->whereDate('transfer_method_pick_date', '>=', $date))
+												->when($data['to'] ?? null, fn (Builder $q, $date) => $q->whereDate('transfer_method_pick_date', '<=', $date)))
+										->indicateUsing(fn (array $data): array => array_filter([
+												isset($data['from']) ? 'Забор с ' . Carbon::parse($data['from'])->format('d.m.Y') : null,
+												isset($data['to']) ? 'Забор по ' . Carbon::parse($data['to'])->format('d.m.Y') : null,
+										])),
+								Filter::make('transfer_method_pick_address')
+										->label('Адрес забора')
+										->form([
+												Forms\Components\TextInput::make('value')
+														->label('Содержит')
+														->placeholder('Введите часть адреса'),
+										])
+										->query(fn (Builder $query, array $data): Builder => $query->when(
+												$data['value'] ?? null,
+												fn (Builder $q, string $value) => $q->where('transfer_method_pick_address', 'like', '%' . $value . '%'),
+										))
+										->indicateUsing(fn (array $data): array => $data['value'] ?? null ? ['Адрес забора: ' . $data['value']] : []),
 								
 						])
 						->actions([
