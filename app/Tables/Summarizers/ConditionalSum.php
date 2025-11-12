@@ -32,6 +32,32 @@ class ConditionalSum extends Sum
         $expression = $this->resolveExpression($attribute);
 
         if ($expression === null) {
+            if ($this->recordValueResolver !== null) {
+                $sum = 0.0;
+
+                $clone = clone $query;
+
+                if (method_exists($clone, 'lazy')) {
+                    foreach ($clone->lazy() as $record) {
+                        $value = $this->evaluate($this->recordValueResolver, [
+                            'record' => $record,
+                        ]);
+
+                        $sum += $value === null ? 0.0 : (float) $value;
+                    }
+                } else {
+                    foreach ($clone->cursor() as $record) {
+                        $value = $this->evaluate($this->recordValueResolver, [
+                            'record' => $record,
+                        ]);
+
+                        $sum += $value === null ? 0.0 : (float) $value;
+                    }
+                }
+
+                return $sum;
+            }
+
             return parent::summarize($query, $attribute);
         }
 
@@ -48,6 +74,10 @@ class ConditionalSum extends Sum
         $expression = $this->resolveExpression($column);
 
         if ($expression === null) {
+            if ($this->recordValueResolver !== null) {
+                return [];
+            }
+
             return parent::getSelectStatements($column);
         }
 

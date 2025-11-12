@@ -67,6 +67,125 @@ class OrderResource extends Resource
         'driver_name',
     ];
 
+	protected static array $individualBaseTariffs = [
+		'Wildberries - Симферополь' => 1500.0,
+		'Wildberries - Краснодар' => 5000.0,
+		'Wildberries - Невинномысск' => 6000.0,
+		'Wildberries - Подольск' => 6500.0,
+		'Wildberries - Электросталь' => 7500.0,
+		'Wildberries - Коледино' => 6500.0,
+		'Wildberries - Тула' => 6500.0,
+		'Wildberries - Рязань' => 7000.0,
+		'Wildberries - Тамбов' => 7000.0,
+		'Wildberries - Казань' => 6500.0,
+		'Wildberries - Санкт-Петербург' => 9000.0,
+		'Wildberries - Екатеринбург' => 15000.0,
+		'Wildberries - Новосемейкино' => 7500.0,
+		'Wildberries - Волгоград' => 7500.0,
+		'Wildberries - Сарапул' => 9000.0,
+		'Wildberries - Владимир' => 7500.0,
+		'Wildberries - Воронеж' => 7000.0,
+		'Wildberries - Пенза' => 7500.0,
+		'Ozon - Екатеринбург' => 15000.0,
+		'Ozon - Ростов-на-Дону' => 5000.0,
+		'Ozon - Казань' => 6500.0,
+		'Ozon - Хоругвино' => 7500.0,
+		'Ozon - Санкт-Петербург' => 9000.0,
+		'Ozon - Пушкино-1' => 6500.0,
+		'Ozon - Пушкино-2' => 6500.0,
+		'Ozon - Софьино' => 6500.0,
+		'Ozon - Жуковский' => 6500.0,
+		'Ozon - Гривно' => 6500.0,
+		'Ozon - Адыгея' => 6000.0,
+		'Ozon - Невинномысск' => 6000.0,
+		'Ozon - Пушкино' => 6500.0,
+		'Ozon - Петровское' => 7500.0,
+		'Ozon - Ногинск' => 7500.0,
+		'Ozon - Ростов-на-Дону 2' => 5000.0,
+	];
+
+	protected static array $individualWeightTariffs = [
+		'Wildberries - Краснодар' => 16.67,
+		'Wildberries - Невинномысск' => 20.0,
+		'Wildberries - Подольск' => 21.67,
+		'Wildberries - Электросталь' => 25.0,
+		'Wildberries - Коледино' => 21.67,
+		'Wildberries - Тула' => 21.67,
+		'Wildberries - Рязань' => 23.33,
+		'Wildberries - Тамбов' => 23.33,
+		'Wildberries - Казань' => 21.67,
+		'Wildberries - Санкт-Петербург' => 30.0,
+		'Wildberries - Екатеринбург' => 50.0,
+		'Wildberries - Новосемейкино' => 25.0,
+		'Wildberries - Волгоград' => 25.0,
+		'Wildberries - Сарапул' => 30.0,
+		'Wildberries - Владимир' => 25.0,
+		'Wildberries - Воронеж' => 23.33,
+		'Wildberries - Пенза' => 25.0,
+		'Ozon - Екатеринбург' => 50.0,
+		'Ozon - Ростов-на-Дону' => 16.67,
+		'Ozon - Казань' => 21.67,
+        'Ozon - Хоругвино' => 25.0,
+		'Ozon - Санкт-Петербург' => 30.0,
+		'Ozon - Пушкино-1' => 21.67,
+		'Ozon - Пушкино-2' => 21.67,
+		'Ozon - Софьино' => 21.67,
+		'Ozon - Жуковский' => 21.67,
+		'Ozon - Гривно' => 21.67,
+		'Ozon - Адыгея' => 20.0,
+		'Ozon - Невинномысск' => 20.0,
+		'Ozon - Петровское' => 25.0,
+		'Ozon - Ногинск' => 25.0,
+		'Ozon - Ростов-на-Дону 2' => 16.67,
+	];
+
+	protected static array $individualOverweightRates = [
+		'Краснодар Краснодар, ул. Тихорецкая, 40с1' => 12.5,
+		'Невинномысск Невинномысск, ул. Тимирязева 16' => 15.0,
+		'Подольск Wildberries' => 16.25,
+		'Электросталь Поселок Случайный, территория Массив 3,5' => 18.75,
+		'Коледино Индустриальный парк Коледино, Троицкая улица, 20' => 16.25,
+		'Тула (Алексин) Тульская обл., г.о. Алексин, территория ВБ Алексин, 1' => 16.25,
+		'Рязань Индустриальный промышленный парк Рязанский, Тюшевское сельское поселение, Рязанский р-н' => 17.5,
+		'Тамбов (Котовск) Тамбовская обл., муниципальное образование г. Котовск, р-н индустриальный парк Котовск, 3/8' => 17.5,
+		'Казань Зеленодольск, промышленная площадка Зеленодольск, 20' => 16.25,
+		'Санкт-Петербург (Уткина Заводь) Wildberries' => 22.5,
+		'Екатеринбург - Перспективный 12/2 Екатеринбург, ул. Перспективная 12/2' => 37.5,
+		'Екатеринбург - Испытателей 14Г Екатеринбург, ул. Испытателей, 14Г' => 37.5,
+		'г. Пенза, ул. Ульяновская, 85А' => 18.75,
+		'Екатеринбург Ozon' => 37.5,
+		'Ростов-на-Дону г. Ростов-на-Дону, Аксайский р-н, х. Ленина, ул. Логопарк 5' => 12.5,
+		'Ростов-на-Дону (Кроссдок) г. Ростов-на-Дону, Аксайский р-н, х. Ленина, ул. Логопарк 5' => 12.5,
+		'Казань Ozon' => 16.25,
+		'Казань (Кроссдок) Ozon' => 16.25,
+		'Хоругвино Ozon' => 18.75,
+		'Хоругвино (Кроссдок) Ozon' => 18.75,
+		'Санкт-Петербург (Шушары) Ozon' => 22.5,
+		'Санкт-Петербург (Петро-Славянка) Ozon' => 22.5,
+		'Санкт-Петербург (Бугры) Ozon' => 22.5,
+		'Санкт-Петербург (Колпино) Ozon' => 22.5,
+		'Пушкино-1 Ozon' => 16.25,
+		'Пушкино-1 (Кроссдок) Ozon' => 16.25,
+		'Ozon Пушкино-2' => 16.25,
+		'Пушкино-2 (Кроссдок) Ozon ' => 16.25,
+		'Софьино Московская обл., Раменский городской округ, территория Логистический технопарк Софьино, 2/1' => 16.25,
+		'Жуковский Ozon' => 16.25,
+		'Гривно Ozon' => 16.25,
+		'Гривно (Кроссдок) Ozon' => 16.25,
+		'Адыгея Ozon' => 15.0,
+		'Невинномысск Невинномысск, ул. Приозерная, зд. 25, стр. 1, к. 1' => 15.0,
+		'Новосемейкино Индустриальный парк Новосемейкино, городское поселение Новосемейкино, Красноярский р-н, Самарская обл.' => 18.75,
+		'Волгоград Волгоград, Ангарская 149' => 18.75,
+		'Сарапул Удмуртская Республика, г. Сарапул, Ижевский тракт, д. 22' => 22.5,
+		'Санкт-Петербург (Шушары) Санкт-Петербург, Пушкинский район, посёлок Шушары, Московское шоссе, д. 153 к. 2' => 22.5,
+		'Владимир Wildberries' => 18.75,
+		'Воронеж Воронежская обл., Новоусманский р-н, Отрадненское сельское поселение' => 17.5,
+		'Софиьно Яндекс Маркет' => 16.25,
+		'Ростов-на-Дону Яндекс Маркет' => 12.5,
+		'Ногинск Московская область, Богородский городской округ, рабочий поселок Обухово, территория Обухово-Парк, дом 2, строение 1' => 25.0,
+		'Ростовская обл.,  Аксайский р-н, Большелогское с.п., тер. Промышленная зона, зд. 180б, стр.1' => 12.5,
+	];
+
 		public static function table(Table $table): Table
 		{
 				return $table
@@ -159,14 +278,13 @@ class OrderResource extends Resource
 								Tables\Columns\TextColumn::make('individual_cost')
 										->label('Индивид стоимость')
 										->money('RUB')
-										->getStateUsing(fn (Order $record) => $record->individual ? $record->total : null)
+										->getStateUsing(fn (Order $record) => $record->individual ? static::calculateIndividualCost($record) : null)
 										->default('—')
 										->summarize(
 												ConditionalSum::make('individual_cost_total')
 														->label('Итого')
 														->money('RUB')
-														->expression(static fn (string $attribute): string => 'CASE WHEN individual = 1 THEN COALESCE(total, 0) ELSE 0 END')
-														->recordValueUsing(fn (Order $record): float => $record->individual ? (float) ($record->total ?? 0) : 0)
+														->recordValueUsing(fn (Order $record): float => (float) (static::calculateIndividualCost($record) ?? 0))
 										)
 										->visible(fn () => in_array(optional(auth()->user())->role, ['manager', 'admin'], true))
 										->toggleable(isToggledHiddenByDefault: false),
@@ -1147,6 +1265,193 @@ class OrderResource extends Resource
 				$count = $record->pallets_count;
 
 				return $count !== null && (float) $count > 0;
+		}
+
+		protected static function calculateIndividualCost(Order $record): ?float
+		{
+				if (! $record->individual) {
+						return null;
+				}
+
+				$palletsCount = static::toFloat($record->pallets_count);
+				$volume = static::toFloat(static::resolveDisplayValue($record, 'boxes_volume'));
+				$weight = static::toFloat(static::resolveDisplayValue($record, 'boxes_weight'));
+
+				if ($palletsCount <= 0 && $volume === 0.0 && $weight === 0.0) {
+						return null;
+				}
+
+				$tariff = static::resolveIndividualTariff($record, $palletsCount, $volume, $weight);
+
+				if ($tariff === null) {
+						return null;
+				}
+
+				$address = static::resolveDistributionAddress($record);
+
+				if ($address !== null && static::isSimferopolSmallVolume($address, $volume)) {
+						return 500.0;
+				}
+
+				if ($palletsCount > 0) {
+						$base = $tariff * $palletsCount;
+
+						if ($weight > 0 && ($weight / $palletsCount) > 400) {
+								$extraWeight = max(0.0, $weight - (400 * $palletsCount));
+								$extraRate = static::resolveOverweightRate($record);
+
+								return $base + ($extraRate * $extraWeight);
+						}
+
+						return $base;
+				}
+
+				if ($volume <= 0.0) {
+						return null;
+				}
+
+				if ($volume <= 0.1 && $weight <= 30) {
+						return ($tariff * 0.1) + 200;
+				}
+
+				if ($weight > 0 && ($weight / $volume) > 300) {
+						return $weight * $tariff;
+				}
+
+				return $volume * $tariff;
+		}
+
+		protected static function resolveIndividualTariff(Order $record, float $palletsCount, float $volume, float $weight): ?float
+		{
+				$key = static::resolveFullDistributionKey($record);
+
+				if ($key === null) {
+						return null;
+				}
+
+				if ($palletsCount > 0) {
+						return static::mapLookup(static::$individualBaseTariffs, $key);
+				}
+
+				if ($volume > 0 && $weight > 0 && ($weight / $volume) > 300) {
+						$rate = static::mapLookup(static::$individualWeightTariffs, $key);
+
+						return $rate;
+				}
+
+				return static::mapLookup(static::$individualBaseTariffs, $key);
+		}
+
+		protected static function resolveOverweightRate(Order $record): float
+		{
+				$address = static::resolveDistributionAddress($record);
+
+				if ($address === null) {
+						return 0.0;
+				}
+
+				return static::mapLookup(static::$individualOverweightRates, $address) ?? 0.0;
+		}
+
+		protected static function resolveFullDistributionKey(Order $record): ?string
+		{
+				$marketplace = static::resolveMarketplace($record);
+				$city = static::extractCity(static::resolveDistributionAddress($record));
+
+				if ($marketplace === null || $city === null) {
+						return null;
+				}
+
+				return static::normalizeString($marketplace . ' - ' . $city);
+		}
+
+		protected static function resolveMarketplace(Order $record): ?string
+		{
+				$label = static::normalizeString($record->distribution_label);
+
+				if ($label !== null && str_contains($label, ' - ')) {
+						[$marketplace,] = explode(' - ', $label, 2);
+
+						return static::normalizeString($marketplace);
+				}
+
+				return static::normalizeString($record->distributor_id);
+		}
+
+		protected static function resolveDistributionAddress(Order $record): ?string
+		{
+				$label = static::normalizeString($record->distribution_label);
+
+				if ($label !== null && str_contains($label, ' - ')) {
+						[, $address] = explode(' - ', $label, 2);
+
+						return static::normalizeString($address);
+				}
+
+				return static::normalizeString($record->distributor_center_id);
+		}
+
+		protected static function extractCity(?string $address): ?string
+		{
+				if ($address === null) {
+						return null;
+				}
+
+				if (! preg_match('/^\S+/u', $address, $matches)) {
+						return null;
+				}
+
+				return static::normalizeString($matches[0]);
+		}
+
+		protected static function isSimferopolSmallVolume(string $address, float $volume): bool
+		{
+				$target = static::normalizeString('Симферополь (Молодежное) пгт. Молодежное, Московское шоссе, 11');
+
+				return static::normalizeString($address) === $target
+						&& $volume >= 0.05
+						&& $volume <= 0.3;
+		}
+
+		protected static function mapLookup(array $map, ?string $key): ?float
+		{
+				$normalized = static::normalizeString($key);
+
+				if ($normalized === null) {
+						return null;
+				}
+
+				foreach ($map as $candidate => $value) {
+						if (static::normalizeString($candidate) === $normalized) {
+								return (float) $value;
+						}
+				}
+
+				return null;
+		}
+
+		protected static function normalizeString(?string $value): ?string
+		{
+				if ($value === null) {
+						return null;
+				}
+
+				$value = trim($value);
+
+				if ($value === '') {
+						return null;
+				}
+
+				return (string) Str::of($value)->replaceMatches('/\s+/u', ' ')->trim();
+		}
+
+		protected static function toFloat(mixed $value): float
+		{
+				if (is_string($value)) {
+						$value = str_replace(',', '.', $value);
+				}
+
+				return is_numeric($value) ? (float) $value : 0.0;
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
