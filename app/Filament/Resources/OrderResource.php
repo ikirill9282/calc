@@ -168,7 +168,7 @@ class OrderResource extends Resource
 														->expression(static fn (string $attribute): string => 'SUM(CASE WHEN individual = 1 THEN COALESCE(total, 0) ELSE 0 END)')
 														->recordValueUsing(fn (Order $record): float => $record->individual ? (float) ($record->total ?? 0) : 0)
 										)
-										->visible(fn () => optional(auth()->user())->role === 'manager')
+										->visible(fn () => in_array(optional(auth()->user())->role, ['manager', 'admin'], true))
 										->toggleable(isToggledHiddenByDefault: false),
 								
 								// Груз
