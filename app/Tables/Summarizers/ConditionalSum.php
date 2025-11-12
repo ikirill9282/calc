@@ -38,7 +38,7 @@ class ConditionalSum extends Sum
                 $sql->orders = [];
                 $sql->unionOrders = [];
 
-                $modelPrototype = $this->getLivewire()->getTableQuery()->getModel();
+                $modelPrototype = $query->getModel();
 
                 $sum = 0.0;
 
