@@ -156,6 +156,21 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('individual') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 								
+								Tables\Columns\TextColumn::make('individual_cost')
+										->label('Индивид стоимость')
+										->money('RUB')
+										->getStateUsing(fn (Order $record) => $record->individual ? $record->total : null)
+										->default('—')
+										->summarize(
+												ConditionalSum::make('individual_cost_total')
+														->label('Итого')
+														->money('RUB')
+														->expression(static fn (string $attribute): string => 'SUM(CASE WHEN individual = 1 THEN COALESCE(total, 0) ELSE 0 END)')
+														->recordValueUsing(fn (Order $record): float => $record->individual ? (float) ($record->total ?? 0) : 0)
+										)
+										->visible(fn () => optional(auth()->user())->role === 'manager')
+										->toggleable(isToggledHiddenByDefault: false),
+								
 								// Груз
 								Tables\Columns\TextColumn::make('cargo')
 										->label('Груз')
