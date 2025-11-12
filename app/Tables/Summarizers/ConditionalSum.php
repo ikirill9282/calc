@@ -34,11 +34,13 @@ class ConditionalSum extends Sum
 
         if ($expression === null) {
             if ($this->recordValueResolver !== null) {
-                $sql = $query->cloneWithout(['columns', 'orders'])->cloneWithoutBindings(['order']);
-                $sql->orders = [];
-                $sql->unionOrders = [];
+                $sql = $query->cloneWithout(['columns'])->cloneWithoutBindings(['order']);
 
-                $modelPrototype = $query->getModel();
+                // When Filament wraps the table query into a subquery, the builder instance
+                // may not contain a model. Try to resolve it from the table component.
+                $modelPrototype = method_exists($this->getLivewire(), 'getTable')
+                    ? optional($this->getLivewire()->getTable()?->getQuery())->getModel()
+                    : null;
 
                 $sum = 0.0;
 
