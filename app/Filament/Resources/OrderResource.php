@@ -284,7 +284,7 @@ class OrderResource extends Resource
 												ConditionalSum::make('individual_cost_total')
 														->label('Итого')
 														->money('RUB')
-														->recordValueUsing(fn (Order $record): float => (float) (static::calculateIndividualCost($record) ?? 0))
+														->recordValueUsing(fn ($record): float => (float) (static::calculateIndividualCost(static::ensureOrderModel($record)) ?? 0))
 										)
 										->visible(fn () => in_array(optional(auth()->user())->role, ['manager', 'admin'], true))
 										->toggleable(isToggledHiddenByDefault: false),
@@ -1452,6 +1452,18 @@ class OrderResource extends Resource
 				}
 
 				return is_numeric($value) ? (float) $value : 0.0;
+		}
+
+		protected static function ensureOrderModel(mixed $record): Order
+		{
+				if ($record instanceof Order) {
+						return $record;
+				}
+
+				$model = new Order();
+				$model->forceFill((array) $record);
+
+				return $model;
 		}
 
 		public static function infolist(Infolist $infolist): Infolist
