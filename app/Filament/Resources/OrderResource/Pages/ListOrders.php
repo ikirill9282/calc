@@ -306,8 +306,11 @@ class ListOrders extends ListRecords
             ->values();
 
         if ($selectedKeys->isEmpty()) {
+            \Log::debug('orders.summary.selected.empty');
             return null;
         }
+
+        \Log::debug('orders.summary.selected.keys', $selectedKeys->all());
 
         /** @var Collection<int, Order> $records */
         $records = Order::query()
