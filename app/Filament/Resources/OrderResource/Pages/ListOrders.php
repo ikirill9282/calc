@@ -301,11 +301,18 @@ class ListOrders extends ListRecords
 
     protected function getSelectedOrdersSummary(): ?array
     {
-        $records = $this->getSelectedTableRecords();
+        $selectedKeys = collect($this->selectedTableRecords ?? [])
+            ->filter(fn ($key) => $key !== null && $key !== '')
+            ->values();
 
-        if ($records->isEmpty()) {
+        if ($selectedKeys->isEmpty()) {
             return null;
         }
+
+        /** @var Collection<int, Order> $records */
+        $records = Order::query()
+            ->whereKey($selectedKeys->all())
+            ->get();
 
         return [
             'count' => $records->count(),
