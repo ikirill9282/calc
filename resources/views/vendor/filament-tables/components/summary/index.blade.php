@@ -24,7 +24,7 @@
             ->all();
     }
 
-    $selectedRecordKeys = collect(property_exists($this, 'selectedTableRecords') ? $this->selectedTableRecords : [])
+    $selectedRecordKeys = collect(method_exists($this, 'getSelectedTableRecords') ? $this->getSelectedTableRecords(false) : [])
         ->filter(fn ($key) => $key !== null && $key !== '');
     $selectedCount = $selectedRecordKeys->count();
 
