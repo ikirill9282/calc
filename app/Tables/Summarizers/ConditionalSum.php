@@ -14,6 +14,27 @@ class ConditionalSum extends Sum
 
     protected ?Closure $recordValueResolver = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->modifyQueryUsing(function (Builder $query): Builder {
+            $selectedKeys = $this->getSelectedRecordKeys();
+
+            if ($selectedKeys->isEmpty()) {
+                return $query;
+            }
+
+            $model = optional($this->getLivewire()->getTable()?->getQuery())->getModel();
+
+            if (! $model) {
+                return $query;
+            }
+
+            return $query->whereIn($model->getQualifiedKeyName(), $selectedKeys->all());
+        });
+    }
+
     public function expression(?Closure $resolver): static
     {
         $this->expressionResolver = $resolver;
@@ -30,22 +51,28 @@ class ConditionalSum extends Sum
 
     public function summarize(Builder $query, string $attribute): int | float | null
     {
-        $selectedRecords = method_exists($this->getLivewire(), 'getSelectedTableRecords')
-            ? $this->getLivewire()->getSelectedTableRecords()
-            : collect();
+        $selectedKeys = $this->getSelectedRecordKeys();
 
-        if ($selectedRecords->isNotEmpty()) {
-            if ($this->recordValueResolver !== null) {
-                return (float) $selectedRecords->sum(function ($record) {
-                    $value = $this->evaluate($this->recordValueResolver, [
-                        'record' => $record,
-                    ]);
+        if ($selectedKeys->isNotEmpty()) {
+            if ($this->recordValueResolver !== null && method_exists($this->getLivewire(), 'getSelectedTableRecords')) {
+                $selectedRecords = $this->getLivewire()->getSelectedTableRecords();
 
-                    return $value === null ? 0.0 : (float) $value;
-                });
+                if ($selectedRecords->isNotEmpty()) {
+                    return (float) $selectedRecords->sum(function ($record) {
+                        $value = $this->evaluate($this->recordValueResolver, [
+                            'record' => $record,
+                        ]);
+
+                        return $value === null ? 0.0 : (float) $value;
+                    });
+                }
             }
 
-            return (float) $selectedRecords->sum(fn ($record) => (float) (data_get($record, $attribute) ?? 0));
+            $model = optional($this->getLivewire()->getTable()?->getQuery())->getModel();
+
+            if ($model) {
+                $query = (clone $query)->whereIn($model->getQualifiedKeyName(), $selectedKeys->all());
+            }
         }
 
         $expression = $this->resolveExpression($attribute);
@@ -114,7 +141,9 @@ class ConditionalSum extends Sum
         }
 
         /** @var Collection $records */
-        $records = $this->getLivewire()->getSelectedTableRecords();
+        $records = method_exists($this->getLivewire(), 'getSelectedTableRecords')
+            ? $this->getLivewire()->getSelectedTableRecords()
+            : collect();
 
         if ($records->isEmpty()) {
             return parent::getSelectedState();
@@ -138,5 +167,18 @@ class ConditionalSum extends Sum
         return $this->evaluate($this->expressionResolver, [
             'attribute' => $attribute,
         ]);
+    }
+
+    protected function getSelectedRecordKeys(): Collection
+    {
+        $livewire = $this->getLivewire();
+
+        if (! $livewire || ! property_exists($livewire, 'selectedTableRecords')) {
+            return collect();
+        }
+
+        return collect($livewire->selectedTableRecords)
+            ->filter(fn ($key) => $key !== null && $key !== '')
+            ->values();
     }
 }

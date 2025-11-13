@@ -517,20 +517,44 @@ class OrderResource extends Resource
 										->toggleable(isToggledHiddenByDefault: false),
 						]))
 						->headerActions([
-								Tables\Actions\Action::make('toggleSendDateToday')
-										->label('Отправки сегодня')
+								Tables\Actions\Action::make('filterSendDate')
+										->label('Дата отправки')
 										->icon('heroicon-o-calendar-days')
 										->color('primary')
-										->action(function (Pages\ListOrders $livewire): void {
+										->modalHeading('Выберите дату отправки')
+										->modalSubmitActionLabel('Применить')
+										->form([
+												Forms\Components\DatePicker::make('send_date')
+														->label('Дата отправки')
+														->displayFormat('d.m.Y')
+														->native(false)
+														->closeOnDateSelection()
+														->placeholder('Выберите дату'),
+										])
+										->fillForm(function (Pages\ListOrders $livewire): array {
 												$filters = $livewire->tableFilters ?? [];
-												$isActive = $filters['send_date_today']['isActive'] ?? false;
 
-												unset($filters['send_date_set'], $filters['send_date_missing']);
+												if (isset($filters['send_date_exact']['value'])) {
+														return ['send_date' => $filters['send_date_exact']['value']];
+												}
 
-												if ($isActive) {
-														unset($filters['send_date_today']);
+												return [];
+										})
+										->action(function (array $data, Pages\ListOrders $livewire): void {
+												$filters = $livewire->tableFilters ?? [];
+
+												unset(
+													$filters['send_date_today'],
+													$filters['send_date_set'],
+													$filters['send_date_missing']
+												);
+
+												if (!empty($data['send_date'])) {
+														$filters['send_date_exact'] = [
+																'value' => Carbon::parse($data['send_date'])->toDateString(),
+														];
 												} else {
-														$filters['send_date_today'] = ['isActive' => true];
+														unset($filters['send_date_exact']);
 												}
 
 												$livewire->tableFilters = empty($filters) ? null : $filters;
@@ -538,10 +562,22 @@ class OrderResource extends Resource
 										}),
 						])
 						->filters([
-								Filter::make('send_date_today')
-										->label('Отправки сегодня')
-										->query(fn (Builder $query): Builder => $query->whereDate('send_date', Carbon::today('Europe/Moscow')->toDateString()))
-										->indicateUsing(fn (?array $state): array => (($state['isActive'] ?? false) === true) ? ['Дата отправки: сегодня'] : []),
+								Filter::make('send_date_exact')
+										->label('Дата отправки')
+										->form([
+												Forms\Components\DatePicker::make('value')
+														->label('Дата отправки')
+														->displayFormat('d.m.Y')
+														->native(false)
+														->closeOnDateSelection(),
+										])
+										->query(fn (Builder $query, array $data): Builder => $query->when(
+												$data['value'] ?? null,
+												fn (Builder $q, string $value) => $q->whereDate('send_date', '=', $value),
+										))
+										->indicateUsing(fn (array $data): array => isset($data['value']) && $data['value'] !== null
+												? ['Дата отправки: ' . Carbon::parse($data['value'])->format('d.m.Y')]
+												: []),
 								Filter::make('advanced_rules')
 										->label('Фильтр по правилам')
 										->form([
