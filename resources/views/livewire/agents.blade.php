@@ -38,7 +38,7 @@
                     autocomplete="off"
                     aria-autocomplete="off"
                     rp="form."
-                    empty_text="Введите ИНН"
+                    empty_text="ВВЕДИТЕ ИНН ВАШЕГО ИП ИЛИ ООО"
                   />
 
                   <x-form.wrap label="ИНН/КПП" name="inn" :disabled="true" >
