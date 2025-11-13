@@ -127,7 +127,7 @@
 .fi-ta-table thead th,
 .fi-ta-table tbody td {
   border-right: 1px solid rgba(148, 163, 184, 0.4);
-  padding: 0.35rem 0.5rem;
+  /* padding: 0.35rem 0.5rem; */
 }
 
 .fi-ta-table thead th {
