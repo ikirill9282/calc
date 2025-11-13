@@ -35,6 +35,48 @@ class ConditionalSum extends Sum
         });
     }
 
+    public function getState(): mixed
+    {
+        $selectedKeys = $this->getSelectedRecordKeys();
+
+        if ($selectedKeys->isNotEmpty()) {
+            $livewire = $this->getLivewire();
+
+            if ($this->recordValueResolver !== null && method_exists($livewire, 'getSelectedTableRecords')) {
+                $records = $livewire->getSelectedTableRecords();
+
+                if ($records->isNotEmpty()) {
+                    $sum = $records->sum(function ($record) {
+                        $value = $this->evaluate($this->recordValueResolver, [
+                            'record' => $record,
+                        ]);
+
+                        return $value === null ? 0.0 : (float) $value;
+                    });
+
+                    return $sum === 0.0 ? '0' : $sum;
+                }
+            }
+
+            $tableQuery = optional($livewire?->getTable()?->getQuery());
+
+            if ($tableQuery instanceof \Illuminate\Database\Eloquent\Builder) {
+                $model = $tableQuery->getModel();
+
+                $sum = $tableQuery
+                    ->cloneWithout(['columns', 'orders', 'unionOrders'])
+                    ->cloneWithoutBindings(['select', 'order', 'union', 'unionOrder'])
+                    ->selectRaw('COALESCE(SUM(' . $model->qualifyColumn($this->getColumn()->getName()) . '), 0) as aggregate')
+                    ->whereIn($model->getQualifiedKeyName(), $selectedKeys->all())
+                    ->value('aggregate') ?? 0.0;
+
+                return (float) $sum === 0.0 ? '0' : (float) $sum;
+            }
+        }
+
+        return parent::getState();
+    }
+
     public function expression(?Closure $resolver): static
     {
         $this->expressionResolver = $resolver;
