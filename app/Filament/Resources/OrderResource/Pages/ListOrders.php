@@ -6,6 +6,7 @@ use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -283,5 +284,41 @@ class ListOrders extends ListRecords
             report($exception);
             $this->dispatch('inline-edit-cell-error', message: 'Не удалось сохранить значение');
         }
+    }
+
+    protected function getTableContentFooter(): ?View
+    {
+        $summary = $this->getSelectedOrdersSummary();
+
+        if ($summary === null) {
+            return null;
+        }
+
+        return view('filament.tables.selected-summary', [
+            'summary' => $summary,
+        ]);
+    }
+
+    protected function getSelectedOrdersSummary(): ?array
+    {
+        $records = $this->getSelectedTableRecords();
+
+        if ($records->isEmpty()) {
+            return null;
+        }
+
+        return [
+            'count' => $records->count(),
+            'pallets_count' => $records->sum(fn (Order $order) => (float) ($order->pallets_count ?? 0)),
+            'boxes_count' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryDisplayValue($order, 'boxes_count') ?? 0)),
+            'boxes_volume' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryDisplayValue($order, 'boxes_volume') ?? 0)),
+            'boxes_weight' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryDisplayValue($order, 'boxes_weight') ?? 0)),
+            'palletizing_count' => $records->sum(fn (Order $order) => (float) ($order->palletizing_count ?? 0)),
+            'pick' => $records->sum(fn (Order $order) => (float) ($order->pick ?? 0)),
+            'delivery' => $records->sum(fn (Order $order) => (float) ($order->delivery ?? 0)),
+            'additional' => $records->sum(fn (Order $order) => (float) ($order->additional ?? 0)),
+            'total' => $records->sum(fn (Order $order) => (float) ($order->total ?? 0)),
+            'individual_cost' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryIndividualCost($order) ?? 0)),
+        ];
     }
 }
