@@ -52,7 +52,7 @@
 
 
           <div class="font-medium text-lg p-4 border mt-4 inline-block text-secondary-400 dark:text-secondary-600 border-secondary-400 dark:border-secondary-600">
-            Важно! Дата доставки в РЦ WILDBERRIES может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указаннной даты.
+            Важно! Дата доставки в РЦ WILDBERRIES может отличаться на 24 часа в ту или иную сторону , но не более чем на 1 сутки с указанной даты.
           </div>
 
           <div class="py-6 mt-6 border-t border-primary-500/50">

@@ -436,7 +436,7 @@ class OrderResource extends Resource
 										->toggleable(isToggledHiddenByDefault: false),
 								// Оплата за забор груза
 								Tables\Columns\TextColumn::make('pick')
-										->label('Оплата за забор')
+										->label('Стоимость забора')
 										->money('RUB')
 										->sortable()
 										->default('—')
