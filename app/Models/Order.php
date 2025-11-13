@@ -225,6 +225,24 @@ class Order extends Model
     return $this->distributionLabel();
   }
 
+  public function getCashExpectedTotalAttribute(): ?float
+  {
+    $components = [$this->pick, $this->delivery, $this->additional];
+    $sum = 0.0;
+    $hasValue = false;
+
+    foreach ($components as $value) {
+      if ($value === null) {
+        continue;
+      }
+
+      $sum += (float) $value;
+      $hasValue = true;
+    }
+
+    return $hasValue ? $sum : null;
+  }
+
   public static function getFieldLabel(string $field): string
   {
     if (array_key_exists($field, self::FIELD_LABELS)) {
