@@ -5,6 +5,20 @@
         padding: 0.35rem 0.5rem;
     }
 
+    .fi-ta-table thead tr {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    }
+
+    .fi-ta-table thead th {
+        color: #f8fafc;
+        font-weight: 600;
+        border-right-color: rgba(248, 250, 252, 0.25);
+    }
+
+    .fi-ta-table thead th .fi-ta-header-cell-label {
+        color: inherit;
+    }
+
     .fi-ta-table thead th:last-child,
     .fi-ta-table tbody td:last-child {
         border-right: none;
@@ -44,6 +58,10 @@
     .fi-ta-header-cell-label {
         font-size: 0.75rem;
         line-height: 1rem;
+    }
+
+    .fi-ta-table thead th .fi-icon {
+        color: rgba(248, 250, 252, 0.8);
     }
 
     .fi-sidebar-toggle {
