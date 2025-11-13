@@ -1268,8 +1268,12 @@ class OrderResource extends Resource
 												->label('Итого, ₽')
 												->numeric()
 												->prefix('₽'),
+										Forms\Components\TextInput::make('cash_accepted')
+												->label('Принято, ₽')
+												->numeric()
+												->prefix('₽'),
 								])
-								->columns(4),
+								->columns(5),
 				]);
 		}
 
@@ -1798,6 +1802,13 @@ class OrderResource extends Resource
 															->size('sm')
 															->hidden(fn (Order $record) => blank($record->total))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('total') ? ['class' => 'text-orange-500'] : []),
+												Infolists\Components\TextEntry::make('cash_accepted')
+															->label('Принято, ₽')
+														->money('RUB')
+														->weight('bold')
+															->size('sm')
+															->hidden(fn (Order $record) => $record->cash_accepted === null)
+														->extraAttributes(fn (Order $record) => $record->hasChanged('cash_accepted') ? ['class' => 'text-orange-500'] : []),
 										])
 												->columns(2)
 												->compact()

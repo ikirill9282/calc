@@ -88,14 +88,14 @@ class CashStatement extends ListOrders
                         ->money('RUB')
                         ->recordValueUsing(fn ($record): float => (float) ($record->cash_expected_total ?? 0))
                 ),
-            Tables\Columns\TextColumn::make('total')
+            Tables\Columns\TextColumn::make('cash_accepted')
                 ->label('Принято')
                 ->money('RUB')
                 ->summarize(
-                    ConditionalSum::make('total_sum')
+                    ConditionalSum::make('cash_accepted_sum')
                         ->label('Итого')
                         ->money('RUB')
-                        ->recordValueUsing(fn ($record): float => (float) ($record->total ?? 0))
+                        ->recordValueUsing(fn ($record): float => (float) ($record->cash_accepted ?? 0))
                 ),
             Tables\Columns\TextColumn::make('driver_name')
                 ->label('ФИО водителя')
