@@ -643,7 +643,7 @@ class OrderResource extends Resource
 												true: fn (Builder $query): Builder => $query->where('transfer_method', 'pick'),
 												false: fn (Builder $query): Builder => $query->where('transfer_method', '!=', 'pick'),
 										)
-										->indicateUsing(fn (?bool $state): array => $state === null ? [] : ['Забор: ' . ($state ? 'Да' : 'Нет')]),
+										->indicateUsing(fn (array $data): array => array_key_exists('value', $data) && $data['value'] !== null ? ['Забор: ' . ($data['value'] ? 'Да' : 'Нет')] : []),
 								Filter::make('transfer_method_receive_date')
 										->label('Дата привоза клиентом')
 										->form([
