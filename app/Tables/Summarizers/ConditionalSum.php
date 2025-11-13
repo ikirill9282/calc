@@ -74,7 +74,7 @@ class ConditionalSum extends Sum
             }
         }
 
-        return parent::getState();
+        return '0';
     }
 
     public function expression(?Closure $resolver): static
@@ -148,7 +148,7 @@ class ConditionalSum extends Sum
                 return $sum;
             }
 
-            return parent::summarize($query, $attribute);
+            return 0.0;
         }
 
         return (float) ($query
@@ -188,7 +188,7 @@ class ConditionalSum extends Sum
             : collect();
 
         if ($records->isEmpty()) {
-            return parent::getSelectedState();
+            return 0.0;
         }
 
         return (float) $records->sum(function ($record) {
