@@ -18,7 +18,7 @@ class ConditionalSum extends Sum
     {
         parent::setUp();
 
-        $this->modifyQueryUsing(function (Builder $query): Builder {
+        $this->query(function (string $attribute, Builder $query): Builder {
             $selectedKeys = $this->getSelectedRecordKeys();
 
             if ($selectedKeys->isEmpty()) {
