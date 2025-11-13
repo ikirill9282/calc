@@ -633,17 +633,17 @@ class OrderResource extends Resource
 												'bill' => 'Безналичный',
 										])
 										->indicator('Способ оплаты'),
-								Filter::make('has_pickup')
+								TernaryFilter::make('has_pickup')
 										->label('Забор груза')
-										->form([
-												Forms\Components\Toggle::make('value')
-														->label('Забор выполнен')
-														->default(true),
-										])
-										->query(fn (Builder $query, array $data): Builder => $query->when($data['value'] ?? null, fn (Builder $q) => $q->where('transfer_method', 'pick'), fn (Builder $q) => $q->where('transfer_method', '!=', 'pick')))
-										->indicateUsing(fn (array $data): array => [
-												'Забор: ' . (($data['value'] ?? true) ? 'Да' : 'Нет'),
-										]),
+										->nullable()
+										->placeholder('Все')
+										->trueLabel('Да')
+										->falseLabel('Нет')
+										->queries(
+												true: fn (Builder $query): Builder => $query->where('transfer_method', 'pick'),
+												false: fn (Builder $query): Builder => $query->where('transfer_method', '!=', 'pick'),
+										)
+										->indicateUsing(fn (?bool $state): array => $state === null ? [] : ['Забор: ' . ($state ? 'Да' : 'Нет')]),
 								Filter::make('transfer_method_receive_date')
 										->label('Дата привоза клиентом')
 										->form([
