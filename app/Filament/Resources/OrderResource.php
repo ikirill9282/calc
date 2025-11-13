@@ -65,6 +65,7 @@ class OrderResource extends Resource
         'pallets_volume',
         'pallets_weight',
         'driver_name',
+		'cash_accepted',
     ];
 
 	protected static array $individualBaseTariffs = [

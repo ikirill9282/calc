@@ -29,10 +29,9 @@
     $selectedCount = $selectedRecordKeys->count();
 
     $summaryQuery = $this->getAllTableSummaryQuery();
-    $hasSummary = $this->getTable()->hasSummary($summaryQuery);
 @endphp
 
-@if ($hasSummary && $selectedCount > 0)
+@if ($selectedCount > 0)
     <x-filament-tables::row
         class="fi-ta-summary-header-row bg-gray-50 dark:bg-white/5"
     >

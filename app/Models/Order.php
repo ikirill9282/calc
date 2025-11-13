@@ -49,6 +49,7 @@ class Order extends Model
     'delivery' => 'Доставка, ₽',
     'additional' => 'Палетирование, ₽',
     'total' => 'Предварительная сумма, ₽',
+    'cash_accepted' => 'Принято, ₽',
     'cargo_comment' => 'Комментарий',
     'highlight_color' => 'Цвет подсветки',
     'driver_name' => 'ФИО водителя',
@@ -58,6 +59,7 @@ class Order extends Model
     'changed_fields' => 'array',
     'highlight_color' => 'string',
     'send_date' => 'date',
+    'cash_accepted' => 'float',
   ];
 
   /**
