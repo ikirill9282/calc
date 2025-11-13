@@ -24,7 +24,7 @@
             ->all();
     }
 
-    $livewire = $this->getLivewire();
+    $livewire = $this;
 
     $selectedRecordKeys = [];
 
