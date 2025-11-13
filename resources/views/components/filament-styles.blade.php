@@ -5,6 +5,10 @@
         padding: 0.35rem 0.5rem;
     }
 
+    .fi-ta-table table {
+        table-layout: auto !important;
+    }
+
     .fi-ta-table thead tr {
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
     }
@@ -58,10 +62,16 @@
     .fi-ta-header-cell-label {
         font-size: 0.75rem;
         line-height: 1rem;
+        white-space: normal !important;
+        word-break: break-word;
     }
 
     .fi-ta-table thead th .fi-icon {
         color: rgba(248, 250, 252, 0.8);
+    }
+
+    .fi-ta-table tbody td {
+        white-space: nowrap;
     }
 
     .fi-sidebar-toggle {
