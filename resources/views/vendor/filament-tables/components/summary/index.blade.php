@@ -24,9 +24,19 @@
             ->all();
     }
 
-    $selectedRecordKeys = property_exists($this, 'selectedTableRecords') && is_array($this->selectedTableRecords)
-        ? array_filter($this->selectedTableRecords, fn ($key) => $key !== null && $key !== '')
-        : [];
+    $livewire = $this->getLivewire();
+
+    $selectedRecordKeys = [];
+
+    if ($livewire) {
+        if (method_exists($livewire, 'getSelectedTableRecords')) {
+            $selectedRecordKeys = $livewire->getSelectedTableRecords(false)->all();
+        } elseif (property_exists($livewire, 'selectedTableRecords') && is_array($livewire->selectedTableRecords)) {
+            $selectedRecordKeys = $livewire->selectedTableRecords;
+        }
+    }
+
+    $selectedRecordKeys = array_filter($selectedRecordKeys, fn ($key) => $key !== null && $key !== '');
     $selectedCount = count($selectedRecordKeys);
 
     $summaryQuery = $this->getAllTableSummaryQuery();
