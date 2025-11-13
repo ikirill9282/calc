@@ -24,9 +24,10 @@
             ->all();
     }
 
-    $selectedRecordKeys = collect(method_exists($this, 'getSelectedTableRecords') ? $this->getSelectedTableRecords(false) : [])
-        ->filter(fn ($key) => $key !== null && $key !== '');
-    $selectedCount = $selectedRecordKeys->count();
+    $selectedRecordKeys = property_exists($this, 'selectedTableRecords') && is_array($this->selectedTableRecords)
+        ? array_filter($this->selectedTableRecords, fn ($key) => $key !== null && $key !== '')
+        : [];
+    $selectedCount = count($selectedRecordKeys);
 
     $summaryQuery = $this->getAllTableSummaryQuery();
 @endphp
