@@ -5,10 +5,6 @@
         padding: 0.35rem 0.5rem;
     }
 
-    .fi-ta-summary {
-        display: none !important;
-    }
-
     .fi-ta-table table {
         table-layout: auto !important;
     }
