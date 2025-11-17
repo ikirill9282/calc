@@ -23,6 +23,10 @@
       <div>
           <x-card>
               <form wire:submit.prevent="submit" action="{{ url('/agents/create') }}" class="flex flex-col gap-4 bg-inherit">
+                  <x-form.wrap label="ИНН/КПП" name="inn" :disabled="true" >
+                    <x-form.input wire:model="form.inn" name="inn" class="input-numeric" readonly />
+                  </x-form.wrap>
+
                   <x-form.dropdown 
                     id="title"
                     name="title"
@@ -40,10 +44,6 @@
                     rp="form."
                     empty_text="ВВЕДИТЕ ИНН ВАШЕГО ИП ИЛИ ООО"
                   />
-
-                  <x-form.wrap label="ИНН/КПП" name="inn" :disabled="true" >
-                    <x-form.input wire:model="form.inn" name="inn" class="input-numeric" readonly />
-                  </x-form.wrap>
 
                   <x-form.wrap label="ОГРН/ОГРНИП" name="ogrn" :disabled="true" >
                     <x-form.input wire:model="form.ogrn" name="ogrn" class="input-numeric" readonly />
