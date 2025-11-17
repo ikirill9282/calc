@@ -26,7 +26,7 @@
                   <x-form.dropdown 
                     id="inn"
                     name="inn"
-                    label="ИНН/КПП"
+                    label="ИНН"
                     :items="$this->companies"
                     :searchable="true"
                     wire:model="form.inn"
