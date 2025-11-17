@@ -17,10 +17,23 @@
         color: #f8fafc;
         font-weight: 600;
         border-right-color: rgba(248, 250, 252, 0.25);
+        white-space: nowrap;
+    }
+
+    .fi-ta-table thead th > div,
+    .fi-ta-table thead th .fi-ta-header-cell-label-wrapper {
+        white-space: nowrap !important;
+        display: flex !important;
+        align-items: center;
+        flex-wrap: nowrap !important;
     }
 
     .fi-ta-table thead th .fi-ta-header-cell-label {
         color: inherit;
+        white-space: nowrap !important;
+        word-break: normal !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .fi-ta-table thead th:last-child,
@@ -62,8 +75,8 @@
     .fi-ta-header-cell-label {
         font-size: 0.75rem;
         line-height: 1rem;
-        white-space: normal !important;
-        word-break: break-word;
+        white-space: nowrap !important;
+        word-break: normal !important;
     }
 
     .fi-ta-table thead th .fi-icon {
