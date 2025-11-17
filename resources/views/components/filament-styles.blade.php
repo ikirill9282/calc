@@ -159,6 +159,10 @@
         width: 500px !important;
         max-width: calc(100vw - 2rem)!important;
     }
+
+    .fi-ta-summary {
+        display: none !important;
+    }
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', () => {

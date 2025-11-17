@@ -1898,4 +1898,9 @@ class OrderResource extends Resource
 
         return $items;
     }
+
+    public static function getSummaryDisplayValue(Order $record, string $field): mixed
+    {
+        return static::resolveDisplayValue($record, $field);
+    }
 }
