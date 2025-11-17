@@ -67,11 +67,14 @@ class Agents extends Component
         $this->dropdownOpen[$property] = true;
         $this->getAddresses(Arr::get($this->form, str_ireplace('form.', '', $property)));
       }
-      if ($property == 'form.title') {
-        $this->form['title'] = preg_replace('/\D+/', '', (string) $this->form['title']);
+      if ($property == 'form.inn') {
+        $inn = preg_replace('/\D+/', '', (string) $this->form['inn']);
+        $this->form['inn'] = $inn;
 
-        $this->dropdownOpen[$property] = true;
-        $this->getCompanies(Arr::get($this->form, str_ireplace('form.', '', $property)));
+        if (strlen($inn) >= 10) {
+          $this->dropdownOpen[$property] = true;
+          $this->getCompanies($inn);
+        }
       }
     }
 
@@ -86,10 +89,12 @@ class Agents extends Component
         $this->getAddresses();
       }
 
-      if ($name == 'title') {
-        $this->clearField('address');
-        $this->clearField('inn');
-        $this->clearField('ogrn');
+      if ($name == 'form.inn' || $name == 'inn') {
+        $this->form['title'] = null;
+        $this->form['ogrn'] = null;
+        $this->form['address'] = null;
+        $this->company = [];
+        $this->companies = [];
       }
     }
 
@@ -294,23 +299,23 @@ class Agents extends Component
     {
       Arr::set($this->form, str_ireplace('form.', '', $name), $value);
       
+      if ($name == 'form.inn') {
+        $company = collect($this->companies)->where('key', $value)->first();
+        if ($company) {
+          $this->form['title'] = $company['name'];
+          $this->form['inn'] = $company['inn'];
+          $this->form['ogrn'] = $company['ogrn'];
+          $this->form['address'] = $company['address'];
+          $this->company = $company;
+          $this->getAddresses($company['address'] ?? null);
+          unset($this->dropdownOpen[$name]);
+          unset($this->dropdownOpen['form.address']);
+        }
+      }
+      
       if ($name == 'form.address') {
         $this->getAddresses();
         unset($this->dropdownOpen[$name]);
-      }
-      
-      if ($name == 'form.title') {
-        $company = collect($this->companies)->where('key', $value)->first();
-        $this->form['title'] = $company['name'];
-        $this->form['inn'] = $company['inn'];
-        $this->form['ogrn'] = $company['ogrn'];
-        $this->form['address'] = $company['address'];
-        $this->company = $company;
-        $this->getCompanies($company['name']);
-        $this->getAddresses($company['address'] ?? null);
-        $this->form['title'] = $company['name'];
-        unset($this->dropdownOpen[$name]);
-        unset($this->dropdownOpen['form.address']);
       }
     }
 
