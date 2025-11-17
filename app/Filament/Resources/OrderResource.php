@@ -411,7 +411,7 @@ class OrderResource extends Resource
 								// Дата привоза клиентом
 								Tables\Columns\TextColumn::make('transfer_method_receive_date')
 										->label('Дата привоза клиентом')
-										->date('d.m.Y H:i')
+										->date('d.m.Y')
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? 'warning' : null)
@@ -420,7 +420,7 @@ class OrderResource extends Resource
 										// Дата забора груза
 										Tables\Columns\TextColumn::make('transfer_method_pick_date')
 										->label('Дата забора груза')
-										->date('d.m.Y H:i')
+										->date('d.m.Y')
 										->sortable()
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? 'warning' : null)
@@ -1827,13 +1827,13 @@ class OrderResource extends Resource
 														->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method') ? ['class' => 'text-orange-500'] : []),
 												Infolists\Components\TextEntry::make('transfer_method_pick_date')
 															->label('Дата забора')
-														->dateTime('d.m.Y H:i')
+														->date('d.m.Y')
 															->size('sm')
 															->hidden(fn (Order $record) => blank($record->transfer_method_pick_date))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? ['class' => 'text-orange-500'] : []),
 												Infolists\Components\TextEntry::make('transfer_method_receive_date')
 															->label('Дата привоза')
-														->dateTime('d.m.Y H:i')
+														->date('d.m.Y')
 															->size('sm')
 															->hidden(fn (Order $record) => blank($record->transfer_method_receive_date))
 														->extraAttributes(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? ['class' => 'text-orange-500'] : []),
