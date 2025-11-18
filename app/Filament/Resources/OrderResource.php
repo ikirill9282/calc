@@ -66,8 +66,6 @@ class OrderResource extends Resource
         'pallets_weight',
         'driver_name',
 		'cash_accepted',
-        'distributor_id',
-        'distributor_center_id',
     ];
 
 	protected static array $individualBaseTariffs = [
@@ -259,22 +257,6 @@ class OrderResource extends Resource
 												->orderBy('distributor_center_id', $direction))
 										->color(fn (Order $record) => $record->hasChanged('distributor_id', 'distributor_center_id') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
-								
-								Tables\Columns\TextColumn::make('distributor_id')
-										->label('РЦ')
-										->searchable()
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('distributor_id') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: true),
-								
-								Tables\Columns\TextColumn::make('distributor_center_id')
-										->label('Адрес РЦ')
-										->searchable()
-										->sortable()
-										->limit(60)
-										->tooltip(fn (Order $record) => $record->distributor_center_id)
-										->color(fn (Order $record) => $record->hasChanged('distributor_center_id') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: true),
 								
 								Tables\Columns\IconColumn::make('individual')
 										->label('Индивид.')
