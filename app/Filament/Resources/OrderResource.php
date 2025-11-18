@@ -258,17 +258,6 @@ class OrderResource extends Resource
 										->color(fn (Order $record) => $record->hasChanged('distributor_id', 'distributor_center_id') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 								
-								Tables\Columns\TextColumn::make('payment_method')
-										->label('Способ оплаты')
-										->formatStateUsing(fn ($state) => match($state) {
-												'cash' => 'Наличные',
-												'bill' => 'Безналичный',
-												default => $state
-										})
-										->sortable()
-										->color(fn (Order $record) => $record->hasChanged('payment_method') ? 'warning' : null)
-										->toggleable(isToggledHiddenByDefault: false),
-								
 								Tables\Columns\IconColumn::make('individual')
 										->label('Индивид.')
 										->boolean()
@@ -435,6 +424,18 @@ class OrderResource extends Resource
 										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_address') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
+								
+								Tables\Columns\TextColumn::make('payment_method')
+										->label('Способ оплаты')
+										->formatStateUsing(fn ($state) => match($state) {
+												'cash' => 'Наличные',
+												'bill' => 'Безналичный',
+												default => $state
+										})
+										->sortable()
+										->color(fn (Order $record) => $record->hasChanged('payment_method') ? 'warning' : null)
+										->toggleable(isToggledHiddenByDefault: false),
+								
 								// Оплата за забор груза
 								Tables\Columns\TextColumn::make('pick')
 										->label('Стоимость забора')
