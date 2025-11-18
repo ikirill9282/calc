@@ -133,7 +133,27 @@ class Order extends Model
         $model->additional = null;
         $model->total = null;
       } elseif ($model->shouldRecalculatePricing()) {
+        // Сохраняем вручную измененные поля стоимости
+        $manualPick = $model->isDirty('pick') ? $model->pick : null;
+        $manualDelivery = $model->isDirty('delivery') ? $model->delivery : null;
+        $manualAdditional = $model->isDirty('additional') ? $model->additional : null;
+        $manualTotal = $model->isDirty('total') ? $model->total : null;
+        
         $model->recalculatePricing();
+        
+        // Восстанавливаем вручную измененные значения
+        if ($manualPick !== null) {
+          $model->pick = $manualPick;
+        }
+        if ($manualDelivery !== null) {
+          $model->delivery = $manualDelivery;
+        }
+        if ($manualAdditional !== null) {
+          $model->additional = $manualAdditional;
+        }
+        if ($manualTotal !== null) {
+          $model->total = $manualTotal;
+        }
       }
 
       if (!$model->exists) {
