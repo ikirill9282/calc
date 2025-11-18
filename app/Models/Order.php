@@ -132,27 +132,51 @@ class Order extends Model
         $model->delivery = null;
         $model->additional = null;
         $model->total = null;
-      } elseif ($model->shouldRecalculatePricing()) {
-        // Сохраняем вручную измененные поля стоимости
-        $manualPick = $model->isDirty('pick') ? $model->pick : null;
-        $manualDelivery = $model->isDirty('delivery') ? $model->delivery : null;
-        $manualAdditional = $model->isDirty('additional') ? $model->additional : null;
-        $manualTotal = $model->isDirty('total') ? $model->total : null;
+      } else {
+        // Проверяем, изменяются ли только поля стоимости
+        $pricingFields = ['pick', 'delivery', 'additional', 'total'];
+        $dirtyFields = array_keys($model->getDirty());
+        $onlyPricingFieldsChanged = !empty($dirtyFields) && 
+          empty(array_diff($dirtyFields, array_merge($pricingFields, ['updated_at', 'changed_fields'])));
         
-        $model->recalculatePricing();
-        
-        // Восстанавливаем вручную измененные значения
-        if ($manualPick !== null) {
-          $model->pick = $manualPick;
-        }
-        if ($manualDelivery !== null) {
-          $model->delivery = $manualDelivery;
-        }
-        if ($manualAdditional !== null) {
-          $model->additional = $manualAdditional;
-        }
-        if ($manualTotal !== null) {
-          $model->total = $manualTotal;
+        if ($onlyPricingFieldsChanged) {
+          // Если изменяются только поля стоимости, пересчитываем total
+          if ($model->isDirty('pick') || $model->isDirty('delivery') || $model->isDirty('additional')) {
+            $pick = $model->pick ?? 0;
+            $delivery = $model->delivery ?? 0;
+            $additional = $model->additional ?? 0;
+            $model->total = (int) ceil($pick + $delivery + $additional);
+          }
+        } elseif ($model->shouldRecalculatePricing()) {
+          // Сохраняем вручную измененные поля стоимости
+          $manualPick = $model->isDirty('pick') ? $model->pick : null;
+          $manualDelivery = $model->isDirty('delivery') ? $model->delivery : null;
+          $manualAdditional = $model->isDirty('additional') ? $model->additional : null;
+          $manualTotal = $model->isDirty('total') ? $model->total : null;
+          
+          $model->recalculatePricing();
+          
+          // Восстанавливаем вручную измененные значения
+          if ($manualPick !== null) {
+            $model->pick = $manualPick;
+          }
+          if ($manualDelivery !== null) {
+            $model->delivery = $manualDelivery;
+          }
+          if ($manualAdditional !== null) {
+            $model->additional = $manualAdditional;
+          }
+          if ($manualTotal !== null) {
+            $model->total = $manualTotal;
+          }
+          
+          // Пересчитываем total на основе восстановленных значений
+          if ($manualPick !== null || $manualDelivery !== null || $manualAdditional !== null) {
+            $pick = $model->pick ?? 0;
+            $delivery = $model->delivery ?? 0;
+            $additional = $model->additional ?? 0;
+            $model->total = (int) ceil($pick + $delivery + $additional);
+          }
         }
       }
 
