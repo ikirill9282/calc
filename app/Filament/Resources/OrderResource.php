@@ -66,6 +66,7 @@ class OrderResource extends Resource
         'pallets_weight',
         'driver_name',
 		'cash_accepted',
+        'distribution',
     ];
 
 	protected static array $individualBaseTariffs = [
@@ -1397,6 +1398,7 @@ class OrderResource extends Resource
 						'boxes_count' => $hasPallets ? 'pallets_boxcount' : 'boxes_count',
 						'boxes_volume' => $hasPallets ? 'pallets_volume' : 'boxes_volume',
 						'boxes_weight' => $hasPallets ? 'pallets_weight' : 'boxes_weight',
+						'distribution' => 'distribution_edit',
 						default => $field,
 				};
 		}
@@ -1415,6 +1417,7 @@ class OrderResource extends Resource
 						'boxes_weight' => $hasPallets
 								? $record->pallets_weight
 								: $record->boxes_weight,
+						'distribution' => static::formatDistributionForEdit($record),
 						default => data_get($record, $field),
 				};
 		}
@@ -1424,6 +1427,21 @@ class OrderResource extends Resource
 				$count = $record->pallets_count;
 
 				return $count !== null && (float) $count > 0;
+		}
+
+		protected static function formatDistributionForEdit(Order $record): string
+		{
+				// Если есть distribution_label, разбиваем его по " - "
+				if ($record->distribution_label && str_contains($record->distribution_label, ' - ')) {
+						$parts = explode(' - ', $record->distribution_label, 2);
+						return trim($parts[0] ?? '') . '|' . trim($parts[1] ?? '');
+				}
+
+				// Иначе используем прямые значения полей
+				$distributorId = $record->distributor_id ?? '';
+				$distributorCenterId = $record->distributor_center_id ?? '';
+
+				return $distributorId . '|' . $distributorCenterId;
 		}
 
 		protected static function calculateIndividualCost(Order $record): ?float

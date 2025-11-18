@@ -260,6 +260,12 @@ class ListOrders extends ListRecords
             return;
         }
 
+        // Специальная обработка для редактирования distribution
+        if ($field === 'distribution_edit') {
+            $this->handleDistributionEdit($recordId, $value);
+            return;
+        }
+
         if (! in_array($field, OrderResource::getInlineEditableFields(), true)) {
             return;
         }
@@ -280,6 +286,37 @@ class ListOrders extends ListRecords
 
             $this->resetTable();
             $this->dispatch('inline-edit-cell-saved', field: $field, recordId: $recordId);
+        } catch (\Throwable $exception) {
+            report($exception);
+            $this->dispatch('inline-edit-cell-error', message: 'Не удалось сохранить значение');
+        }
+    }
+
+    protected function handleDistributionEdit($recordId, $value): void
+    {
+        /** @var Order|null $record */
+        $record = Order::query()->find($recordId);
+
+        if (! $record) {
+            $this->dispatch('inline-edit-cell-error', message: 'Запись не найдена');
+            return;
+        }
+
+        try {
+            // Разбиваем значение по разделителю "|"
+            // Формат: "РЦ|Адрес"
+            $parts = explode('|', $value, 2);
+            $distributorId = trim($parts[0] ?? '');
+            $distributorCenterId = trim($parts[1] ?? '');
+
+            $record->fillFields([
+                'distributor_id' => $distributorId ?: null,
+                'distributor_center_id' => $distributorCenterId ?: null,
+            ]);
+            $record->save();
+
+            $this->resetTable();
+            $this->dispatch('inline-edit-cell-saved', field: 'distribution', recordId: $recordId);
         } catch (\Throwable $exception) {
             report($exception);
             $this->dispatch('inline-edit-cell-error', message: 'Не удалось сохранить значение');

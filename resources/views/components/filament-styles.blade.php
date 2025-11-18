@@ -295,7 +295,13 @@
 
             const label = cell.getAttribute('data-inline-label') || 'значение';
             const currentValue = cell.getAttribute('data-inline-value') ?? cell.innerText.trim();
-            const nextValue = window.prompt(`Изменить «${label}»`, currentValue);
+            
+            let promptText = `Изменить «${label}»`;
+            if (field === 'distribution_edit') {
+                promptText += '\n\nФормат: РЦ|Адрес\nПример: Wildberries - Москва|ул. Примерная, д. 1';
+            }
+            
+            const nextValue = window.prompt(promptText, currentValue);
 
             if (nextValue === null || nextValue === currentValue) {
                 return;
