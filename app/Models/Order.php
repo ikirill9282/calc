@@ -687,11 +687,33 @@ class Order extends Model
   public function deliveryDate(): Attribute
   {
     return Attribute::make(
-      set: function($val) {
-        if ($val === null || $val === '' || (is_string($val) && trim($val) === '')) {
+      get: function($value) {
+        if (blank($value) || (is_string($value) && (trim($value) === '—' || trim($value) === '–'))) {
           return null;
         }
-        return Carbon::parse($val)->format('Y-m-d H:i:s');
+        return $value;
+      },
+      set: function($val) {
+        if ($val === null || $val === '') {
+          return null;
+        }
+        
+        if (is_string($val)) {
+          $trimmed = trim($val);
+          if ($trimmed === '' || $trimmed === '?' || $trimmed === '—' || $trimmed === '–') {
+            return null;
+          }
+        }
+        
+        if ($val instanceof \DateTimeInterface) {
+          return Carbon::instance($val)->format('Y-m-d H:i:s');
+        }
+        
+        try {
+          return Carbon::parse($val)->format('Y-m-d H:i:s');
+        } catch (\Throwable $e) {
+          return null;
+        }
       },
     );
   }
@@ -699,11 +721,33 @@ class Order extends Model
   public function transferMethodReceiveDate(): Attribute
   {
     return Attribute::make(
-      set: function($val) {
-        if ($val === null || $val === '' || (is_string($val) && trim($val) === '')) {
+      get: function($value) {
+        if (blank($value) || (is_string($value) && (trim($value) === '—' || trim($value) === '–'))) {
           return null;
         }
-        return Carbon::parse($val)->format('Y-m-d H:i:s');
+        return $value;
+      },
+      set: function($val) {
+        if ($val === null || $val === '') {
+          return null;
+        }
+        
+        if (is_string($val)) {
+          $trimmed = trim($val);
+          if ($trimmed === '' || $trimmed === '?' || $trimmed === '—' || $trimmed === '–') {
+            return null;
+          }
+        }
+        
+        if ($val instanceof \DateTimeInterface) {
+          return Carbon::instance($val)->format('Y-m-d H:i:s');
+        }
+        
+        try {
+          return Carbon::parse($val)->format('Y-m-d H:i:s');
+        } catch (\Throwable $e) {
+          return null;
+        }
       }
     );
   }
@@ -711,11 +755,33 @@ class Order extends Model
   public function transferMethodPickDate(): Attribute
   {
     return Attribute::make(
-      set: function($val) {
-        if ($val === null || $val === '' || (is_string($val) && trim($val) === '')) {
+      get: function($value) {
+        if (blank($value) || (is_string($value) && (trim($value) === '—' || trim($value) === '–'))) {
           return null;
         }
-        return Carbon::parse($val)->format('Y-m-d H:i:s');
+        return $value;
+      },
+      set: function($val) {
+        if ($val === null || $val === '') {
+          return null;
+        }
+        
+        if (is_string($val)) {
+          $trimmed = trim($val);
+          if ($trimmed === '' || $trimmed === '?' || $trimmed === '—' || $trimmed === '–') {
+            return null;
+          }
+        }
+        
+        if ($val instanceof \DateTimeInterface) {
+          return Carbon::instance($val)->format('Y-m-d H:i:s');
+        }
+        
+        try {
+          return Carbon::parse($val)->format('Y-m-d H:i:s');
+        } catch (\Throwable $e) {
+          return null;
+        }
       }
     );
   }

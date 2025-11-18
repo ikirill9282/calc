@@ -239,7 +239,16 @@ class OrderResource extends Resource
 								
 								Tables\Columns\TextColumn::make('delivery_date')
 										->label('Дата поставки на РЦ')
-										->date('d.m.Y')
+										->formatStateUsing(function ($state) {
+											if (blank($state) || $state === '—' || $state === '–') {
+												return '—';
+											}
+											try {
+												return Carbon::parse($state)->format('d.m.Y');
+											} catch (\Throwable $e) {
+												return '—';
+											}
+										})
 										->extraAttributes([
 												'style' => 'width:3.5rem;max-width:3.5rem;',
 										])
@@ -401,18 +410,34 @@ class OrderResource extends Resource
 								// Дата привоза клиентом
 								Tables\Columns\TextColumn::make('transfer_method_receive_date')
 										->label('Дата привоза клиентом')
-										->date('d.m.Y')
+										->formatStateUsing(function ($state) {
+											if (blank($state) || $state === '—' || $state === '–') {
+												return '—';
+											}
+											try {
+												return Carbon::parse($state)->format('d.m.Y');
+											} catch (\Throwable $e) {
+												return '—';
+											}
+										})
 										->sortable()
-										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_receive_date') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 										
 										// Дата забора груза
 										Tables\Columns\TextColumn::make('transfer_method_pick_date')
 										->label('Дата забора груза')
-										->date('d.m.Y')
+										->formatStateUsing(function ($state) {
+											if (blank($state) || $state === '—' || $state === '–') {
+												return '—';
+											}
+											try {
+												return Carbon::parse($state)->format('d.m.Y');
+											} catch (\Throwable $e) {
+												return '—';
+											}
+										})
 										->sortable()
-										->default('—')
 										->color(fn (Order $record) => $record->hasChanged('transfer_method_pick_date') ? 'warning' : null)
 										->toggleable(isToggledHiddenByDefault: false),
 										
