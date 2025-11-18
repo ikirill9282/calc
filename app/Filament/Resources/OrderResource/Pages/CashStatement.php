@@ -51,6 +51,11 @@ class CashStatement extends ListOrders
                 ->label('РЦ и адрес')
                 ->default('—')
                 ->wrap(),
+            Tables\Columns\TextColumn::make('transfer_method_pick_address')
+                ->label('Адрес забора')
+                ->default('—')
+                ->wrap()
+                ->visible(fn (): bool => $this->activeTab === 'pickup'),
             Tables\Columns\TextColumn::make('delivery')
                 ->label('Доставка')
                 ->money('RUB')

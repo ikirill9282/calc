@@ -687,21 +687,36 @@ class Order extends Model
   public function deliveryDate(): Attribute
   {
     return Attribute::make(
-      set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s'),
+      set: function($val) {
+        if ($val === null || $val === '' || (is_string($val) && trim($val) === '')) {
+          return null;
+        }
+        return Carbon::parse($val)->format('Y-m-d H:i:s');
+      },
     );
   }
 
   public function transferMethodReceiveDate(): Attribute
   {
     return Attribute::make(
-      set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s')
+      set: function($val) {
+        if ($val === null || $val === '' || (is_string($val) && trim($val) === '')) {
+          return null;
+        }
+        return Carbon::parse($val)->format('Y-m-d H:i:s');
+      }
     );
   }
 
   public function transferMethodPickDate(): Attribute
   {
     return Attribute::make(
-      set: fn($val) => Carbon::parse($val)->format('Y-m-d H:i:s')
+      set: function($val) {
+        if ($val === null || $val === '' || (is_string($val) && trim($val) === '')) {
+          return null;
+        }
+        return Carbon::parse($val)->format('Y-m-d H:i:s');
+      }
     );
   }
 
