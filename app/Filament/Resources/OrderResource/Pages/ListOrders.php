@@ -22,19 +22,10 @@ class ListOrders extends ListRecords
         'inlineEditCell' => 'handleInlineEditCell',
     ];
 
-    public $selectedSummaryData = null;
-
-    public function updatedSelectedTableRecords(): void
+    public function refreshSummary()
     {
-        $this->selectedSummaryData = $this->getSelectedOrdersSummary();
-    }
-
-    public function getSelectedSummaryProperty(): ?array
-    {
-        if ($this->selectedSummaryData === null) {
-            $this->selectedSummaryData = $this->getSelectedOrdersSummary();
-        }
-        return $this->selectedSummaryData;
+        // Метод для обновления сводки через JavaScript
+        return $this->getSelectedOrdersSummary();
     }
 
     protected function getHeaderActions(): array

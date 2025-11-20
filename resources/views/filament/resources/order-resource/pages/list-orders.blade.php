@@ -11,30 +11,28 @@
 
         {{ $this->table }}
 
+        {{-- ТЕСТ: Проверка что view используется --}}
+        <div class="mt-4 p-2 bg-blue-100 dark:bg-blue-900 text-xs">
+            ТЕСТ: Кастомный view загружен! Время: {{ now()->format('H:i:s') }}
+        </div>
+
         {{-- Сводка по выбранным заявкам --}}
         @php
             $selectedIds = $this->selectedTableRecords ?? [];
             $selectedCount = is_array($selectedIds) ? count($selectedIds) : 0;
         @endphp
         
-        {{-- Временный отладочный вывод --}}
-        @if ($selectedCount > 0)
-            <div class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 text-sm">
-                Отладка: Выбрано {{ $selectedCount }} записей. IDs: {{ implode(', ', array_slice($selectedIds, 0, 5)) }}...
-            </div>
-        @endif
-        
         @if ($selectedCount >= 2)
             @php
                 $summary = $this->getSelectedOrdersSummary();
             @endphp
             @if ($summary)
-                <div wire:key="selected-summary-{{ $selectedCount }}-{{ md5(implode(',', $selectedIds)) }}" class="mt-6">
+                <div 
+                    wire:key="selected-summary-{{ $selectedCount }}-{{ md5(implode(',', $selectedIds)) }}" 
+                    class="mt-6"
+                    wire:poll.1s="refreshSummary"
+                >
                     @include('filament.tables.selected-summary', ['summary' => $summary])
-                </div>
-            @else
-                <div class="mt-4 p-4 bg-red-100 dark:bg-red-900 text-sm">
-                    Отладка: Сводка не создана (summary = null)
                 </div>
             @endif
         @endif
