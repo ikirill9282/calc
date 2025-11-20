@@ -340,21 +340,38 @@ class ListOrders extends ListRecords
     {
         $records = $this->getSelectedTableRecords();
 
-        if ($records->isEmpty()) {
+        // Показываем сводку только при выборе 2 и более заявок
+        if ($records->isEmpty() || $records->count() < 2) {
             return null;
         }
 
+        // Вспомогательная функция для безопасного преобразования в число
+        $toFloat = function ($value): float {
+            if ($value === null || $value === '') {
+                return 0.0;
+            }
+            if (is_numeric($value)) {
+                return (float) $value;
+            }
+            // Пытаемся извлечь число из строки (например, "10000 ₽" -> 10000)
+            if (is_string($value)) {
+                preg_match('/[\d.,]+/', str_replace(',', '.', $value), $matches);
+                return $matches ? (float) str_replace(',', '.', $matches[0]) : 0.0;
+            }
+            return 0.0;
+        };
+
         return [
             'count' => $records->count(),
-            'pallets_count' => $records->sum(fn (Order $order) => (float) ($order->pallets_count ?? 0)),
-            'boxes_count' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryDisplayValue($order, 'boxes_count') ?? 0)),
-            'boxes_volume' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryDisplayValue($order, 'boxes_volume') ?? 0)),
-            'boxes_weight' => $records->sum(fn (Order $order) => (float) (OrderResource::getSummaryDisplayValue($order, 'boxes_weight') ?? 0)),
-            'palletizing_count' => $records->sum(fn (Order $order) => (float) ($order->palletizing_count ?? 0)),
-            'pick' => $records->sum(fn (Order $order) => (float) ($order->pick ?? 0)),
-            'delivery' => $records->sum(fn (Order $order) => (float) ($order->delivery ?? 0)),
-            'additional' => $records->sum(fn (Order $order) => (float) ($order->additional ?? 0)),
-            'total' => $records->sum(fn (Order $order) => (float) ($order->total ?? 0)),
+            'pallets_count' => $records->sum(fn (Order $order) => $toFloat($order->pallets_count)),
+            'boxes_count' => $records->sum(fn (Order $order) => $toFloat(OrderResource::getSummaryDisplayValue($order, 'boxes_count'))),
+            'boxes_volume' => $records->sum(fn (Order $order) => $toFloat(OrderResource::getSummaryDisplayValue($order, 'boxes_volume'))),
+            'boxes_weight' => $records->sum(fn (Order $order) => $toFloat(OrderResource::getSummaryDisplayValue($order, 'boxes_weight'))),
+            'palletizing_count' => $records->sum(fn (Order $order) => $toFloat($order->palletizing_count)),
+            'pick' => $records->sum(fn (Order $order) => $toFloat($order->pick)),
+            'delivery' => $records->sum(fn (Order $order) => $toFloat($order->delivery)),
+            'additional' => $records->sum(fn (Order $order) => $toFloat($order->additional)),
+            'total' => $records->sum(fn (Order $order) => $toFloat($order->total)),
         ];
     }
 }
