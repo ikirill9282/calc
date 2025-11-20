@@ -30,14 +30,37 @@ class ConditionalSum extends Sum
 
     public function summarize(Builder $query, string $attribute): int | float | null
     {
-        // Если есть выбранные записи, используем getSelectedState() вместо суммирования всех записей
+        // ПРИОРИТЕТ: Если есть выбранные записи, суммируем только их
         if ($this->recordValueResolver !== null) {
-            $selectedState = $this->getSelectedState();
-            if ($selectedState !== null && method_exists($this->getLivewire(), 'getSelectedTableRecords')) {
-                $selectedRecords = $this->getLivewire()->getSelectedTableRecords();
-                if ($selectedRecords->isNotEmpty()) {
-                    return $selectedState;
+            try {
+                $livewire = $this->getLivewire();
+                if ($livewire && method_exists($livewire, 'getSelectedTableRecords')) {
+                    $selectedRecords = $livewire->getSelectedTableRecords();
+                    
+                    if ($selectedRecords && $selectedRecords->isNotEmpty()) {
+                        // Суммируем только выбранные записи
+                        $sum = (float) $selectedRecords->sum(function ($record) {
+                            $value = $this->evaluate($this->recordValueResolver, [
+                                'record' => $record,
+                            ]);
+                            return $value === null ? 0.0 : (float) $value;
+                        });
+                        
+                        // Логируем для отладки (можно убрать позже)
+                        \Log::debug('ConditionalSum::summarize - Selected records sum', [
+                            'attribute' => $attribute,
+                            'selected_count' => $selectedRecords->count(),
+                            'sum' => $sum,
+                        ]);
+                        
+                        return $sum;
+                    }
                 }
+            } catch (\Throwable $e) {
+                \Log::error('ConditionalSum::summarize error', [
+                    'error' => $e->getMessage(),
+                    'attribute' => $attribute,
+                ]);
             }
         }
 
@@ -106,20 +129,25 @@ class ConditionalSum extends Sum
             return parent::getSelectedState();
         }
 
-        /** @var Collection $records */
-        $records = $this->getLivewire()->getSelectedTableRecords();
+        try {
+            /** @var Collection $records */
+            $records = $this->getLivewire()->getSelectedTableRecords();
 
-        if ($records->isEmpty()) {
+            if ($records->isEmpty()) {
+                return parent::getSelectedState();
+            }
+
+            // Суммируем только выбранные записи
+            return (float) $records->sum(function ($record) {
+                $value = $this->evaluate($this->recordValueResolver, [
+                    'record' => $record,
+                ]);
+
+                return $value === null ? 0.0 : (float) $value;
+            });
+        } catch (\Throwable $e) {
             return parent::getSelectedState();
         }
-
-        return (float) $records->sum(function ($record) {
-            $value = $this->evaluate($this->recordValueResolver, [
-                'record' => $record,
-            ]);
-
-            return $value === null ? 0 : (float) $value;
-        });
     }
 
     protected function resolveExpression(string $attribute): ?string
