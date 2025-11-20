@@ -349,27 +349,27 @@ class ListOrders extends ListRecords
         ]);
     }
 
-    protected function getSelectedOrdersSummary(): ?array
+    public function getSelectedOrdersSummary(): ?array
     {
         // Пробуем получить выбранные записи разными способами
         $records = null;
         
-        // Способ 1: через метод getSelectedTableRecords
-        try {
-            $records = $this->getSelectedTableRecords(false); // false = не загружать из БД
-        } catch (\Throwable $e) {
-            Log::debug('ListOrders::getSelectedOrdersSummary - getSelectedTableRecords failed', [
-                'error' => $e->getMessage(),
-            ]);
-        }
-        
-        // Способ 2: через свойство selectedTableRecords напрямую
-        if (($records === null || $records->isEmpty()) && 
-            property_exists($this, 'selectedTableRecords') && 
-            !empty($this->selectedTableRecords)) {
+        // Способ 1: через свойство selectedTableRecords напрямую (самый надежный)
+        if (property_exists($this, 'selectedTableRecords') && !empty($this->selectedTableRecords)) {
             $selectedIds = $this->selectedTableRecords;
             if (!empty($selectedIds) && is_array($selectedIds)) {
                 $records = Order::query()->whereIn('id', $selectedIds)->get();
+            }
+        }
+        
+        // Способ 2: через метод getSelectedTableRecords (если способ 1 не сработал)
+        if (($records === null || $records->isEmpty())) {
+            try {
+                $records = $this->getSelectedTableRecords(true); // true = загрузить из БД
+            } catch (\Throwable $e) {
+                Log::debug('ListOrders::getSelectedOrdersSummary - getSelectedTableRecords failed', [
+                    'error' => $e->getMessage(),
+                ]);
             }
         }
         
