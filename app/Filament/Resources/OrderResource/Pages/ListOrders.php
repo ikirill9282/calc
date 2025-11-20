@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\View\View;
 
@@ -327,6 +328,11 @@ class ListOrders extends ListRecords
     {
         $summary = $this->getSelectedOrdersSummary();
 
+        Log::debug('ListOrders::getTableContentFooter', [
+            'summary_exists' => $summary !== null,
+            'summary_count' => $summary['count'] ?? 0,
+        ]);
+
         if ($summary === null) {
             return null;
         }
@@ -339,6 +345,11 @@ class ListOrders extends ListRecords
     protected function getSelectedOrdersSummary(): ?array
     {
         $records = $this->getSelectedTableRecords();
+
+        Log::debug('ListOrders::getSelectedOrdersSummary', [
+            'selected_count' => $records->count(),
+            'is_empty' => $records->isEmpty(),
+        ]);
 
         // Показываем сводку только при выборе 2 и более заявок
         if ($records->isEmpty() || $records->count() < 2) {
