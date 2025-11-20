@@ -30,6 +30,17 @@ class ConditionalSum extends Sum
 
     public function summarize(Builder $query, string $attribute): int | float | null
     {
+        // Если есть выбранные записи, используем getSelectedState() вместо суммирования всех записей
+        if ($this->recordValueResolver !== null) {
+            $selectedState = $this->getSelectedState();
+            if ($selectedState !== null && method_exists($this->getLivewire(), 'getSelectedTableRecords')) {
+                $selectedRecords = $this->getLivewire()->getSelectedTableRecords();
+                if ($selectedRecords->isNotEmpty()) {
+                    return $selectedState;
+                }
+            }
+        }
+
         $expression = $this->resolveExpression($attribute);
 
         if ($expression === null) {
