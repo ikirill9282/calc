@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Filament\Notifications\Notification;
 
 class LaravelLogs extends Page
@@ -54,26 +55,39 @@ class LaravelLogs extends Page
             $files = File::files($logsDir);
             foreach ($files as $file) {
                 $filename = $file->getFilename();
-                // Проверяем, является ли файл логом Laravel
+                // Проверяем, является ли файл логом Laravel (laravel.log или laravel-YYYY-MM-DD.log)
                 if (preg_match('/^laravel(-\d{4}-\d{2}-\d{2})?\.log$/', $filename)) {
                     $logFiles[] = $file->getPathname();
                 }
             }
         }
         
-        // Сортируем по дате (новые первыми)
+        // Сортируем по дате из имени файла (новые первыми)
         usort($logFiles, function($a, $b) {
+            // Извлекаем дату из имени файла
+            $dateA = $this->extractDateFromFilename(basename($a));
+            $dateB = $this->extractDateFromFilename(basename($b));
+            
+            // Если дата в имени файла, используем её, иначе время модификации
+            if ($dateA && $dateB) {
+                return strcmp($dateB, $dateA); // Сортируем по убыванию даты
+            }
+            
             return filemtime($b) - filemtime($a);
         });
         
         if (empty($logFiles)) {
+            Log::info('LaravelLogs: No log files found', ['logs_dir' => $logsDir]);
             $this->logs = [];
             return;
         }
 
+        Log::info('LaravelLogs: Found log files', ['count' => count($logFiles), 'files' => array_map('basename', $logFiles)]);
+
         // Читаем все файлы логов
         $allLogs = [];
         foreach ($logFiles as $logPath) {
+            Log::debug('LaravelLogs: Reading file', ['file' => basename($logPath)]);
             if (!File::exists($logPath)) {
                 continue;
             }
@@ -87,9 +101,14 @@ class LaravelLogs extends Page
             $currentLog = null;
             $buffer = '';
 
+            $lineCount = 0;
+            $matchedCount = 0;
             while (($line = fgets($handle)) !== false) {
+                $lineCount++;
                 // Проверяем, начинается ли новая запись лога
+                // Формат может быть: [2025-11-20 08:30:07] local.ERROR: или [2025-11-20 08:30:07] local.INFO:
                 if (preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] local\.(\w+):\s*(.*)$/', $line, $matches)) {
+                    $matchedCount++;
                     // Сохраняем предыдущую запись
                     if ($currentLog !== null) {
                         $allLogs[] = $currentLog;
@@ -126,10 +145,18 @@ class LaravelLogs extends Page
                 $allLogs[] = $currentLog;
             }
             
+            Log::debug('LaravelLogs: Parsed file', [
+                'file' => basename($logPath),
+                'lines' => $lineCount,
+                'matched' => $matchedCount,
+                'logs_found' => count($allLogs),
+            ]);
+            
             fclose($handle);
         }
         
         $parsedLogs = $allLogs;
+        Log::info('LaravelLogs: Total logs parsed', ['count' => count($parsedLogs)]);
 
         // Фильтрация по уровню
         if ($this->level !== 'all') {
@@ -215,12 +242,21 @@ class LaravelLogs extends Page
     public function getLevelColor($level): string
     {
         return match($level) {
-            'error' => 'text-red-600 bg-red-50',
-            'warning' => 'text-yellow-600 bg-yellow-50',
-            'info' => 'text-blue-600 bg-blue-50',
-            'debug' => 'text-gray-600 bg-gray-50',
-            default => 'text-gray-600 bg-gray-50',
+            'error' => 'text-red-100 bg-red-900/80 dark:bg-red-900/60 dark:text-red-200',
+            'warning' => 'text-yellow-100 bg-yellow-900/80 dark:bg-yellow-900/60 dark:text-yellow-200',
+            'info' => 'text-blue-100 bg-blue-900/80 dark:bg-blue-900/60 dark:text-blue-200',
+            'debug' => 'text-gray-100 bg-gray-700/80 dark:bg-gray-700/60 dark:text-gray-200',
+            default => 'text-gray-100 bg-gray-700/80 dark:bg-gray-700/60 dark:text-gray-200',
         };
+    }
+
+    protected function extractDateFromFilename(string $filename): ?string
+    {
+        // Извлекаем дату из имени файла laravel-YYYY-MM-DD.log
+        if (preg_match('/laravel-(\d{4}-\d{2}-\d{2})\.log$/', $filename, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }
 

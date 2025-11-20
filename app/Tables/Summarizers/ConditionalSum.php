@@ -142,6 +142,45 @@ class ConditionalSum extends Sum
         ];
     }
 
+    public function getState(): int | float | null
+    {
+        // ПРИОРИТЕТ: Если есть выбранные записи, суммируем только их
+        if ($this->recordValueResolver !== null) {
+            try {
+                $livewire = $this->getLivewire();
+                if ($livewire && method_exists($livewire, 'getSelectedTableRecords')) {
+                    $selectedRecords = $livewire->getSelectedTableRecords();
+                    
+                    if ($selectedRecords && $selectedRecords->isNotEmpty()) {
+                        // Суммируем только выбранные записи
+                        $sum = (float) $selectedRecords->sum(function ($record) {
+                            $value = $this->evaluate($this->recordValueResolver, [
+                                'record' => $record,
+                            ]);
+                            return $value === null ? 0.0 : (float) $value;
+                        });
+                        
+                        Log::info('ConditionalSum::getState - Using selected records sum', [
+                            'selected_count' => $selectedRecords->count(),
+                            'sum' => $sum,
+                            'selected_ids' => $selectedRecords->pluck('id')->toArray(),
+                        ]);
+                        
+                        return $sum;
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::error('ConditionalSum::getState error', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
+        }
+        
+        // Если нет выбранных записей, используем стандартную логику
+        return parent::getState();
+    }
+
     public function getSelectedState(): int | float | null
     {
         if ($this->recordValueResolver === null) {
