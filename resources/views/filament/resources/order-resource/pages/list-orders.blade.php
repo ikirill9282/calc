@@ -15,7 +15,7 @@
         <div 
             id="selected-orders-summary-container" 
             class="mt-6"
-            wire:ignore
+            style="min-height: 50px;"
         >
             {{-- Контент будет обновляться через JavaScript --}}
         </div>
@@ -23,7 +23,10 @@
         <script>
             (function() {
                 let updateTimeout;
-                const container = document.getElementById('selected-orders-summary-container');
+                
+                function getContainer() {
+                    return document.getElementById('selected-orders-summary-container');
+                }
                 
                 function formatNumber(num, decimals = 0) {
                     return Number(num || 0).toLocaleString('ru-RU', {
@@ -84,6 +87,12 @@
 
                         console.log('Selected IDs:', selectedIds, 'Checked boxes:', checkedBoxes.length);
                         
+                        const container = getContainer();
+                        if (!container) {
+                            console.error('Container not found!');
+                            return;
+                        }
+                        
                         if (selectedIds.length >= 2) {
                             // Вызываем метод Livewire для получения сводки
                             @this.call('getSelectedOrdersSummaryForIds', selectedIds).then(function(summary) {
@@ -138,19 +147,39 @@
                                             </div>
                                         </div>
                                     `;
-                                    container.innerHTML = summaryHtml;
-                                    container.style.display = 'block';
+                                    
+                                    const cont = getContainer();
+                                    if (cont) {
+                                        cont.innerHTML = summaryHtml;
+                                        cont.style.display = 'block';
+                                        cont.style.visibility = 'visible';
+                                        console.log('Container updated successfully');
+                                    } else {
+                                        console.error('Container not found when trying to update!');
+                                    }
                                 } else {
-                                    container.innerHTML = '';
-                                    container.style.display = 'none';
+                                    console.log('Summary invalid or count < 2', summary);
+                                    const cont = getContainer();
+                                    if (cont) {
+                                        cont.innerHTML = '';
+                                        cont.style.display = 'none';
+                                    }
                                 }
                             }).catch(function(error) {
                                 console.error('Error getting summary:', error);
-                                container.innerHTML = '<div class="p-2 bg-red-100 text-red-800 text-xs">Ошибка получения сводки: ' + error.message + '</div>';
+                                const cont = getContainer();
+                                if (cont) {
+                                    cont.innerHTML = '<div class="p-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs">Ошибка получения сводки: ' + (error.message || 'Unknown error') + '</div>';
+                                    cont.style.display = 'block';
+                                }
                             });
                         } else {
-                            container.innerHTML = '';
-                            container.style.display = 'none';
+                            console.log('Selected IDs < 2:', selectedIds.length);
+                            const cont = getContainer();
+                            if (cont) {
+                                cont.innerHTML = '';
+                                cont.style.display = 'none';
+                            }
                         }
                     }, 200);
                 }
