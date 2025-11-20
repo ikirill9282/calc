@@ -35,21 +35,54 @@
                 function updateSummary() {
                     clearTimeout(updateTimeout);
                     updateTimeout = setTimeout(function() {
-                        // Получаем выбранные ID из чекбоксов
-                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
                         const selectedIds = [];
                         
-                        checkboxes.forEach(function(checkbox) {
-                            const wireModel = checkbox.getAttribute('wire:model') || checkbox.getAttribute('wire\\:model');
-                            if (wireModel && wireModel.includes('selectedTableRecords') && checkbox.checked) {
-                                const match = wireModel.match(/selectedTableRecords\.(\d+)/);
-                                if (match) {
-                                    selectedIds.push(parseInt(match[1]));
+                        // Способ 1: Ищем все отмеченные чекбоксы и извлекаем ID из строки таблицы
+                        const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                        checkedBoxes.forEach(function(checkbox) {
+                            // Ищем строку таблицы, содержащую этот чекбокс
+                            const row = checkbox.closest('tr');
+                            if (row) {
+                                // Ищем все ячейки в строке
+                                const cells = row.querySelectorAll('td, th');
+                                // Обычно ID находится во второй ячейке (после чекбокса)
+                                for (let i = 0; i < cells.length; i++) {
+                                    const cellText = cells[i]?.textContent?.trim();
+                                    // Проверяем, является ли текст числом (ID заявки)
+                                    const id = parseInt(cellText);
+                                    if (id && !isNaN(id) && id > 100000 && id < 999999) {
+                                        // Это похоже на ID заявки
+                                        if (!selectedIds.includes(id)) {
+                                            selectedIds.push(id);
+                                        }
+                                        break;
+                                    }
                                 }
                             }
                         });
+                        
+                        // Способ 2: Если не нашли через строки, пробуем через wire:model
+                        if (selectedIds.length === 0) {
+                            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+                            allCheckboxes.forEach(function(checkbox) {
+                                if (checkbox.checked) {
+                                    const wireModel = checkbox.getAttribute('wire:model') || 
+                                                    checkbox.getAttribute('wire\\:model') ||
+                                                    checkbox.getAttribute('data-wire-model');
+                                    if (wireModel) {
+                                        const match = wireModel.match(/selectedTableRecords\[(\d+)\]|selectedTableRecords\.(\d+)/);
+                                        if (match) {
+                                            const id = parseInt(match[1] || match[2]);
+                                            if (id && !selectedIds.includes(id)) {
+                                                selectedIds.push(id);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
 
-                        console.log('Selected IDs:', selectedIds);
+                        console.log('Selected IDs:', selectedIds, 'Checked boxes:', checkedBoxes.length);
                         
                         if (selectedIds.length >= 2) {
                             // Вызываем метод Livewire для получения сводки
