@@ -16,9 +16,16 @@ class ListOrders extends ListRecords
 {
     protected static string $resource = OrderResource::class;
 
+    protected static string $view = 'filament.resources.order-resource.pages.list-orders';
+
     protected $listeners = [
         'inlineEditCell' => 'handleInlineEditCell',
     ];
+
+    public function getSelectedSummaryProperty(): ?array
+    {
+        return $this->getSelectedOrdersSummary();
+    }
 
     protected function getHeaderActions(): array
     {
