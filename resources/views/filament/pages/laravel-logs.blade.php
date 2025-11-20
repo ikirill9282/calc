@@ -55,13 +55,18 @@
                         @foreach ($logs as $log)
                             <div class="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
                                 <div class="flex items-start justify-between gap-4 mb-2">
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-3 flex-wrap">
                                         <span class="px-2 py-1 text-xs font-semibold rounded {{ $this->getLevelColor($log['level']) }}">
                                             {{ strtoupper($log['level']) }}
                                         </span>
                                         <span class="text-sm text-gray-500">
                                             {{ $log['date'] }}
                                         </span>
+                                        @if(isset($log['file']))
+                                            <span class="text-xs text-gray-400">
+                                                ({{ $log['file'] }})
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                                 

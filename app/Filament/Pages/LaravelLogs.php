@@ -46,63 +46,90 @@ class LaravelLogs extends Page
 
     public function loadLogs(): void
     {
-        $logPath = storage_path('logs/laravel.log');
+        $logsDir = storage_path('logs');
+        $logFiles = [];
         
-        if (!File::exists($logPath)) {
-            $this->logs = [];
-            return;
-        }
-
-        // Читаем файл построчно для больших файлов
-        $handle = fopen($logPath, 'r');
-        if (!$handle) {
-            $this->logs = [];
-            return;
-        }
-
-        $parsedLogs = [];
-        $currentLog = null;
-        $buffer = '';
-
-        while (($line = fgets($handle)) !== false) {
-            // Проверяем, начинается ли новая запись лога
-            if (preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] local\.(\w+):\s*(.*)$/', $line, $matches)) {
-                // Сохраняем предыдущую запись
-                if ($currentLog !== null) {
-                    $parsedLogs[] = $currentLog;
+        // Получаем все файлы логов (daily формат: laravel-YYYY-MM-DD.log или single: laravel.log)
+        if (File::isDirectory($logsDir)) {
+            $files = File::files($logsDir);
+            foreach ($files as $file) {
+                $filename = $file->getFilename();
+                // Проверяем, является ли файл логом Laravel
+                if (preg_match('/^laravel(-\d{4}-\d{2}-\d{2})?\.log$/', $filename)) {
+                    $logFiles[] = $file->getPathname();
                 }
-                
-                $currentLog = [
-                    'date' => $matches[1],
-                    'level' => strtolower($matches[2]),
-                    'message' => trim($matches[3]),
-                    'stack' => '',
-                ];
-                $buffer = '';
-            } elseif ($currentLog !== null) {
-                // Продолжение предыдущей записи
-                $buffer .= $line;
-                
-                // Проверяем, является ли это стеком вызовов
-                if (preg_match('/^(Stack trace:|#\d+)/', trim($line))) {
-                    $currentLog['stack'] .= $buffer;
+            }
+        }
+        
+        // Сортируем по дате (новые первыми)
+        usort($logFiles, function($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        
+        if (empty($logFiles)) {
+            $this->logs = [];
+            return;
+        }
+
+        // Читаем все файлы логов
+        $allLogs = [];
+        foreach ($logFiles as $logPath) {
+            if (!File::exists($logPath)) {
+                continue;
+            }
+
+            // Читаем файл построчно для больших файлов
+            $handle = fopen($logPath, 'r');
+            if (!$handle) {
+                continue;
+            }
+
+            $currentLog = null;
+            $buffer = '';
+
+            while (($line = fgets($handle)) !== false) {
+                // Проверяем, начинается ли новая запись лога
+                if (preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] local\.(\w+):\s*(.*)$/', $line, $matches)) {
+                    // Сохраняем предыдущую запись
+                    if ($currentLog !== null) {
+                        $allLogs[] = $currentLog;
+                    }
+                    
+                    $currentLog = [
+                        'date' => $matches[1],
+                        'level' => strtolower($matches[2]),
+                        'message' => trim($matches[3]),
+                        'stack' => '',
+                        'file' => basename($logPath),
+                    ];
                     $buffer = '';
-                } elseif (empty($currentLog['stack']) && !empty(trim($line))) {
-                    // Если еще нет стека, это продолжение сообщения
-                    $currentLog['message'] .= "\n" . trim($line);
+                } elseif ($currentLog !== null) {
+                    // Продолжение предыдущей записи
+                    $buffer .= $line;
+                    
+                    // Проверяем, является ли это стеком вызовов
+                    if (preg_match('/^(Stack trace:|#\d+)/', trim($line))) {
+                        $currentLog['stack'] .= $buffer;
+                        $buffer = '';
+                    } elseif (empty($currentLog['stack']) && !empty(trim($line))) {
+                        // Если еще нет стека, это продолжение сообщения
+                        $currentLog['message'] .= "\n" . trim($line);
+                    }
                 }
             }
-        }
-        
-        // Добавляем последнюю запись
-        if ($currentLog !== null) {
-            if (!empty($buffer)) {
-                $currentLog['stack'] .= $buffer;
+            
+            // Добавляем последнюю запись из этого файла
+            if ($currentLog !== null) {
+                if (!empty($buffer)) {
+                    $currentLog['stack'] .= $buffer;
+                }
+                $allLogs[] = $currentLog;
             }
-            $parsedLogs[] = $currentLog;
+            
+            fclose($handle);
         }
         
-        fclose($handle);
+        $parsedLogs = $allLogs;
 
         // Фильтрация по уровню
         if ($this->level !== 'all') {
@@ -162,14 +189,25 @@ class LaravelLogs extends Page
 
     public function clearLogs(): void
     {
-        $logPath = storage_path('logs/laravel.log');
-        if (File::exists($logPath)) {
-            File::put($logPath, '');
+        $logsDir = storage_path('logs');
+        $cleared = 0;
+        
+        if (File::isDirectory($logsDir)) {
+            $files = File::files($logsDir);
+            foreach ($files as $file) {
+                $filename = $file->getFilename();
+                // Очищаем все файлы логов Laravel
+                if (preg_match('/^laravel(-\d{4}-\d{2}-\d{2})?\.log$/', $filename)) {
+                    File::put($file->getPathname(), '');
+                    $cleared++;
+                }
+            }
         }
+        
         $this->loadLogs();
         
         Notification::make()
-            ->title('Логи очищены')
+            ->title("Очищено файлов логов: {$cleared}")
             ->success()
             ->send();
     }
