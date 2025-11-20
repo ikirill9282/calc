@@ -22,9 +22,19 @@ class ListOrders extends ListRecords
         'inlineEditCell' => 'handleInlineEditCell',
     ];
 
+    public $selectedSummaryData = null;
+
+    public function updatedSelectedTableRecords(): void
+    {
+        $this->selectedSummaryData = $this->getSelectedOrdersSummary();
+    }
+
     public function getSelectedSummaryProperty(): ?array
     {
-        return $this->getSelectedOrdersSummary();
+        if ($this->selectedSummaryData === null) {
+            $this->selectedSummaryData = $this->getSelectedOrdersSummary();
+        }
+        return $this->selectedSummaryData;
     }
 
     protected function getHeaderActions(): array
@@ -373,14 +383,15 @@ class ListOrders extends ListRecords
             }
         }
         
-        Log::debug('ListOrders::getSelectedOrdersSummary', [
+        Log::info('ListOrders::getSelectedOrdersSummary', [
             'selected_count_method' => $records ? $records->count() : 0,
             'selected_ids_property' => property_exists($this, 'selectedTableRecords') 
                 ? (is_array($this->selectedTableRecords) ? count($this->selectedTableRecords) : 'not_array')
                 : 'no_property',
             'selected_ids' => property_exists($this, 'selectedTableRecords') && is_array($this->selectedTableRecords)
-                ? $this->selectedTableRecords
+                ? array_slice($this->selectedTableRecords, 0, 10) // Логируем только первые 10
                 : [],
+            'will_return_summary' => ($records !== null && $records->isNotEmpty() && $records->count() >= 2),
         ]);
 
         // Показываем сводку только при выборе 2 и более заявок
