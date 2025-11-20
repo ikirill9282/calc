@@ -22,10 +22,46 @@ class ListOrders extends ListRecords
         'inlineEditCell' => 'handleInlineEditCell',
     ];
 
-    public function refreshSummary()
+    public function getSelectedOrdersSummaryForIds(array $ids): ?array
     {
-        // Метод для обновления сводки через JavaScript
-        return $this->getSelectedOrdersSummary();
+        if (count($ids) < 2) {
+            return null;
+        }
+
+        $records = Order::query()->whereIn('id', $ids)->get();
+        
+        if ($records->isEmpty()) {
+            return null;
+        }
+
+        // Вспомогательная функция для безопасного преобразования в число
+        $toFloat = function ($value): float {
+            if ($value === null || $value === '') {
+                return 0.0;
+            }
+            if (is_numeric($value)) {
+                return (float) $value;
+            }
+            // Пытаемся извлечь число из строки (например, "10000 ₽" -> 10000)
+            if (is_string($value)) {
+                preg_match('/[\d.,]+/', str_replace(',', '.', $value), $matches);
+                return $matches ? (float) str_replace(',', '.', $matches[0]) : 0.0;
+            }
+            return 0.0;
+        };
+
+        return [
+            'count' => $records->count(),
+            'pallets_count' => $records->sum(fn (Order $order) => $toFloat($order->pallets_count)),
+            'boxes_count' => $records->sum(fn (Order $order) => $toFloat(OrderResource::getSummaryDisplayValue($order, 'boxes_count'))),
+            'boxes_volume' => $records->sum(fn (Order $order) => $toFloat(OrderResource::getSummaryDisplayValue($order, 'boxes_volume'))),
+            'boxes_weight' => $records->sum(fn (Order $order) => $toFloat(OrderResource::getSummaryDisplayValue($order, 'boxes_weight'))),
+            'palletizing_count' => $records->sum(fn (Order $order) => $toFloat($order->palletizing_count)),
+            'pick' => $records->sum(fn (Order $order) => $toFloat($order->pick)),
+            'delivery' => $records->sum(fn (Order $order) => $toFloat($order->delivery)),
+            'additional' => $records->sum(fn (Order $order) => $toFloat($order->additional)),
+            'total' => $records->sum(fn (Order $order) => $toFloat($order->total)),
+        ];
     }
 
     protected function getHeaderActions(): array
