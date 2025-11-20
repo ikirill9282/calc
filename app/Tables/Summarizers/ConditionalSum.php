@@ -148,26 +148,56 @@ class ConditionalSum extends Sum
         if ($this->recordValueResolver !== null) {
             try {
                 $livewire = $this->getLivewire();
+                
+                // Пробуем получить выбранные записи разными способами
+                $selectedRecords = null;
+                
+                // Способ 1: через метод getSelectedTableRecords
                 if ($livewire && method_exists($livewire, 'getSelectedTableRecords')) {
-                    $selectedRecords = $livewire->getSelectedTableRecords();
-                    
-                    if ($selectedRecords && $selectedRecords->isNotEmpty()) {
-                        // Суммируем только выбранные записи
-                        $sum = (float) $selectedRecords->sum(function ($record) {
-                            $value = $this->evaluate($this->recordValueResolver, [
-                                'record' => $record,
-                            ]);
-                            return $value === null ? 0.0 : (float) $value;
-                        });
-                        
-                        Log::info('ConditionalSum::getState - Using selected records sum', [
-                            'selected_count' => $selectedRecords->count(),
-                            'sum' => $sum,
-                            'selected_ids' => $selectedRecords->pluck('id')->toArray(),
-                        ]);
-                        
-                        return $sum;
+                    $selectedRecords = $livewire->getSelectedTableRecords(false); // false = не загружать из БД
+                }
+                
+                // Способ 2: через свойство selectedTableRecords напрямую
+                if (($selectedRecords === null || $selectedRecords->isEmpty()) && 
+                    $livewire && 
+                    property_exists($livewire, 'selectedTableRecords') && 
+                    !empty($livewire->selectedTableRecords)) {
+                    // Получаем ID выбранных записей
+                    $selectedIds = $livewire->selectedTableRecords;
+                    if (!empty($selectedIds)) {
+                        // Загружаем записи из БД
+                        $table = $livewire->getTable();
+                        if ($table) {
+                            $model = $table->getQuery()->getModel();
+                            $selectedRecords = $model::query()->whereIn('id', $selectedIds)->get();
+                        }
                     }
+                }
+                
+                Log::debug('ConditionalSum::getState - Selected records check', [
+                    'has_livewire' => $livewire !== null,
+                    'selected_count_method' => $selectedRecords ? $selectedRecords->count() : 0,
+                    'selected_ids_property' => $livewire && property_exists($livewire, 'selectedTableRecords') 
+                        ? (is_array($livewire->selectedTableRecords) ? count($livewire->selectedTableRecords) : 'not_array')
+                        : 'no_property',
+                ]);
+                
+                if ($selectedRecords && $selectedRecords->isNotEmpty()) {
+                    // Суммируем только выбранные записи
+                    $sum = (float) $selectedRecords->sum(function ($record) {
+                        $value = $this->evaluate($this->recordValueResolver, [
+                            'record' => $record,
+                        ]);
+                        return $value === null ? 0.0 : (float) $value;
+                    });
+                    
+                    Log::info('ConditionalSum::getState - Using selected records sum', [
+                        'selected_count' => $selectedRecords->count(),
+                        'sum' => $sum,
+                        'selected_ids' => $selectedRecords->pluck('id')->toArray(),
+                    ]);
+                    
+                    return $sum;
                 }
             } catch (\Throwable $e) {
                 Log::error('ConditionalSum::getState error', [

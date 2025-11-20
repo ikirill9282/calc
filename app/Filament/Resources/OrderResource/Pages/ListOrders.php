@@ -344,15 +344,40 @@ class ListOrders extends ListRecords
 
     protected function getSelectedOrdersSummary(): ?array
     {
-        $records = $this->getSelectedTableRecords();
-
+        // Пробуем получить выбранные записи разными способами
+        $records = null;
+        
+        // Способ 1: через метод getSelectedTableRecords
+        try {
+            $records = $this->getSelectedTableRecords(false); // false = не загружать из БД
+        } catch (\Throwable $e) {
+            Log::debug('ListOrders::getSelectedOrdersSummary - getSelectedTableRecords failed', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+        
+        // Способ 2: через свойство selectedTableRecords напрямую
+        if (($records === null || $records->isEmpty()) && 
+            property_exists($this, 'selectedTableRecords') && 
+            !empty($this->selectedTableRecords)) {
+            $selectedIds = $this->selectedTableRecords;
+            if (!empty($selectedIds) && is_array($selectedIds)) {
+                $records = Order::query()->whereIn('id', $selectedIds)->get();
+            }
+        }
+        
         Log::debug('ListOrders::getSelectedOrdersSummary', [
-            'selected_count' => $records->count(),
-            'is_empty' => $records->isEmpty(),
+            'selected_count_method' => $records ? $records->count() : 0,
+            'selected_ids_property' => property_exists($this, 'selectedTableRecords') 
+                ? (is_array($this->selectedTableRecords) ? count($this->selectedTableRecords) : 'not_array')
+                : 'no_property',
+            'selected_ids' => property_exists($this, 'selectedTableRecords') && is_array($this->selectedTableRecords)
+                ? $this->selectedTableRecords
+                : [],
         ]);
 
         // Показываем сводку только при выборе 2 и более заявок
-        if ($records->isEmpty() || $records->count() < 2) {
+        if ($records === null || $records->isEmpty() || $records->count() < 2) {
             return null;
         }
 
