@@ -23,28 +23,38 @@
         <script>
             (function() {
                 let updateTimeout;
+                const container = document.getElementById('selected-orders-summary-container');
+                
+                function formatNumber(num, decimals = 0) {
+                    return Number(num || 0).toLocaleString('ru-RU', {
+                        minimumFractionDigits: decimals,
+                        maximumFractionDigits: decimals
+                    });
+                }
                 
                 function updateSummary() {
                     clearTimeout(updateTimeout);
                     updateTimeout = setTimeout(function() {
                         // Получаем выбранные ID из чекбоксов
-                        const checkboxes = document.querySelectorAll('input[type="checkbox"][wire\\:model*="selectedTableRecords"]');
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
                         const selectedIds = [];
                         
                         checkboxes.forEach(function(checkbox) {
-                            if (checkbox.checked) {
-                                const match = checkbox.getAttribute('wire:model')?.match(/selectedTableRecords\.(\d+)/);
+                            const wireModel = checkbox.getAttribute('wire:model') || checkbox.getAttribute('wire\\:model');
+                            if (wireModel && wireModel.includes('selectedTableRecords') && checkbox.checked) {
+                                const match = wireModel.match(/selectedTableRecords\.(\d+)/);
                                 if (match) {
                                     selectedIds.push(parseInt(match[1]));
                                 }
                             }
                         });
 
-                        const container = document.getElementById('selected-orders-summary-container');
+                        console.log('Selected IDs:', selectedIds);
                         
                         if (selectedIds.length >= 2) {
                             // Вызываем метод Livewire для получения сводки
                             @this.call('getSelectedOrdersSummaryForIds', selectedIds).then(function(summary) {
+                                console.log('Summary received:', summary);
                                 if (summary && summary.count >= 2) {
                                     // Формируем HTML сводки
                                     const summaryHtml = `
@@ -52,45 +62,45 @@
                                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-primary-200/60 pb-3 text-sm font-medium text-primary-900 dark:border-primary-400/20 dark:text-primary-100">
                                                 <span>Выбранные заявки</span>
                                                 <span class="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-200">
-                                                    Количество: ${summary.count.toLocaleString('ru-RU')}
+                                                    Количество: ${formatNumber(summary.count)}
                                                 </span>
                                             </div>
                                             <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Палет</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.pallets_count || 0).toLocaleString('ru-RU')}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pallets_count)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Коробов</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.boxes_count || 0).toLocaleString('ru-RU')}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_count)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Объем, м³</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.boxes_volume || 0).toLocaleString('ru-RU', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_volume, 2)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Вес, кг</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.boxes_weight || 0).toLocaleString('ru-RU', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_weight, 2)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Палетирование, шт</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.palletizing_count || 0).toLocaleString('ru-RU')}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.palletizing_count)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Стоимость забора, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.pick || 0).toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pick, 2)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Доставка, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.delivery || 0).toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.delivery, 2)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Палетирование, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.additional || 0).toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.additional, 2)}</p>
                                                 </div>
                                                 <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                                                     <p class="text-xs text-slate-500">Предварительная сумма, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${(summary.total || 0).toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.total, 2)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,39 +113,41 @@
                                 }
                             }).catch(function(error) {
                                 console.error('Error getting summary:', error);
-                                container.innerHTML = '';
-                                container.style.display = 'none';
+                                container.innerHTML = '<div class="p-2 bg-red-100 text-red-800 text-xs">Ошибка получения сводки: ' + error.message + '</div>';
                             });
                         } else {
                             container.innerHTML = '';
                             container.style.display = 'none';
                         }
-                    }, 300);
+                    }, 200);
                 }
 
                 // Отслеживаем изменения чекбоксов
                 document.addEventListener('change', function(e) {
-                    if (e.target.type === 'checkbox' && e.target.getAttribute('wire:model')?.includes('selectedTableRecords')) {
+                    if (e.target.type === 'checkbox') {
                         updateSummary();
                     }
                 });
 
-                // Также отслеживаем через Livewire события
-                if (window.Livewire) {
-                    Livewire.hook('morph.updated', function() {
-                        updateSummary();
-                    });
-                }
+                // Отслеживаем клики (на случай если change не срабатывает)
+                document.addEventListener('click', function(e) {
+                    if (e.target.type === 'checkbox') {
+                        setTimeout(updateSummary, 100);
+                    }
+                });
 
                 // Обновляем при загрузке страницы
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', updateSummary);
-                } else {
+                function init() {
                     updateSummary();
+                    // Обновляем периодически
+                    setInterval(updateSummary, 1500);
                 }
 
-                // Обновляем периодически (на случай если события не срабатывают)
-                setInterval(updateSummary, 1000);
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
             })();
         </script>
 

@@ -24,13 +24,19 @@ class ListOrders extends ListRecords
 
     public function getSelectedOrdersSummaryForIds(array $ids): ?array
     {
+        Log::info('getSelectedOrdersSummaryForIds called', ['ids' => $ids, 'count' => count($ids)]);
+        
         if (count($ids) < 2) {
+            Log::debug('getSelectedOrdersSummaryForIds: less than 2 ids', ['count' => count($ids)]);
             return null;
         }
 
         $records = Order::query()->whereIn('id', $ids)->get();
         
+        Log::info('getSelectedOrdersSummaryForIds: records found', ['count' => $records->count()]);
+        
         if ($records->isEmpty()) {
+            Log::debug('getSelectedOrdersSummaryForIds: no records found');
             return null;
         }
 
