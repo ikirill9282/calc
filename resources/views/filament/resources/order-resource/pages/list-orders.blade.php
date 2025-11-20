@@ -11,15 +11,11 @@
 
         {{ $this->table }}
 
-        @php
-            use Illuminate\Support\Facades\Log;
-        @endphp
-
         {{-- Сводка по выбранным заявкам --}}
         @php
             $selectedIds = $this->selectedTableRecords ?? [];
             $selectedCount = is_array($selectedIds) ? count($selectedIds) : 0;
-            Log::info('View render - selected count', ['count' => $selectedCount, 'ids' => $selectedIds]);
+            \Illuminate\Support\Facades\Log::info('View render - selected count', ['count' => $selectedCount, 'ids' => $selectedIds]);
         @endphp
         
         {{-- Отладка --}}
@@ -30,7 +26,7 @@
         @if ($selectedCount >= 2)
             @php
                 $summary = $this->getSelectedOrdersSummary();
-                Log::info('View render - summary', ['summary_exists' => $summary !== null, 'count' => $summary['count'] ?? 0]);
+                \Illuminate\Support\Facades\Log::info('View render - summary', ['summary_exists' => $summary !== null, 'count' => $summary['count'] ?? 0]);
             @endphp
             
             @if ($summary)
