@@ -15,7 +15,7 @@
         <div 
             id="selected-orders-summary-container" 
             class="mt-6"
-            style="min-height: 50px;"
+            style="min-height: 50px; position: relative; z-index: 10;"
         >
             {{-- Контент будет обновляться через JavaScript --}}
         </div>
@@ -100,7 +100,7 @@
                                 if (summary && summary.count >= 2) {
                                     // Формируем HTML сводки
                                     const summaryHtml = `
-                                        <div class="fi-ta-selected-summary rounded-xl border border-primary-200/60 bg-primary-50/60 p-4 shadow-sm dark:border-primary-400/20 dark:bg-primary-500/10">
+                                        <div class="fi-ta-selected-summary rounded-xl border border-primary-200/60 bg-primary-50/60 p-4 shadow-sm dark:border-primary-400/20 dark:bg-primary-500/10" style="position: relative; z-index: 100;">
                                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-primary-200/60 pb-3 text-sm font-medium text-primary-900 dark:border-primary-400/20 dark:text-primary-100">
                                                 <span>Выбранные заявки</span>
                                                 <span class="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-200">
@@ -150,10 +150,34 @@
                                     
                                     const cont = getContainer();
                                     if (cont) {
+                                        // Временно добавляем яркий фон для отладки
+                                        cont.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                                        cont.style.border = '2px solid red';
+                                        cont.style.padding = '20px';
+                                        cont.style.margin = '20px 0';
+                                        
                                         cont.innerHTML = summaryHtml;
                                         cont.style.display = 'block';
                                         cont.style.visibility = 'visible';
-                                        console.log('Container updated successfully');
+                                        cont.style.opacity = '1';
+                                        cont.style.height = 'auto';
+                                        cont.style.overflow = 'visible';
+                                        cont.style.position = 'relative';
+                                        cont.style.zIndex = '1000';
+                                        
+                                        const rect = cont.getBoundingClientRect();
+                                        console.log('Container updated successfully', {
+                                            position: rect,
+                                            display: window.getComputedStyle(cont).display,
+                                            visibility: window.getComputedStyle(cont).visibility,
+                                            opacity: window.getComputedStyle(cont).opacity,
+                                            innerHTML_length: cont.innerHTML.length
+                                        });
+                                        
+                                        // Прокручиваем к контейнеру
+                                        setTimeout(function() {
+                                            cont.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 200);
                                     } else {
                                         console.error('Container not found when trying to update!');
                                     }
