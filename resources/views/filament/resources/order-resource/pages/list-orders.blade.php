@@ -103,42 +103,42 @@
                                                     Количество: ${formatNumber(summary.count)}
                                                 </span>
                                             </div>
-                                            <div class="flex flex-wrap items-center gap-4 text-sm" style="overflow-x: auto;">
+                                            <div class="flex flex-wrap items-center gap-4 text-base" style="overflow-x: auto;">
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Палет:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pallets_count)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Палет:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pallets_count)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Коробов:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_count)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Коробов:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_count)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Объем, м³:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_volume, 2)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Объем, м³:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_volume, 2)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Вес, кг:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_weight, 2)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Вес, кг:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_weight, 2)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Палетирование, шт:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.palletizing_count)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Палетирование, шт:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.palletizing_count)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Стоимость забора, ₽:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pick, 2)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Стоимость забора, ₽:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pick, 2)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Доставка, ₽:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.delivery, 2)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Доставка, ₽:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.delivery, 2)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Палетирование, ₽:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.additional, 2)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Палетирование, ₽:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.additional, 2)}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Предварительная сумма, ₽:</span>
-                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.total, 2)}</span>
+                                                    <span class="text-sm text-slate-500 dark:text-slate-400">Предварительная сумма, ₽:</span>
+                                                    <span class="text-base font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.total, 2)}</span>
                                                 </div>
                                             </div>
                                         </div>
