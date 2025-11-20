@@ -7,6 +7,7 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ConditionalSum extends Sum
 {
@@ -34,8 +35,20 @@ class ConditionalSum extends Sum
         if ($this->recordValueResolver !== null) {
             try {
                 $livewire = $this->getLivewire();
+                Log::debug('ConditionalSum::summarize - Checking selected records', [
+                    'attribute' => $attribute,
+                    'has_livewire' => $livewire !== null,
+                    'has_method' => $livewire && method_exists($livewire, 'getSelectedTableRecords'),
+                ]);
+                
                 if ($livewire && method_exists($livewire, 'getSelectedTableRecords')) {
                     $selectedRecords = $livewire->getSelectedTableRecords();
+                    
+                    Log::debug('ConditionalSum::summarize - Selected records', [
+                        'attribute' => $attribute,
+                        'selected_count' => $selectedRecords ? $selectedRecords->count() : 0,
+                        'is_empty' => $selectedRecords ? $selectedRecords->isEmpty() : true,
+                    ]);
                     
                     if ($selectedRecords && $selectedRecords->isNotEmpty()) {
                         // Суммируем только выбранные записи
@@ -46,23 +59,29 @@ class ConditionalSum extends Sum
                             return $value === null ? 0.0 : (float) $value;
                         });
                         
-                        // Логируем для отладки (можно убрать позже)
-                        \Log::debug('ConditionalSum::summarize - Selected records sum', [
+                        // Логируем для отладки
+                        Log::info('ConditionalSum::summarize - Using selected records sum', [
                             'attribute' => $attribute,
                             'selected_count' => $selectedRecords->count(),
                             'sum' => $sum,
+                            'selected_ids' => $selectedRecords->pluck('id')->toArray(),
                         ]);
                         
                         return $sum;
                     }
                 }
             } catch (\Throwable $e) {
-                \Log::error('ConditionalSum::summarize error', [
+                Log::error('ConditionalSum::summarize error', [
                     'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
                     'attribute' => $attribute,
                 ]);
             }
         }
+        
+        Log::debug('ConditionalSum::summarize - Using default sum (all records)', [
+            'attribute' => $attribute,
+        ]);
 
         $expression = $this->resolveExpression($attribute);
 
