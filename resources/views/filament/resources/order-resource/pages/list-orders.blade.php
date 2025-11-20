@@ -98,51 +98,51 @@
                             @this.call('getSelectedOrdersSummaryForIds', selectedIds).then(function(summary) {
                                 console.log('Summary received:', summary);
                                 if (summary && summary.count >= 2) {
-                                    // Формируем HTML сводки
+                                    // Формируем HTML сводки в одну линию
                                     const summaryHtml = `
                                         <div class="fi-ta-selected-summary rounded-xl border border-primary-200/60 bg-primary-50/60 p-4 shadow-sm dark:border-primary-400/20 dark:bg-primary-500/10" style="position: relative; z-index: 100;">
-                                            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-primary-200/60 pb-3 text-sm font-medium text-primary-900 dark:border-primary-400/20 dark:text-primary-100">
+                                            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-primary-200/60 pb-3 mb-3 text-sm font-medium text-primary-900 dark:border-primary-400/20 dark:text-primary-100">
                                                 <span>Выбранные заявки</span>
                                                 <span class="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-200">
                                                     Количество: ${formatNumber(summary.count)}
                                                 </span>
                                             </div>
-                                            <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Палет</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pallets_count)}</p>
+                                            <div class="flex flex-wrap items-center gap-4 text-sm" style="overflow-x: auto;">
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Палет:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pallets_count)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Коробов</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_count)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Коробов:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_count)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Объем, м³</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_volume, 2)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Объем, м³:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_volume, 2)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Вес, кг</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_weight, 2)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Вес, кг:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.boxes_weight, 2)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Палетирование, шт</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.palletizing_count)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Палетирование, шт:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.palletizing_count)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Стоимость забора, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pick, 2)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Стоимость забора, ₽:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pick, 2)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Доставка, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.delivery, 2)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Доставка, ₽:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.delivery, 2)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Палетирование, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.additional, 2)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Палетирование, ₽:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.additional, 2)}</span>
                                                 </div>
-                                                <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
-                                                    <p class="text-xs text-slate-500">Предварительная сумма, ₽</p>
-                                                    <p class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.total, 2)}</p>
+                                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">Предварительная сумма, ₽:</span>
+                                                    <span class="font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.total, 2)}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,12 +150,6 @@
                                     
                                     const cont = getContainer();
                                     if (cont) {
-                                        // Временно добавляем яркий фон для отладки
-                                        cont.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                                        cont.style.border = '2px solid red';
-                                        cont.style.padding = '20px';
-                                        cont.style.margin = '20px 0';
-                                        
                                         cont.innerHTML = summaryHtml;
                                         cont.style.display = 'block';
                                         cont.style.visibility = 'visible';
