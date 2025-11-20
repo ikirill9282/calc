@@ -85,18 +85,14 @@
                             });
                         }
 
-                        console.log('Selected IDs:', selectedIds, 'Checked boxes:', checkedBoxes.length);
-                        
                         const container = getContainer();
                         if (!container) {
-                            console.error('Container not found!');
                             return;
                         }
                         
                         if (selectedIds.length >= 2) {
                             // Вызываем метод Livewire для получения сводки
                             @this.call('getSelectedOrdersSummaryForIds', selectedIds).then(function(summary) {
-                                console.log('Summary received:', summary);
                                 if (summary && summary.count >= 2) {
                                     // Формируем HTML сводки в одну линию
                                     const summaryHtml = `
@@ -158,25 +154,8 @@
                                         cont.style.overflow = 'visible';
                                         cont.style.position = 'relative';
                                         cont.style.zIndex = '1000';
-                                        
-                                        const rect = cont.getBoundingClientRect();
-                                        console.log('Container updated successfully', {
-                                            position: rect,
-                                            display: window.getComputedStyle(cont).display,
-                                            visibility: window.getComputedStyle(cont).visibility,
-                                            opacity: window.getComputedStyle(cont).opacity,
-                                            innerHTML_length: cont.innerHTML.length
-                                        });
-                                        
-                                        // Прокручиваем к контейнеру
-                                        setTimeout(function() {
-                                            cont.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        }, 200);
-                                    } else {
-                                        console.error('Container not found when trying to update!');
                                     }
                                 } else {
-                                    console.log('Summary invalid or count < 2', summary);
                                     const cont = getContainer();
                                     if (cont) {
                                         cont.innerHTML = '';
@@ -184,15 +163,13 @@
                                     }
                                 }
                             }).catch(function(error) {
-                                console.error('Error getting summary:', error);
                                 const cont = getContainer();
                                 if (cont) {
-                                    cont.innerHTML = '<div class="p-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs">Ошибка получения сводки: ' + (error.message || 'Unknown error') + '</div>';
-                                    cont.style.display = 'block';
+                                    cont.innerHTML = '';
+                                    cont.style.display = 'none';
                                 }
                             });
                         } else {
-                            console.log('Selected IDs < 2:', selectedIds.length);
                             const cont = getContainer();
                             if (cont) {
                                 cont.innerHTML = '';
