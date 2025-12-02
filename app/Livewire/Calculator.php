@@ -223,11 +223,17 @@ class Calculator extends Component
         $weight = $this->getField('boxes_data.weight');
 
         if (!empty($volume) && !empty($weight)) {
-          $density = round($weight / $volume);
-          if ($density > 300) {
-            $this->setField('individual', 1);
-          } elseif ($this->getField('individual')) {
-            $this->setField('individual', 0);
+          // Преобразуем в числа для безопасного деления
+          $volume = floatval($volume);
+          $weight = floatval($weight);
+          
+          if ($volume > 0) {
+            $density = round($weight / $volume);
+            if ($density > 300) {
+              $this->setField('individual', 1);
+            } elseif ($this->getField('individual')) {
+              $this->setField('individual', 0);
+            }
           }
         }
       }
@@ -236,10 +242,13 @@ class Calculator extends Component
       if ($this->getField('cargo') == 'pallets') {
         $pallets_weight = $this->getField('pallets_data.weight');
         
-        if ($pallets_weight && $pallets_weight > 400) {
-          $this->setField('individual', 1);
-        } else {
-          $this->setField('individual', 0);
+        if ($pallets_weight) {
+          $pallets_weight = floatval($pallets_weight);
+          if ($pallets_weight > 400) {
+            $this->setField('individual', 1);
+          } else {
+            $this->setField('individual', 0);
+          }
         }
       }
     }
