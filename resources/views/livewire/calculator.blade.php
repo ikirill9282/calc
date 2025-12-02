@@ -85,6 +85,13 @@
                             <x-form.datepicker id="datepicker2" name="fields.transfer_method_receive.date"
                                 label="Укажите дату отгрузки" wire:model.live="fields.transfer_method_receive.date" />
 
+                            @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
+                            <div class="flex justify-start items-start gap-3 w-full p-4 mt-4 text-white bg-amber-600">
+                                <span>@include('icons.info', ['width' => 40, 'height' => 40])</span>
+                                <span class="">При сдаче груза на склад ТК "82 регион" обязательно наличие ТН. Образец ТН можно найти в личном кабинете селлера.</span>
+                            </div>
+                            @endif
+
                             <div
                                 class="cargo-date {{ $this->getField('transfer_method_receive.date') ? 'collapsed' : 'hidden' }}">
                                 <div class="w-full p-4 text-white bg-sky-600">
