@@ -134,6 +134,23 @@ class Calculator extends Component
 
     public function updated($property, $value)
     {
+      // Замена запятой на точку для полей объема и веса
+      $decimalFields = [
+        'fields.boxes_data.volume',
+        'fields.boxes_data.weight',
+        'fields.pallets_data.volume',
+        'fields.pallets_data.weight',
+      ];
+      
+      if (in_array($property, $decimalFields) && is_string($value)) {
+        $normalizedValue = str_replace(',', '.', $value);
+        if ($normalizedValue !== $value) {
+          $key = str_ireplace('fields.', '', $property);
+          Arr::set($this->fields, $key, $normalizedValue);
+          return;
+        }
+      }
+
       if ($property == 'fields.transfer_method_pick.address') {
         $this->dropdownOpen[$property] = true;
         $this->getAddresses(Arr::get($this->fields, str_ireplace('fields.', '', $property)));

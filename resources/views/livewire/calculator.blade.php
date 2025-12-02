@@ -160,11 +160,13 @@
                             </x-form.wrap>
                             <x-form.wrap label="Объем м3" name="fields.boxes_data.volume">
                                 <x-form.input class="input-numeric" name="fields.boxes_data.volume"
-                                    wire:model.live="fields.boxes_data.volume" />
+                                    wire:model.live="fields.boxes_data.volume"
+                                    x-on:input="$event.target.value = $event.target.value.replace(',', '.')" />
                             </x-form.wrap>
                             <x-form.wrap label="Вес" name="fields.boxes_data.weight">
                                 <x-form.input class="input-numeric" name="fields.boxes_data.weight"
-                                    wire:model.live="fields.boxes_data.weight" />
+                                    wire:model.live="fields.boxes_data.weight"
+                                    x-on:input="$event.target.value = $event.target.value.replace(',', '.')" />
                             </x-form.wrap>
                         </div>
                     </div>
@@ -185,11 +187,13 @@
                             </x-form.wrap>
                             <x-form.wrap label="Общий объем " name="fields.pallets_data.volume">
                                 <x-form.input class="input-numeric" name="fields.pallets_data.volume"
-                                    wire:model.live.debounce.500ms="fields.pallets_data.volume" />
+                                    wire:model.live.debounce.500ms="fields.pallets_data.volume"
+                                    x-on:input="$event.target.value = $event.target.value.replace(',', '.')" />
                             </x-form.wrap>
                             <x-form.wrap label="Общий вес" name="fields.pallets_data.weight">
                                 <x-form.input class="input-numeric" name="fields.pallets_data.weight"
-                                    wire:model.live.debounce.500ms="fields.pallets_data.weight" />
+                                    wire:model.live.debounce.500ms="fields.pallets_data.weight"
+                                    x-on:input="$event.target.value = $event.target.value.replace(',', '.')" />
                             </x-form.wrap>
                             {{-- <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производится
                                 индивидуально, предварительная стоимость указана при условии, что вес каждой паллеты не
