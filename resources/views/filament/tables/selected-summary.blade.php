@@ -13,7 +13,7 @@
             </span>
         </div>
 
-        <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <div class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
             <div class="rounded-lg bg-white/60 px-3 py-2 text-sm shadow-sm dark:bg-slate-900/40">
                 <p class="text-xs text-slate-500">Палет</p>
                 <p class="font-semibold text-slate-900 dark:text-slate-100">{{ $formatInt((float) ($summary['pallets_count'] ?? 0)) }}</p>

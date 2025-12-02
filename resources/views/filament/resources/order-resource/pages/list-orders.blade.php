@@ -103,7 +103,7 @@
                                                     Количество: ${formatNumber(summary.count)}
                                                 </span>
                                             </div>
-                                            <div class="flex flex-wrap items-center gap-5 text-lg" style="overflow-x: auto;">
+                                            <div class="flex flex-wrap items-center gap-6 text-lg" style="overflow-x: auto;">
                                                 <div class="flex items-center gap-2 whitespace-nowrap">
                                                     <span class="text-base text-slate-500 dark:text-slate-400">Палет:</span>
                                                     <span class="text-lg font-semibold text-slate-900 dark:text-slate-100">${formatNumber(summary.pallets_count)}</span>
