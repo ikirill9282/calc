@@ -172,6 +172,11 @@ class Agents extends Component
       $valid = $validator->validated();
       $valid['user_id'] = Auth::user()->id;
       
+      // Преобразуем пустой или null address в пустую строку вместо null
+      if (!isset($valid['address']) || $valid['address'] === null || trim($valid['address']) === '') {
+        $valid['address'] = '';
+      }
+      
       $agent = Agent::where([
         'user_id' => $valid['user_id'],
         'title' => $valid['title'],
@@ -188,6 +193,7 @@ class Agents extends Component
           'name' => $valid['name'],
           'phone' => $valid['phone'],
           'email' => $valid['email'],
+          'address' => $valid['address'] ?? '',
         ]);
         $this->reloadAgents();
         return ;
