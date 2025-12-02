@@ -53,6 +53,10 @@ class AgentResource extends Resource
                             ->required()
                             ->rows(2)
                             ->columnSpanFull(),
+                        Forms\Components\Textarea::make('legal_address')
+                            ->label('Юридический адрес')
+                            ->rows(2)
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('name')
                             ->label('Контактное лицо')
                             ->required()
@@ -99,6 +103,11 @@ class AgentResource extends Resource
                     ->label('ОГРН')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('legal_address')
+                    ->label('Юридический адрес')
+                    ->searchable()
+                    ->wrap()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Контактное лицо')
                     ->searchable()
