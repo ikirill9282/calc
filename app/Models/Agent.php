@@ -23,9 +23,6 @@ class Agent extends Model
         'disabled' => 'boolean',
     ];
 
-    /**
-     * Получить пользователя, которому принадлежит контрагент
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
