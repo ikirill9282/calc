@@ -50,7 +50,6 @@ class AgentResource extends Resource
                             ->maxLength(255),
                         Forms\Components\Textarea::make('address')
                             ->label('Юридический адрес')
-                            ->required()
                             ->rows(2)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('name')
