@@ -49,12 +49,8 @@ class AgentResource extends Resource
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('address')
-                            ->label('Адрес')
-                            ->required()
-                            ->rows(2)
-                            ->columnSpanFull(),
-                        Forms\Components\Textarea::make('legal_address')
                             ->label('Юридический адрес')
+                            ->required()
                             ->rows(2)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('name')
@@ -103,7 +99,7 @@ class AgentResource extends Resource
                     ->label('ОГРН')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('legal_address')
+                Tables\Columns\TextColumn::make('address')
                     ->label('Юридический адрес')
                     ->searchable()
                     ->wrap()

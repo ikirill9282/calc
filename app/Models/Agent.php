@@ -13,7 +13,6 @@ class Agent extends Model
         'inn',
         'ogrn',
         'address',
-        'legal_address',
         'name',
         'phone',
         'email',
