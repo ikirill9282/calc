@@ -86,9 +86,16 @@
                                 label="Укажите дату отгрузки" wire:model.live="fields.transfer_method_receive.date" />
 
                             @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
-                            <div class="flex justify-start items-start gap-3 w-full p-4 mt-4 text-white bg-amber-600">
-                                <span>@include('icons.info', ['width' => 40, 'height' => 40])</span>
-                                <span class="">При сдаче груза на склад ТК "82 регион" обязательно наличие ТН. Образец ТН можно найти в личном кабинете селлера.</span>
+                            <div class="flex flex-col gap-3 w-full mt-4">
+                                <div class="flex justify-start items-start gap-3 w-full p-4 text-white bg-amber-600">
+                                    <span>@include('icons.info', ['width' => 40, 'height' => 40])</span>
+                                    <span class="">При сдаче груза на склад ТК "82 регион" обязательно наличие ТН. Образец ТН можно скачать ниже. Пример заполнения ТН есть в Базе Знаний OZON. Накладная может понадобиться для решения спорных вопросов с OZON.</span>
+                                </div>
+                                <div class="pl-4">
+                                    <a href="{{ asset('shablon-transportnoy-naklodnoy_1668418908.xlsx') }}" download class="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 underline font-medium">
+                                        Скачать шаблон
+                                    </a>
+                                </div>
                             </div>
                             @endif
 

@@ -8,7 +8,6 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
@@ -66,13 +65,5 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
       return in_array($this->role, ['admin', 'manager'], true);
-    }
-
-    /**
-     * Получить всех контрагентов пользователя
-     */
-    public function agents(): HasMany
-    {
-        return $this->hasMany(Agent::class);
     }
 }
