@@ -163,6 +163,39 @@ class Order extends Model
         }
       }
 
+      // Автоматический расчет send_date из delivery_diff в sheet_data
+      // Вычисляем только если send_date не был изменен вручную
+      if (!$model->isDirty('send_date')) {
+        $shouldCalculateSendDate = !$model->exists // Новый заказ
+          || $model->isDirty('warehouse_id')
+          || $model->isDirty('distributor_id')
+          || $model->isDirty('distributor_center_id')
+          || $model->isDirty('delivery_date');
+
+        if ($shouldCalculateSendDate && $model->warehouse_id && $model->distributor_id && $model->distributor_center_id && $model->delivery_date) {
+          $sendDate = $model->calculateSendDate();
+          if ($sendDate !== null) {
+            $model->send_date = $sendDate;
+            \Log::info('Order send_date calculated', [
+              'order_id' => $model->id ?? 'new',
+              'send_date' => $sendDate,
+              'delivery_date' => $model->delivery_date,
+              'warehouse_id' => $model->warehouse_id,
+              'distributor_id' => $model->distributor_id,
+              'distributor_center_id' => $model->distributor_center_id,
+            ]);
+          } else {
+            \Log::warning('Order send_date calculation failed', [
+              'order_id' => $model->id ?? 'new',
+              'delivery_date' => $model->delivery_date,
+              'warehouse_id' => $model->warehouse_id,
+              'distributor_id' => $model->distributor_id,
+              'distributor_center_id' => $model->distributor_center_id,
+            ]);
+          }
+        }
+      }
+
       if (!$model->exists) {
         return;
       }
@@ -807,5 +840,40 @@ class Order extends Model
     $this->delivery = $pricing['delivery'];
     $this->additional = $pricing['additional'];
     $this->total = $pricing['total'];
+  }
+
+  /**
+   * Рассчитывает send_date на основе delivery_diff из sheet_data
+   * @return string|null Дата в формате Y-m-d или null, если не удалось рассчитать
+   */
+  public function calculateSendDate(): ?string
+  {
+    if (empty($this->warehouse_id) || empty($this->distributor_id) || empty($this->distributor_center_id) || empty($this->delivery_date)) {
+      return null;
+    }
+
+    try {
+      $deliveryDate = Carbon::parse($this->delivery_date)->format('Y-m-d');
+      
+      $deliveryDiff = SheetData::query()
+        ->where(DB::raw('CONCAT(wh, " ", wh_address)'), $this->warehouse_id)
+        ->where('distributor', $this->distributor_id)
+        ->where(DB::raw('CONCAT(distributor_center, " ", distributor_address)'), $this->distributor_center_id)
+        ->where('distributor_center_delivery_date', $deliveryDate)
+        ->select('delivery_diff')
+        ->orderByDesc('delivery_diff')
+        ->first()
+        ?->delivery_diff;
+
+      if ($deliveryDiff) {
+        // delivery_diff - это timestamp, извлекаем только дату
+        return Carbon::parse($deliveryDiff)->toDateString();
+      }
+    } catch (\Throwable $e) {
+      // В случае ошибки возвращаем null
+      return null;
+    }
+
+    return null;
   }
 }

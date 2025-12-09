@@ -18,6 +18,7 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
+use App\Services\GoogleClient;
 
 class Calculator extends Component
 {
@@ -228,11 +229,11 @@ class Calculator extends Component
           $weight = floatval($weight);
           
           if ($volume > 0) {
-            $density = round($weight / $volume);
-            if ($density > 300) {
-              $this->setField('individual', 1);
-            } elseif ($this->getField('individual')) {
-              $this->setField('individual', 0);
+          $density = round($weight / $volume);
+          if ($density > 300) {
+            $this->setField('individual', 1);
+          } elseif ($this->getField('individual')) {
+            $this->setField('individual', 0);
             }
           }
         }
@@ -245,9 +246,9 @@ class Calculator extends Component
         if ($pallets_weight) {
           $pallets_weight = floatval($pallets_weight);
           if ($pallets_weight > 400) {
-            $this->setField('individual', 1);
-          } else {
-            $this->setField('individual', 0);
+          $this->setField('individual', 1);
+        } else {
+          $this->setField('individual', 0);
           }
         }
       }
@@ -1042,6 +1043,20 @@ class Calculator extends Component
           // } catch (\Exception $e) {
             
           // }
+
+          // Отправляем данные в Google Sheets сразу после создания заявки
+          // чтобы синхронизировать send_date из колонки H
+          try {
+            $data = $order->prepareSheetData();
+            GoogleClient::write($data[0]);
+            $order->print()->firstOrCreate();
+          } catch (\Exception $e) {
+            // Логируем ошибку, но не прерываем процесс создания заявки
+            \Log::error("Failed to send order to Google Sheets immediately after creation", [
+              'order_id' => $order->id,
+              'error' => $e->getMessage(),
+            ]);
+          }
 
           Session::forget('calc');
           return redirect('/success/?order='.Crypt::encrypt($order->id));
