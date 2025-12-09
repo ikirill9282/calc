@@ -1,4 +1,14 @@
-<div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_350px] 2xl:grid-cols-[1fr_400px] gap-5 2xl:gap-10">
+<div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_350px] 2xl:grid-cols-[1fr_400px] gap-5 2xl:gap-10 relative">
+    {{-- Overlay прелоадер во время обработки формы --}}
+    <div wire:loading wire:target="submit" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-primary-900 rounded-lg p-8 flex flex-col items-center gap-4">
+            <div class="text-secondary-600 dark:text-secondary-400">
+                @include('icons.loading', ['width' => 50, 'height' => 50])
+            </div>
+            <p class="text-lg font-medium text-primary-900 dark:text-primary-100">Обработка заявки...</p>
+            <p class="text-sm text-primary-600 dark:text-primary-400">Пожалуйста, подождите</p>
+        </div>
+    </div>
 
     <div class="{{ $this->checkout ? 'flex' : 'hidden' }} flex-col gap-10">
         <x-link wire:click.prevent="back" class="sm:text-lg sm:mb-8">← Вернуться назад к&nbsp;заполнению заявки</x-link>
@@ -273,11 +283,21 @@
     <div class="">
         <x-details :order="$this->prepareOrder()">
             <x-button wire:click.prevent="submit"
-                class="w-full 
+                wire:loading.attr="disabled"
+                wire:target="submit"
+                class="w-full relative
                     {{ auth()->check() ? '' : 'open_auth' }} 
                     {{ $this->isFieldDisabled(7) ? 'pointer-events-none select-none !bg-primary-500' : '' }}
                     ">
-                {{ $this->checkout ? 'Оформить' : 'Перейти к оформлению' }}
+                <span wire:loading.remove wire:target="submit">
+                    {{ $this->checkout ? 'Оформить' : 'Перейти к оформлению' }}
+                </span>
+                <span wire:loading wire:target="submit" class="flex items-center justify-center gap-2">
+                    <span class="inline-block">
+                        @include('icons.loading', ['width' => 20, 'height' => 20])
+                    </span>
+                    <span>Обработка...</span>
+                </span>
             </x-button>
             <x-button class="w-full !p-0" outlined>
                 <div class="flex justify-center items-center gap-2">
