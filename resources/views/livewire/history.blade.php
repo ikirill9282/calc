@@ -106,6 +106,16 @@
                   </span>
                 </p>
               </div>
+              <div class="mt-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <div class="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5">
+                    @include('icons.info', ['width' => 24, 'height' => 24])
+                  </div>
+                  <p class="text-amber-900 dark:text-amber-100 font-medium">
+                    <strong>Важно:</strong> Данные водителя отправляются на указанную в контрагенте электронную почту в день выгрузки.
+                  </p>
+                </div>
+              </div>
             </div>
             <div class="border-t border-primary-500/50 mt-6 py-6">
               <div class="text-xl font-bold mb-6">Состав груза:</div>
