@@ -15,6 +15,18 @@
             {{-- <p>На вашу почту уже отправлено письмо с информацией о заказе.</p> --}}
           </div>
         </div>
+        <div class="px-3 sm:px-6 md:px-12 pt-6 pb-6 border-b border-primary-500/15">
+          <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+            <div class="flex items-start gap-3">
+              <div class="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5">
+                @include('icons.info', ['width' => 24, 'height' => 24])
+              </div>
+              <p class="text-amber-900 dark:text-amber-100 font-medium">
+                <strong>Важно:</strong> Данные водителя отправляются на указанную в контрагенте электронную почту в день выгрузки.
+              </p>
+            </div>
+          </div>
+        </div>
         <div class="px-3 sm:px-6 md:px-12 pt-6">
           <div class="flex flex-col !gap-3">
             <p>
