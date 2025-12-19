@@ -11,6 +11,31 @@ use App\Models\Order;
 
 class GoogleClient
 {
+  // Пороговый номер заявки для переключения на новую таблицу
+  const ORDER_THRESHOLD = 103717;
+  
+  // ID старой таблицы (заявки < 103717)
+  const OLD_SPREADSHEET_ID = '1RCZPm9Q-A-1osteZkMlwYYCkuLJ0em1zKpKZGOnC6is';
+  
+  // ID новой таблицы (заявки >= 103717)
+  // ВАЖНО: Замените на реальный ID новой таблицы после её создания
+  const NEW_SPREADSHEET_ID = '13Nx2avDtQqKQ9Ml3APkrmg42UBqKm32SB2iUG6RAWGM';
+
+  /**
+   * Определяет, какую таблицу использовать на основе номера заявки
+   * 
+   * @param int $orderId Номер заявки
+   * @return string ID таблицы Google Sheets
+   */
+  protected static function getSpreadsheetId(int $orderId): string
+  {
+    if ($orderId >= self::ORDER_THRESHOLD) {
+      return self::NEW_SPREADSHEET_ID;
+    }
+    
+    return self::OLD_SPREADSHEET_ID;
+  }
+
   public static function write(array $data)
   {
     $client = new Client();
@@ -21,14 +46,16 @@ class GoogleClient
 
     $service = new Sheets($client);
 
-    $spreadsheetId = '1RCZPm9Q-A-1osteZkMlwYYCkuLJ0em1zKpKZGOnC6is';
+    $order_id = $data[1];
+    
+    // Определяем, какую таблицу использовать
+    $spreadsheetId = self::getSpreadsheetId($order_id);
     $sheetName = 'Лист1';
 
     $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
     $existing = $response->getValues() ?? [];
 
     $order_ids = array_column($existing, 1);
-    $order_id = $data[1];
 
     // Check existing order id
     if (!in_array($order_id, $order_ids)) {
@@ -47,7 +74,7 @@ class GoogleClient
         $body,
         $params
       );
-      Log::debug("Order printed {$order_id}", ['order' => $data, 'result' => $result]);
+      Log::debug("Order printed {$order_id} in spreadsheet {$spreadsheetId}", ['order' => $data, 'result' => $result]);
       
       // После создания заявки читаем данные обратно из Google Sheets
       // чтобы получить send_date из колонки H
