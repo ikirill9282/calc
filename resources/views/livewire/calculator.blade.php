@@ -49,6 +49,22 @@
     </div>
     <div class="{{ $this->checkout ? 'hidden' : 'flex' }} flex-col justify-start items-stretch gap-10">
 
+        {{-- Баннер о новогодних праздниках --}}
+        <div class="w-full p-4 md:p-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <div class="flex items-start gap-3">
+                <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm md:text-base font-medium text-amber-900 dark:text-amber-100">
+                        График работы на новогодние праздники: с 01.01.2026 по 04.01.2026 склад функционировать не будет.
+                    </p>
+                </div>
+            </div>
+        </div>
+
         {{-- @dump($this->fields) --}}
         {{-- @dump($this->fields, $this->fields['transfer_method_receive'], $this->fields['transfer_method_pick']) --}}
 
@@ -155,6 +171,20 @@
 
                             <x-form.datepicker id="datepicker3" name="fields.transfer_method_pick.date"
                                 label="Укажите дату отгрузки" wire:model.live="fields.transfer_method_pick.date" />
+
+                            @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
+                            <div class="flex flex-col gap-3 w-full mt-4">
+                                <div class="flex justify-start items-start gap-3 w-full p-4 text-white bg-amber-600">
+                                    <span>@include('icons.info', ['width' => 40, 'height' => 40])</span>
+                                    <span class="">При сдаче груза на склад ТК "82 регион" обязательно наличие ТН. Образец ТН можно скачать ниже. Пример заполнения ТН есть в Базе Знаний OZON. Накладная может понадобиться для решения спорных вопросов с OZON.</span>
+                                </div>
+                                <div class="pl-4">
+                                    <a href="{{ asset('shablon-transportnoy-naklodnoy_1668418908.xlsx') }}" download class="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 underline font-medium">
+                                        Скачать шаблон
+                                    </a>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>

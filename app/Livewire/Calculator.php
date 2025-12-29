@@ -198,6 +198,15 @@ class Calculator extends Component
       return true;
     }
 
+    function isHolidayPeriod(string $date): bool
+    {
+      $parsedDate = Carbon::parse($date);
+      $holidayStart = Carbon::parse('2026-01-01');
+      $holidayEnd = Carbon::parse('2026-01-04');
+      
+      return $parsedDate->gte($holidayStart) && $parsedDate->lte($holidayEnd);
+    }
+
     #[On('initDatepickers')]
     public function onInitDatepickers()
     {
@@ -752,6 +761,9 @@ class Calculator extends Component
 
         $result = array_values(array_filter($result, fn($date) => Carbon::parse($date)->gte(Carbon::today())));
         
+        // Исключаем праздничные даты (01.01-04.01.2026)
+        $result = array_values(array_filter($result, fn($date) => !$this->isHolidayPeriod($date)));
+        
         foreach($result as $k => $date) {
           $sub_dates = $this->getDeliveryPickDates($date);
           if (empty($sub_dates)) unset($result[$k]);
@@ -807,6 +819,11 @@ class Calculator extends Component
             $date == Carbon::today()->format('Y-m-d')
             && Carbon::now()->gte(Carbon::today()->setHours(16))
           ) {
+            return false;
+          }
+
+          // Исключаем праздничные даты (01.01-04.01.2026)
+          if ($this->isHolidayPeriod($date)) {
             return false;
           }
 
@@ -867,6 +884,12 @@ class Calculator extends Component
           ) {
             return false;
           }
+          
+          // Исключаем праздничные даты (01.01-04.01.2026)
+          if ($this->isHolidayPeriod($date)) {
+            return false;
+          }
+          
           return Carbon::parse($date)->gte(Carbon::today());
         });
 
