@@ -49,22 +49,6 @@
     </div>
     <div class="{{ $this->checkout ? 'hidden' : 'flex' }} flex-col justify-start items-stretch gap-10">
 
-        {{-- Баннер о новогодних праздниках --}}
-        <div class="w-full p-4 md:p-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-            <div class="flex items-start gap-3">
-                <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm md:text-base font-medium text-amber-900 dark:text-amber-100">
-                        График работы на новогодние праздники: с 01.01.2026 по 04.01.2026 склад функционировать не будет.
-                    </p>
-                </div>
-            </div>
-        </div>
-
         {{-- @dump($this->fields) --}}
         {{-- @dump($this->fields, $this->fields['transfer_method_receive'], $this->fields['transfer_method_pick']) --}}
 
