@@ -232,6 +232,12 @@
                                     wire:model.live.debounce.500ms="fields.pallets_data.weight"
                                     x-on:input="$event.target.value = $event.target.value.replace(',', '.')" />
                             </x-form.wrap>
+                            @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
+                            <x-form.wrap label="Номер поставки" name="fields.ozon_shipment_number">
+                                <x-form.input name="fields.ozon_shipment_number"
+                                    wire:model.live="fields.ozon_shipment_number" />
+                            </x-form.wrap>
+                            @endif
                             {{-- <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производится
                                 индивидуально, предварительная стоимость указана при условии, что вес каждой паллеты не
                                 превышает 400кг</div> --}}

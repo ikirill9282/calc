@@ -595,6 +595,15 @@ class Order extends Model
       'user_name' => $user->name,
       'user_phone' => "'$user->phone",
       'user_email' => $user->email,
+      'empty_as' => '', // Дата забора груза (факт)
+      'empty_at' => '', // Уникальный ключ
+      'empty_au' => '', // Отсеивание дубликатов
+      'empty_av' => '', // Чистый объем без дублей
+      'empty_aw' => '', // Чистое кол-во паллет без дублей
+      'empty_ax' => '', // Сумма объема по клиенту
+      'empty_ay' => '', // Сумма кол-ва паллет по клиенту
+      'empty_az' => '', // Формула расчета забора
+      'empty_ba' => '', // Ручное изменение стоимости забора
       'ozon_shipment_number' => $item['ozon_shipment_number'] ?? '',
     ];
 
