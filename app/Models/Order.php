@@ -595,6 +595,7 @@ class Order extends Model
       'user_name' => $user->name,
       'user_phone' => "'$user->phone",
       'user_email' => $user->email,
+      'ozon_shipment_number' => $item['ozon_shipment_number'] ?? '',
     ];
 
     $formatted = array_map(fn($val) => is_null($val) ? '' : $val, $formatted);

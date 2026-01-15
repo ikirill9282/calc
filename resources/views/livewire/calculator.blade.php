@@ -199,6 +199,12 @@
                                     wire:model.live="fields.boxes_data.weight"
                                     x-on:input="$event.target.value = $event.target.value.replace(',', '.')" />
                             </x-form.wrap>
+                            @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
+                            <x-form.wrap label="Номер поставки" name="fields.ozon_shipment_number">
+                                <x-form.input name="fields.ozon_shipment_number"
+                                    wire:model.live="fields.ozon_shipment_number" />
+                            </x-form.wrap>
+                            @endif
                         </div>
                     </div>
                 </div>

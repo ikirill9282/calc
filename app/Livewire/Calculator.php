@@ -63,6 +63,7 @@ class Calculator extends Component
       'payment_method' => null,
       'payment_method_pick' => null,
       'individual' => 0,
+      'ozon_shipment_number' => null,
     ];
 
     protected array $numeric_fields = [
