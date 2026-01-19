@@ -969,6 +969,7 @@ class Calculator extends Component
           'boxes_data.volume' => 'required_if:cargo,boxes|nullable|numeric',
           'boxes_data.weight' => 'required_if:cargo,boxes|nullable|numeric',
           'pallets_data.count' => 'required_if:cargo,pallets|nullable|integer',
+          'ozon_shipment_number' => 'nullable|string',
           // 'pallets_data.weight' => 'required_if:cargo,pallets|nullable|numeric',
           "cargo_comment" => 'sometimes|nullable|string',
           "cargo_type" => 'sometimes|nullable|string',
@@ -986,9 +987,14 @@ class Calculator extends Component
           'transfer_method_receive.date.required_if' => 'Необходимо заоплнить поле',
           'transfer_method_pick.address.required_if' => 'Необходимо заоплнить поле',
           'transfer_method_pick.date.required_if' => 'Необходимо заоплнить поле',
+          'ozon_shipment_number.required' => 'Необходимо заполнить поле',
           'palletizing_count' => 'Введите целое число',
         ]
       );
+      $validator->sometimes('ozon_shipment_number', 'required|string', function ($input) {
+        $distributor = $input['distributor_id'] ?? '';
+        return stripos($distributor, 'Ozon') !== false || stripos($distributor, 'ОЗОН') !== false;
+      });
       if ($validator->fails()) {
         throw new ValidationException($validator);
       }
