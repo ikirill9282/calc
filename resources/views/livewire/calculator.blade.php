@@ -208,13 +208,16 @@
                             </x-form.wrap>
                             @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
                             <x-form.wrap label="Номер поставки" name="fields.ozon_shipment_number">
-                                <div class="flex items-center gap-0 w-full">
+                                <div class="flex items-center gap-0 w-full" wire:ignore>
                                     <span class="inline-flex items-center min-h-9 px-3 bg-primary-100 dark:bg-primary-800 border border-primary-200 dark:border-primary-700 rounded-l-md text-primary-900 dark:text-primary-100 font-mono select-none">20000</span>
-                                    <x-form.input name="fields.ozon_shipment_number_suffix"
-                                        wire:model.blur="fields.ozon_shipment_number_suffix"
-                                        maxlength="8" inputmode="numeric" placeholder="12345678"
-                                        class="rounded-l-none border-l-0"
-                                        x-on:input="$event.target.value = $event.target.value.replace(/\D/g, '').slice(0, 8)" />
+                                    <div x-data="{ val: @js($this->getField('ozon_shipment_number_suffix') ?? '') }" class="flex-1 min-w-0">
+                                        <input type="text"
+                                            x-model="val"
+                                            x-on:input="val = val.replace(/\D/g, '').slice(0, 8)"
+                                            x-on:blur="$wire.set('fields.ozon_shipment_number_suffix', val)"
+                                            maxlength="8" inputmode="numeric" placeholder="12345678"
+                                            class="outline-0 h-full w-full min-h-9 rounded-l-none border-l-0 border border-primary-200 dark:border-primary-700 rounded-r-md px-3 py-2 bg-white dark:bg-primary-900 text-primary-900 dark:text-primary-100" />
+                                    </div>
                                 </div>
                             </x-form.wrap>
                             @endif
@@ -247,13 +250,16 @@
                             </x-form.wrap>
                             @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
                             <x-form.wrap label="Номер поставки" name="fields.ozon_shipment_number">
-                                <div class="flex items-center gap-0 w-full">
+                                <div class="flex items-center gap-0 w-full" wire:ignore>
                                     <span class="inline-flex items-center min-h-9 px-3 bg-primary-100 dark:bg-primary-800 border border-primary-200 dark:border-primary-700 rounded-l-md text-primary-900 dark:text-primary-100 font-mono select-none">20000</span>
-                                    <x-form.input name="fields.ozon_shipment_number_suffix"
-                                        wire:model.blur="fields.ozon_shipment_number_suffix"
-                                        maxlength="8" inputmode="numeric" placeholder="12345678"
-                                        class="rounded-l-none border-l-0"
-                                        x-on:input="$event.target.value = $event.target.value.replace(/\D/g, '').slice(0, 8)" />
+                                    <div x-data="{ val: @js($this->getField('ozon_shipment_number_suffix') ?? '') }" class="flex-1 min-w-0">
+                                        <input type="text"
+                                            x-model="val"
+                                            x-on:input="val = val.replace(/\D/g, '').slice(0, 8)"
+                                            x-on:blur="$wire.set('fields.ozon_shipment_number_suffix', val)"
+                                            maxlength="8" inputmode="numeric" placeholder="12345678"
+                                            class="outline-0 h-full w-full min-h-9 rounded-l-none border-l-0 border border-primary-200 dark:border-primary-700 rounded-r-md px-3 py-2 bg-white dark:bg-primary-900 text-primary-900 dark:text-primary-100" />
+                                    </div>
                                 </div>
                             </x-form.wrap>
                             @endif
