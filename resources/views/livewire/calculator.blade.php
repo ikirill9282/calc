@@ -211,7 +211,7 @@
                                 <div class="flex items-center gap-0 w-full">
                                     <span class="inline-flex items-center min-h-9 px-3 bg-primary-100 dark:bg-primary-800 border border-primary-200 dark:border-primary-700 rounded-l-md text-primary-900 dark:text-primary-100 font-mono select-none">20000</span>
                                     <x-form.input name="fields.ozon_shipment_number_suffix"
-                                        wire:model.live="fields.ozon_shipment_number_suffix"
+                                        wire:model.blur="fields.ozon_shipment_number_suffix"
                                         maxlength="8" inputmode="numeric" placeholder="12345678"
                                         class="rounded-l-none border-l-0"
                                         x-on:input="$event.target.value = $event.target.value.replace(/\D/g, '').slice(0, 8)" />
@@ -250,7 +250,7 @@
                                 <div class="flex items-center gap-0 w-full">
                                     <span class="inline-flex items-center min-h-9 px-3 bg-primary-100 dark:bg-primary-800 border border-primary-200 dark:border-primary-700 rounded-l-md text-primary-900 dark:text-primary-100 font-mono select-none">20000</span>
                                     <x-form.input name="fields.ozon_shipment_number_suffix"
-                                        wire:model.live="fields.ozon_shipment_number_suffix"
+                                        wire:model.blur="fields.ozon_shipment_number_suffix"
                                         maxlength="8" inputmode="numeric" placeholder="12345678"
                                         class="rounded-l-none border-l-0"
                                         x-on:input="$event.target.value = $event.target.value.replace(/\D/g, '').slice(0, 8)" />

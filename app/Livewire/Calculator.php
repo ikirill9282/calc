@@ -167,6 +167,7 @@ class Calculator extends Component
         $suffix = substr($suffix, 0, 8);
         $this->fields['ozon_shipment_number_suffix'] = $suffix;
         $this->fields['ozon_shipment_number'] = '20000' . $suffix;
+        Session::put('calc', json_encode($this->fields));
       }
 
       if ($property == 'fields.transfer_method_pick.address') {
