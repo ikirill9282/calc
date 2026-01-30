@@ -64,6 +64,13 @@
                 <x-form.dropdown label="РЦ, в который будет доставлен груз" name="distributor_center_id"
                     placeholder="Адрес РЦ" wire:model="fields.distributor_center_id" :items="$this->getDistributorCenters()"
                     optionValue="val" optionLabel="distributor_center" optionDescription="distributor_address" />
+
+                @if((stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false) && stripos($this->getField('distributor_center_id') ?? '', 'Ростов-на-Дону') !== false)
+                <div class="flex flex-col gap-2 w-full p-4 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p class="text-sm md:text-base font-medium">Уважаемые клиенты, будьте внимательны, доставка на РФЦ Ростов-на-Дону_2 недоступна!</p>
+                    <p class="text-sm md:text-base">Мы осуществляем доставку только на РФЦ Ростов-на-Дону по адресу: Ростовская обл., Аксайский р-н, х. Ленина, Логопарк 5</p>
+                </div>
+                @endif
             </div>
         </x-form.fieldset>
 
@@ -201,8 +208,14 @@
                             </x-form.wrap>
                             @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
                             <x-form.wrap label="Номер поставки" name="fields.ozon_shipment_number">
-                                <x-form.input name="fields.ozon_shipment_number"
-                                    wire:model.live="fields.ozon_shipment_number" />
+                                <div class="flex items-center gap-0 w-full">
+                                    <span class="inline-flex items-center min-h-9 px-3 bg-primary-100 dark:bg-primary-800 border border-primary-200 dark:border-primary-700 rounded-l-md text-primary-900 dark:text-primary-100 font-mono select-none">20000</span>
+                                    <x-form.input name="fields.ozon_shipment_number_suffix"
+                                        wire:model.live="fields.ozon_shipment_number_suffix"
+                                        maxlength="8" inputmode="numeric" placeholder="12345678"
+                                        class="rounded-l-none border-l-0"
+                                        x-on:input="$event.target.value = $event.target.value.replace(/\D/g, '').slice(0, 8)" />
+                                </div>
                             </x-form.wrap>
                             @endif
                         </div>
@@ -234,8 +247,14 @@
                             </x-form.wrap>
                             @if(stripos($this->getField('distributor_id') ?? '', 'Ozon') !== false || stripos($this->getField('distributor_id') ?? '', 'ОЗОН') !== false)
                             <x-form.wrap label="Номер поставки" name="fields.ozon_shipment_number">
-                                <x-form.input name="fields.ozon_shipment_number"
-                                    wire:model.live="fields.ozon_shipment_number" />
+                                <div class="flex items-center gap-0 w-full">
+                                    <span class="inline-flex items-center min-h-9 px-3 bg-primary-100 dark:bg-primary-800 border border-primary-200 dark:border-primary-700 rounded-l-md text-primary-900 dark:text-primary-100 font-mono select-none">20000</span>
+                                    <x-form.input name="fields.ozon_shipment_number_suffix"
+                                        wire:model.live="fields.ozon_shipment_number_suffix"
+                                        maxlength="8" inputmode="numeric" placeholder="12345678"
+                                        class="rounded-l-none border-l-0"
+                                        x-on:input="$event.target.value = $event.target.value.replace(/\D/g, '').slice(0, 8)" />
+                                </div>
                             </x-form.wrap>
                             @endif
                             {{-- <div class="text-xs sm:text-sm">Если вес 1 паллеты превышает 400 кг , расчет производится
