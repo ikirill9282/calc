@@ -64,6 +64,7 @@ class Calculator extends Component
       'payment_method_pick' => null,
       'individual' => 0,
       'ozon_shipment_number' => null,
+      'ozon_shipment_number_suffix' => null,
     ];
 
     protected array $numeric_fields = [
@@ -119,6 +120,9 @@ class Calculator extends Component
               }
             }
 
+            if (!empty($this->fields['ozon_shipment_number']) && str_starts_with((string) $this->fields['ozon_shipment_number'], '20000')) {
+              $this->fields['ozon_shipment_number_suffix'] = substr($this->fields['ozon_shipment_number'], 5, 8);
+            }
             Session::put('calc', json_encode($this->fields));
             $this->dispatch('runRefresh');
           }
@@ -127,6 +131,10 @@ class Calculator extends Component
         }
       } else if (Session::exists('calc')) {
         $this->fields = array_merge($this->fields, json_decode(Session::get('calc'), true));
+        // Восстанавливаем суффикс номера поставки из полного номера (префикс 20000)
+        if (!empty($this->fields['ozon_shipment_number']) && str_starts_with((string) $this->fields['ozon_shipment_number'], '20000')) {
+          $this->fields['ozon_shipment_number_suffix'] = substr($this->fields['ozon_shipment_number'], 5, 8);
+        }
       }
 
       $this->checkIndividual();
@@ -151,6 +159,14 @@ class Calculator extends Component
           Arr::set($this->fields, $key, $normalizedValue);
           return;
         }
+      }
+
+      // Номер поставки Ozon: только цифры, макс 8 после префикса 20000
+      if ($property === 'fields.ozon_shipment_number_suffix') {
+        $suffix = preg_replace('/\D/', '', (string) $value);
+        $suffix = substr($suffix, 0, 8);
+        $this->fields['ozon_shipment_number_suffix'] = $suffix;
+        $this->fields['ozon_shipment_number'] = '20000' . $suffix;
       }
 
       if ($property == 'fields.transfer_method_pick.address') {
@@ -662,6 +678,9 @@ class Calculator extends Component
       // }
 
       Arr::set($this->fields, $key, $value);
+      if ($key === 'ozon_shipment_number') {
+        $this->fields['ozon_shipment_number_suffix'] = null;
+      }
       $this->clearRelated($key);
       Session::put('calc', json_encode($this->fields));
     }
@@ -969,7 +988,7 @@ class Calculator extends Component
           'boxes_data.volume' => 'required_if:cargo,boxes|nullable|numeric',
           'boxes_data.weight' => 'required_if:cargo,boxes|nullable|numeric',
           'pallets_data.count' => 'required_if:cargo,pallets|nullable|integer',
-          'ozon_shipment_number' => 'nullable|string',
+          'ozon_shipment_number' => 'nullable|string|regex:/^20000\d{8}$/',
           // 'pallets_data.weight' => 'required_if:cargo,pallets|nullable|numeric',
           "cargo_comment" => 'sometimes|nullable|string',
           "cargo_type" => 'sometimes|nullable|string',
@@ -988,10 +1007,11 @@ class Calculator extends Component
           'transfer_method_pick.address.required_if' => 'Необходимо заоплнить поле',
           'transfer_method_pick.date.required_if' => 'Необходимо заоплнить поле',
           'ozon_shipment_number.required' => 'Необходимо заполнить поле',
+          'ozon_shipment_number.regex' => 'Номер поставки: в начале 20000, затем 8 цифр (всего 13 цифр).',
           'palletizing_count' => 'Введите целое число',
         ]
       );
-      $validator->sometimes('ozon_shipment_number', 'required|string', function ($input) {
+      $validator->sometimes('ozon_shipment_number', 'required|string|regex:/^20000\d{8}$/', function ($input) {
         $distributor = $input['distributor_id'] ?? '';
         return stripos($distributor, 'Ozon') !== false || stripos($distributor, 'ОЗОН') !== false;
       });
