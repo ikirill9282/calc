@@ -1052,7 +1052,7 @@ class Calculator extends Component
     public function prepareOrder()
     {
       $fields = $this->fields;
-      unset($fields['user_focused_dropdown'], $fields['user_address_query']);
+      unset($fields['user_focused_dropdown'], $fields['user_address_query'], $fields['ozon_shipment_number_suffix']);
 
       $order = new Order();
       $order->fillFields($fields);
