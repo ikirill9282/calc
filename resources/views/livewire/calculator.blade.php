@@ -215,7 +215,7 @@
                                             x-model="val"
                                             x-on:input="val = val.replace(/\D/g, '').slice(0, 8)"
                                             x-on:blur="$wire.set('fields.ozon_shipment_number_suffix', val)"
-                                            maxlength="8" inputmode="numeric" placeholder="12345678"
+                                            maxlength="8" inputmode="numeric" placeholder="_________"
                                             class="outline-0 h-full w-full min-h-9 rounded-l-none border-l-0 border border-primary-200 dark:border-primary-700 rounded-r-md px-3 py-2 bg-white dark:bg-primary-900 text-primary-900 dark:text-primary-100" />
                                     </div>
                                 </div>
@@ -257,7 +257,7 @@
                                             x-model="val"
                                             x-on:input="val = val.replace(/\D/g, '').slice(0, 8)"
                                             x-on:blur="$wire.set('fields.ozon_shipment_number_suffix', val)"
-                                            maxlength="8" inputmode="numeric" placeholder="12345678"
+                                            maxlength="8" inputmode="numeric" placeholder="_________"
                                             class="outline-0 h-full w-full min-h-9 rounded-l-none border-l-0 border border-primary-200 dark:border-primary-700 rounded-r-md px-3 py-2 bg-white dark:bg-primary-900 text-primary-900 dark:text-primary-100" />
                                     </div>
                                 </div>
