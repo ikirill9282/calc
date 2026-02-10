@@ -19,6 +19,8 @@
 </head>
 <body class="transition grid grid-cols-[1fr] lg:grid-cols-[300px_1fr] text-primary-900 bg-primary-50 dark:bg-primary-950 dark:text-primary-50">
   
+  <x-tariff-notification></x-tariff-notification>
+  
   <div class="fixed z-90 w-full h-full transition duration-300
               bg-black/75 lg:bg-transparent
               lg:col-span-1 translate-x-[-100%] lg:translate-x-0 lg:sticky lg:top-0 lg:left-0 lg:h-screen"
@@ -29,7 +31,6 @@
     </div>
   </div>
   <div class="col-span-1">
-    <x-tariff-notification></x-tariff-notification>
     <x-header></x-header>
 
     <main class="">
