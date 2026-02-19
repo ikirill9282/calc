@@ -574,31 +574,41 @@ class Calculator extends Component
 
       $client = new DadataClient();
       $searchQueries = $this->buildAddressSearchQueries($query);
-      $baseOptions = $this->getDadataAddressOptions();
       $suggestions = [];
 
       foreach ($searchQueries as $searchQuery) {
-        // 1) Базовый поиск (без жестких bound), чтобы не терять релевантные варианты.
-        $addresses = $client->suggest('address', $searchQuery, 12, $baseOptions);
+        // Базовый запрос без kwargs (как в рабочем tinker).
+        $addresses = $client->suggest('address', $searchQuery, 12);
 
         if (is_array($addresses) && !empty($addresses)) {
           $suggestions = array_merge($suggestions, $addresses);
         }
 
-        // 2) Для уличного запроса дополнительно просим именно дома по улице.
-        if ($this->looksLikeStreetQuery($searchQuery)) {
-          $houseOptions = $baseOptions;
-          $houseOptions['from_bound'] = ['value' => 'street'];
-          $houseOptions['to_bound'] = ['value' => 'house'];
+        if (count($suggestions) >= 20) {
+          break;
+        }
+      }
+
+      // Если базовый поиск не дал выдачи, пробуем поиск домов по улице.
+      if (empty($suggestions)) {
+        foreach ($searchQueries as $searchQuery) {
+          if (! $this->looksLikeStreetQuery($searchQuery)) {
+            continue;
+          }
+
+          $houseOptions = [
+            'from_bound' => ['value' => 'street'],
+            'to_bound' => ['value' => 'house'],
+          ];
 
           $houseAddresses = $client->suggest('address', $searchQuery, 12, $houseOptions);
           if (is_array($houseAddresses) && !empty($houseAddresses)) {
             $suggestions = array_merge($suggestions, $houseAddresses);
           }
-        }
 
-        if (count($suggestions) >= 20) {
-          break;
+          if (count($suggestions) >= 20) {
+            break;
+          }
         }
       }
 
@@ -628,15 +638,17 @@ class Calculator extends Component
         $resolved[] = $query;
       }
 
-      $this->addresses = array_values(array_unique(array_slice(array_filter($resolved), 0, 20)));
-      // $result = [['wh' => '', 'wh_address' => '']];
+      $resolved = array_values(array_unique(array_slice(array_filter($resolved), 0, 20)));
+
       $result = [];
-      foreach ($this->addresses as $key => $val) {
+      foreach ($resolved as $key => $val) {
         $result[] = [
           'wh' => $val,
-          // 'wh_address' => $val,
         ];
       }
+
+      $this->addresses = $result;
+
       return collect($result);
     }
 
@@ -663,52 +675,12 @@ class Calculator extends Component
       return trim(str_ireplace('г. ', '', $this->getCity()));
     }
 
-    protected function resolveAddressRegion(string $city): string
-    {
-      $cityNormalized = mb_strtolower($city);
-
-      return match (true) {
-        str_contains($cityNormalized, 'симферополь') => 'Республика Крым',
-        str_contains($cityNormalized, 'ростов') => 'Ростовская область',
-        str_contains($cityNormalized, 'москва') => 'Москва',
-        default => '',
-      };
-    }
-
-    protected function getDadataAddressOptions(): array
-    {
-      $city = $this->resolveAddressCity();
-      $region = $this->resolveAddressRegion($city);
-
-      $location = ['country' => 'Россия'];
-      $boostLocation = [];
-
-      if ($region !== '') {
-        $boostLocation['region'] = $region;
-      }
-
-      if ($city !== '') {
-        $boostLocation['city'] = $city;
-      }
-
-      $options = [
-        'locations' => [$location],
-      ];
-
-      if (!empty($boostLocation)) {
-        $options['locations_boost'] = [$boostLocation];
-      }
-
-      return $options;
-    }
-
     /**
      * @return array<int, string>
      */
     protected function buildAddressSearchQueries(string $query): array
     {
       $city = $this->resolveAddressCity();
-      $region = $this->resolveAddressRegion($city);
       $streetOnly = $this->stripHouseFromAddressQuery($query);
 
       $queries = [$query];
@@ -722,14 +694,6 @@ class Calculator extends Component
 
         if ($streetOnly !== '' && $streetOnly !== $query) {
           $queries[] = "{$city}, {$streetOnly}";
-        }
-      }
-
-      if ($city !== '' && $region !== '' && mb_stripos($query, $region) === false) {
-        $queries[] = "{$region}, {$city}, {$query}";
-
-        if ($streetOnly !== '' && $streetOnly !== $query) {
-          $queries[] = "{$region}, {$city}, {$streetOnly}";
         }
       }
 
