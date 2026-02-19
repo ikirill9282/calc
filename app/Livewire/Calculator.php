@@ -878,7 +878,7 @@ class Calculator extends Component
       unset($this->dropdownOpen["fields.$key"]);
 
       $this->clearRelated($key);
-      $this->onInitDatepickers();
+      $this->refreshDatepickersForField($key);
 
       if ($key == 'transfer_method_pick.address') {
         $this->getAddresses(Arr::get($this->fields, 'transfer_method_pick.address'));
@@ -902,6 +902,22 @@ class Calculator extends Component
       }
 
       Session::put('calc', json_encode($this->fields));
+    }
+
+    protected function refreshDatepickersForField(string $key): void
+    {
+      $routeKeys = ['warehouse_id', 'distributor_id', 'distributor_center_id'];
+
+      // Тяжелый расчет deliveryDates нужен только при смене маршрута.
+      if (in_array($key, $routeKeys, true) && ! $this->isFieldDisabled(2)) {
+        $this->dispatch('deliveryDates', $this->getDeliveryDates());
+      }
+
+      // Даты отгрузки/забора обновляем при смене маршрута или даты поставки.
+      if ((in_array($key, $routeKeys, true) || $key === 'delivery_date') && ! $this->isFieldDisabled(3)) {
+        $this->dispatch('deliveryPickDates', $this->getDeliveryPickDates());
+        $this->dispatch('pickDates', $this->getPickDates());
+      }
     }
 
     public function clearField(string $name) {

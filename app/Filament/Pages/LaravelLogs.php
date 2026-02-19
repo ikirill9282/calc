@@ -176,8 +176,20 @@ class LaravelLogs extends Page
             });
         }
 
-        // Реверс массива (новые логи первыми)
-        $parsedLogs = array_reverse($parsedLogs);
+        // Гарантируем сортировку: от новых записей к старым по timestamp.
+        usort($parsedLogs, function (array $a, array $b): int {
+            $dateA = $a['date'] ?? '';
+            $dateB = $b['date'] ?? '';
+
+            // Формат "Y-m-d H:i:s" корректно сравнивается строкой.
+            $byDate = strcmp($dateB, $dateA);
+            if ($byDate !== 0) {
+                return $byDate;
+            }
+
+            // При одинаковом времени дополнительно сортируем по уровню.
+            return strcmp((string) ($b['level'] ?? ''), (string) ($a['level'] ?? ''));
+        });
         
         // Пагинация
         $total = count($parsedLogs);
@@ -259,4 +271,3 @@ class LaravelLogs extends Page
         return null;
     }
 }
-

@@ -16,17 +16,12 @@ class DadataClient
     $this->api_key = $this->resolveValue([
       config('services.dadata.api_key'),
       config('services.dadata.token'),
-      env('DADATA_API'),
-      env('DADATA_API_KEY'),
-      env('DADATA_TOKEN'),
     ]);
 
     // Для suggest API ключа достаточно, secret может отсутствовать.
     $this->api_secret = $this->resolveValue([
       config('services.dadata.secret'),
       config('services.dadata.secret_key'),
-      env('DADATA_SECRET'),
-      env('DADATA_SECRET_KEY'),
     ]);
 
     if (!is_string($this->api_key) || $this->api_key === '') {
