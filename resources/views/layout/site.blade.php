@@ -36,7 +36,7 @@
         <p class="font-semibold">На сайте ведутся технические работы.</p>
         <p class="mt-1">Если возникли сложности с оформлением заявки, можно оформить её по телефону.</p>
         <div class="mt-2 text-sm leading-6">
-          <p><span class="font-semibold">Менеджер:</span> Любимова София</p>
+          
           <p>
             <span class="font-semibold">Email:</span>
             <a class="underline hover:no-underline" href="mailto:tk82wb24@gmail.com">tk82wb24@gmail.com</a>
