@@ -15,13 +15,17 @@
   'inputClass' => '',
 ])
 @php
-  $fieldName = str_ireplace($rp, '', $attributes->get('wire:model'));
+  $wireModel = $attributes->get('wire:model');
+  $fieldName = str_ireplace($rp, '', $wireModel);
+  $dropdownState = $this?->dropdownOpen ?? [];
+  $isDropdownOpen = array_key_exists($wireModel, $dropdownState) || (bool) \Illuminate\Support\Arr::get($dropdownState, $wireModel, false);
 @endphp
 
 <x-form.wrap :label="$attributes->get('label')" :name="$name">
   <div
     class="flex justify-start items-center relative w-full h-full hover:cursor-pointer dropdown-box"
     id="{{ $fieldName }}-dropdown"
+    wire:click="openDropdown('{{ $wireModel }}')"
   >
     <x-form.input 
       type="{{ $searchable ? 'text' : 'hidden' }}"
@@ -48,7 +52,7 @@
 
     <div class="dropdown absolute z-40 w-full left-0 bottom-[-5px] translate-y-[100%]
             shadow max-h-56 overflow-y-scroll bg-white dark:bg-black {{ $dropDownClass ?? '' }}
-              @if (!array_key_exists($attributes->get('wire:model'), ($this?->dropdownOpen ?? []))) hidden @endif
+              @if (! $isDropdownOpen) hidden @endif
             "
           @if($searchable) data-searchable="true" @endif
           data-open="false"
@@ -90,7 +94,7 @@
                  bg-secondary-600/25 dark:bg-secondary-400/25 
                 @endif
               "
-              wire:click.prevent="setField('{{ $attributes->get('wire:model') }}', '{{ ($optionKey) ? $item[$optionKey] : $fieldValue }}')"
+              wire:click.prevent.stop="setField('{{ $wireModel }}', '{{ ($optionKey) ? $item[$optionKey] : $fieldValue }}')"
               >
                 <p class="text-md">{{  $label }}</p>
                 <p class="text-xs sm:text-sm text-primary-500">{{ $description }}</p>

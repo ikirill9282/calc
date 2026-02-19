@@ -853,6 +853,12 @@ class Calculator extends Component
       // $this->fields[$name] = $value;
     }
 
+    public function openDropdown(string $name): void
+    {
+      $this->dropdownOpen = [];
+      $this->dropdownOpen[$name] = true;
+    }
+
     public function getField(string $name): mixed
     {
       $key = str_ireplace('fields.', '', $name);
@@ -868,6 +874,8 @@ class Calculator extends Component
     {
       $key = str_ireplace('fields.', '', $name);
       Arr::set($this->fields, $key, $value);
+
+      unset($this->dropdownOpen["fields.$key"]);
 
       $this->clearRelated($key);
       $this->onInitDatepickers();

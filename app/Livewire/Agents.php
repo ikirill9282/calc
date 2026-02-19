@@ -299,6 +299,12 @@ class Agents extends Component
       return Arr::get($this->form, str_ireplace('form.', '', $name));
     }
 
+    public function openDropdown(string $name): void
+    {
+      $this->dropdownOpen = [];
+      $this->dropdownOpen[$name] = true;
+    }
+
 
     public function setField(string $name, mixed $value): void
     {
