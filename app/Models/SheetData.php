@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class SheetData extends Model
 {
+    protected static ?bool $hasWeekdayConfigColumns = null;
+
     public $timestamps = false;
 
     protected $table = 'sheet_data';
@@ -26,4 +29,18 @@ class SheetData extends Model
         'delivery_tariff_vol' => 'decimal:2',
         'delivery_tariff_pallete' => 'decimal:2',
     ];
+
+    public static function hasWeekdayConfigColumns(): bool
+    {
+        if (self::$hasWeekdayConfigColumns !== null) {
+            return self::$hasWeekdayConfigColumns;
+        }
+
+        self::$hasWeekdayConfigColumns = Schema::hasColumns(
+            (new static)->getTable(),
+            ['delivery_weekdays_config', 'shipment_weekdays_config']
+        );
+
+        return self::$hasWeekdayConfigColumns;
+    }
 }

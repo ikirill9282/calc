@@ -2,20 +2,23 @@
 
 namespace App\Services;
 
-use App\Services\Dadata\Router;
-use App\Services\Dadata\Client;
 use Dadata\DadataClient as BaseClient;
+use Illuminate\Support\Facades\Log;
 
 class DadataClient
 {
-  private string $api_key;
-  private string $api_secret;
-  protected BaseClient $client;
+  private ?string $api_key = null;
+  private ?string $api_secret = null;
+  protected ?BaseClient $client = null;
 
   public function __construct()
   {
-    $this->api_key = env('DADATA_API');
-    $this->api_secret = env('DADATA_SECRET');
+    $this->api_key = config('services.dadata.api_key');
+    $this->api_secret = config('services.dadata.secret');
+
+    if (!is_string($this->api_key) || !is_string($this->api_secret) || $this->api_key === '' || $this->api_secret === '') {
+      return;
+    }
 
     $this->client = new BaseClient($this->api_key, $this->api_secret);
   }
@@ -23,12 +26,19 @@ class DadataClient
 
   public function __call($name, $arguments)
   {
-    if (method_exists($this->client, $name)) {
+    if ($this->client && method_exists($this->client, $name)) {
       try {
         return $this->client->$name(...$arguments);
-      } catch(\Exception $e) {
+      } catch (\Throwable $e) {
+        Log::warning('DaData request failed', [
+          'method' => $name,
+          'message' => $e->getMessage(),
+        ]);
+
         return [];
       }
     }
+
+    return [];
   }
 }

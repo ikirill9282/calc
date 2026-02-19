@@ -802,13 +802,18 @@ class Calculator extends Component
           return Carbon::parse($exactDate)->format('Y-m-d H:i:s');
         }
 
-        $records = (clone $routeQuery)->get([
+        $recordsColumns = [
           'distributor_center_delivery_date',
           'delivery_diff',
           'pick_diff',
-          'delivery_weekdays_config',
-          'shipment_weekdays_config',
-        ]);
+        ];
+
+        if (SheetData::hasWeekdayConfigColumns()) {
+          $recordsColumns[] = 'delivery_weekdays_config';
+          $recordsColumns[] = 'shipment_weekdays_config';
+        }
+
+        $records = (clone $routeQuery)->get($recordsColumns);
         if ($records->isEmpty()) {
           return null;
         }
