@@ -32,6 +32,20 @@ class CashStatement extends ListOrders
             ->where('payment_method', 'cash');
     }
 
+    public function getPageTableSummaryQuery(): Builder
+    {
+        return $this->applySelectedRecordsToSummaryQuery(
+            parent::getPageTableSummaryQuery(),
+        );
+    }
+
+    public function getAllTableSummaryQuery(): Builder
+    {
+        return $this->applySelectedRecordsToSummaryQuery(
+            parent::getAllTableSummaryQuery(),
+        );
+    }
+
     public function table(Tables\Table $table): Tables\Table
     {
         $columns = [
@@ -134,5 +148,41 @@ class CashStatement extends ListOrders
     public function getDefaultActiveTab(): string | int | null
     {
         return 'warehouse';
+    }
+
+    protected function applySelectedRecordsToSummaryQuery(Builder $query): Builder
+    {
+        $selectedIds = $this->getSelectedSummaryRecordIds();
+
+        if ($selectedIds === []) {
+            return $query;
+        }
+
+        return $query->whereKey($selectedIds);
+    }
+
+    /**
+     * @return array<int>
+     */
+    protected function getSelectedSummaryRecordIds(): array
+    {
+        $selectedIds = [];
+
+        if (property_exists($this, 'selectedTableRecords') && is_array($this->selectedTableRecords)) {
+            $selectedIds = $this->selectedTableRecords;
+        }
+
+        if ($selectedIds === []) {
+            try {
+                $selectedIds = $this->getSelectedTableRecords(false)->all();
+            } catch (\Throwable) {
+                $selectedIds = [];
+            }
+        }
+
+        return array_values(array_unique(array_filter(array_map(
+            static fn (mixed $id): ?int => is_numeric($id) ? (int) $id : null,
+            $selectedIds,
+        ))));
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Livewire\Component;
 use App\Services\DadataClient;
 use App\Support\SheetDataSchedule;
+use App\Models\Agent;
 use App\Models\Manager;
 use App\Models\SheetData;
 use Illuminate\Support\Carbon;
@@ -564,10 +565,45 @@ class Calculator extends Component
 
     public function getAddresses(string $query = '')
     {
-      $query = empty($query) ? '' : $query;
+      $query = trim($query);
+
+      if (mb_strlen($query) < 3) {
+        $this->addresses = [];
+        return collect([]);
+      }
+
       $client = new DadataClient();
-      $addresses = $client->suggest('address', $query);
-      $this->addresses = array_column($addresses, 'value');
+
+      $addresses = $client->suggest('address', $query, 10, [
+        'locations' => [
+          ['country' => 'Россия'],
+        ],
+      ]);
+
+      if (empty($addresses)) {
+        $city = trim(str_ireplace('г. ', '', $this->getCity()));
+
+        if ($city !== '' && mb_stripos($query, $city) === false) {
+          $addresses = $client->suggest('address', "{$city}, {$query}", 10, [
+            'locations' => [
+              ['city' => $city],
+            ],
+          ]);
+        }
+      }
+
+      $resolved = array_column($addresses, 'value');
+
+      if (empty($resolved)) {
+        $resolved = $this->resolveLocalAddressSuggestions($query);
+      }
+
+      // Позволяем выбрать введенный адрес даже при недоступности DaData.
+      if (!in_array($query, $resolved, true)) {
+        $resolved[] = $query;
+      }
+
+      $this->addresses = array_values(array_unique(array_filter($resolved)));
       // $result = [['wh' => '', 'wh_address' => '']];
       $result = [];
       foreach ($this->addresses as $key => $val) {
@@ -577,6 +613,37 @@ class Calculator extends Component
         ];
       }
       return collect($result);
+    }
+
+    protected function resolveLocalAddressSuggestions(string $query): array
+    {
+      if (mb_strlen($query) < 4) {
+        return [];
+      }
+
+      $userId = Auth::id();
+      if (!$userId) {
+        return [];
+      }
+
+      $fromAgents = Agent::query()
+        ->where('user_id', $userId)
+        ->whereNotNull('address')
+        ->where('address', 'like', "%{$query}%")
+        ->limit(7)
+        ->pluck('address')
+        ->toArray();
+
+      $fromOrders = Order::query()
+        ->where('user_id', $userId)
+        ->whereNotNull('transfer_method_pick_address')
+        ->where('transfer_method_pick_address', 'like', "%{$query}%")
+        ->orderByDesc('id')
+        ->limit(7)
+        ->pluck('transfer_method_pick_address')
+        ->toArray();
+
+      return array_values(array_unique(array_merge($fromAgents, $fromOrders)));
     }
 
     public function isFieldDisabled(int $field_number): bool
