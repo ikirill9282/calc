@@ -89,6 +89,7 @@ class Calculator extends Component
     public array $dropdownOpen = [];
 
     public ?string $pick_address = null;
+    protected string $lastAddressQuery = '';
 
     public function mount()
     {
@@ -567,6 +568,12 @@ class Calculator extends Component
     {
       $query = $this->normalizeAddressQuery($query);
 
+      if ($query === $this->lastAddressQuery && !empty($this->addresses)) {
+        return collect($this->addresses);
+      }
+
+      $this->lastAddressQuery = $query;
+
       if (mb_strlen($query) < 3) {
         $this->addresses = [];
         return collect([]);
@@ -589,10 +596,11 @@ class Calculator extends Component
         }
       }
 
-      // Если базовый поиск не дал выдачи, пробуем поиск домов по улице.
-      if (empty($suggestions)) {
+      // Дополнительно пробуем поиск домов по улице (избыточно полезно для "Батурина" -> д. 1, д. 2 ...).
+      if (count($suggestions) < 8) {
         foreach ($searchQueries as $searchQuery) {
-          if (! $this->looksLikeStreetQuery($searchQuery)) {
+          $streetSearchQuery = $this->stripHouseFromAddressQuery($searchQuery);
+          if (! $this->looksLikeStreetQuery($streetSearchQuery)) {
             continue;
           }
 
@@ -601,7 +609,7 @@ class Calculator extends Component
             'to_bound' => ['value' => 'house'],
           ];
 
-          $houseAddresses = $client->suggest('address', $searchQuery, 12, $houseOptions);
+          $houseAddresses = $client->suggest('address', $streetSearchQuery, 12, $houseOptions);
           if (is_array($houseAddresses) && !empty($houseAddresses)) {
             $suggestions = array_merge($suggestions, $houseAddresses);
           }
@@ -635,6 +643,14 @@ class Calculator extends Component
 
       // Если внешние/локальные подсказки недоступны, оставляем введенное значение.
       if (empty($resolved)) {
+        $region = $this->resolveAddressRegion();
+        $city = $this->resolveAddressCity();
+        $locationPrefix = trim(implode(', ', array_filter([$region, $city])));
+
+        if ($locationPrefix !== '') {
+          $resolved[] = "{$locationPrefix}, {$query}";
+        }
+
         $resolved[] = $query;
       }
 
@@ -675,12 +691,32 @@ class Calculator extends Component
       return trim(str_ireplace('г. ', '', $this->getCity()));
     }
 
+    protected function resolveAddressRegion(): string
+    {
+      $warehouse = mb_strtolower((string) $this->getField('warehouse_id'));
+
+      if (str_contains($warehouse, 'крым')) {
+        return 'Респ Крым';
+      }
+
+      if (str_contains($warehouse, 'ростов')) {
+        return 'Ростовская обл';
+      }
+
+      if (str_contains($warehouse, 'москва')) {
+        return 'г Москва';
+      }
+
+      return '';
+    }
+
     /**
      * @return array<int, string>
      */
     protected function buildAddressSearchQueries(string $query): array
     {
       $city = $this->resolveAddressCity();
+      $region = $this->resolveAddressRegion();
       $streetOnly = $this->stripHouseFromAddressQuery($query);
 
       $queries = [$query];
@@ -694,6 +730,14 @@ class Calculator extends Component
 
         if ($streetOnly !== '' && $streetOnly !== $query) {
           $queries[] = "{$city}, {$streetOnly}";
+        }
+      }
+
+      if ($region !== '' && $city !== '') {
+        $queries[] = "{$region}, {$city}, {$query}";
+
+        if ($streetOnly !== '' && $streetOnly !== $query) {
+          $queries[] = "{$region}, {$city}, {$streetOnly}";
         }
       }
 
@@ -857,6 +901,13 @@ class Calculator extends Component
     {
       $this->dropdownOpen = [];
       $this->dropdownOpen[$name] = true;
+
+      if ($name === 'fields.transfer_method_pick.address') {
+        $value = (string) Arr::get($this->fields, 'transfer_method_pick.address', '');
+        if (mb_strlen($this->normalizeAddressQuery($value)) >= 3) {
+          $this->getAddresses($value);
+        }
+      }
     }
 
     public function getField(string $name): mixed

@@ -27,14 +27,24 @@
     id="{{ $fieldName }}-dropdown"
     wire:click="openDropdown('{{ $wireModel }}')"
   >
-    <x-form.input 
-      type="{{ $searchable ? 'text' : 'hidden' }}"
-      class="top-0 left-0 w-full h-full z-10 {{ $inputClass }}" 
-      wire:model.live="{{ $attributes->get('wire:model') }}"
-      name="{{ $name }}"
-      autocomplete="off"
-      placeholder="{{ $searchable ? $placeholder : '' }}"
-    />
+    @if($searchable)
+      <x-form.input
+        type="text"
+        class="top-0 left-0 w-full h-full z-10 {{ $inputClass }}"
+        wire:model.live.debounce.350ms="{{ $attributes->get('wire:model') }}"
+        name="{{ $name }}"
+        autocomplete="off"
+        placeholder="{{ $placeholder }}"
+      />
+    @else
+      <x-form.input
+        type="hidden"
+        class="top-0 left-0 w-full h-full z-10 {{ $inputClass }}"
+        wire:model.live="{{ $attributes->get('wire:model') }}"
+        name="{{ $name }}"
+        autocomplete="off"
+      />
+    @endif
     
     @if(!$searchable)
       <div class="field relative z-20 min-h-9 flex justify-center items-center {{ empty(\Illuminate\Support\Arr::get($this->fields, $fieldName)) ? 'text-primary-600/80 dark:text-primary-300/80' : '' }}">

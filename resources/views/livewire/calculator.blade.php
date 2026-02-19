@@ -1,20 +1,22 @@
 <div class="relative">
-    {{-- Overlay прелоадер во время обработки формы --}}
-    <div
-        wire:loading.flex
-        wire:target="submit"
-        class="fixed inset-0 z-[2147483647] hidden items-center justify-center bg-black/65 backdrop-blur-[2px]"
-    >
-        <div class="mx-4 w-full max-w-md rounded-2xl border border-primary-200 bg-white p-8 shadow-2xl dark:border-primary-700 dark:bg-primary-900">
-            <div class="flex flex-col items-center gap-4 text-center">
-                <div class="text-secondary-600 dark:text-secondary-400">
-                    @include('icons.loading', ['width' => 50, 'height' => 50])
+    @teleport('body')
+        {{-- Overlay прелоадер во время обработки формы --}}
+        <div
+            wire:loading.flex
+            wire:target="submit"
+            class="fixed inset-0 z-[2147483647] hidden items-center justify-center bg-black/65 backdrop-blur-[2px]"
+        >
+            <div class="mx-4 w-full max-w-md rounded-2xl border border-primary-200 bg-white p-8 shadow-2xl dark:border-primary-700 dark:bg-primary-900">
+                <div class="flex flex-col items-center gap-4 text-center">
+                    <div class="text-secondary-600 dark:text-secondary-400">
+                        @include('icons.loading', ['width' => 50, 'height' => 50])
+                    </div>
+                    <p class="text-xl font-semibold text-primary-900 dark:text-primary-100">Обработка заявки...</p>
+                    <p class="text-sm text-primary-600 dark:text-primary-400">Пожалуйста, подождите</p>
                 </div>
-                <p class="text-xl font-semibold text-primary-900 dark:text-primary-100">Обработка заявки...</p>
-                <p class="text-sm text-primary-600 dark:text-primary-400">Пожалуйста, подождите</p>
             </div>
         </div>
-    </div>
+    @endteleport
 
     <div class="grid grid-cols-[1fr] xl:grid-cols-[1fr_350px] 2xl:grid-cols-[1fr_400px] gap-5 2xl:gap-10 relative">
 
