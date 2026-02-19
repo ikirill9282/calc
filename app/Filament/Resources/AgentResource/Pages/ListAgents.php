@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListAgents extends ListRecords
 {
     protected static string $resource = AgentResource::class;
+    protected ?string $maxContentWidth = 'full';
 
     protected function getHeaderActions(): array
     {
@@ -17,4 +18,3 @@ class ListAgents extends ListRecords
         ];
     }
 }
-

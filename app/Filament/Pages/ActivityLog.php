@@ -9,6 +9,8 @@ use Livewire\WithPagination;
 class ActivityLog extends Page
 {
     use WithPagination;
+    
+    protected ?string $maxContentWidth = 'full';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
     protected static string $view = 'filament.pages.activity-log';

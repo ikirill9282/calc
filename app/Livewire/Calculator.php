@@ -565,7 +565,7 @@ class Calculator extends Component
 
     public function getAddresses(string $query = '')
     {
-      $query = trim($query);
+      $query = $this->normalizeAddressQuery($query);
 
       if (mb_strlen($query) < 3) {
         $this->addresses = [];
@@ -573,37 +573,57 @@ class Calculator extends Component
       }
 
       $client = new DadataClient();
+      $searchQueries = $this->buildAddressSearchQueries($query);
+      $baseOptions = $this->getDadataAddressOptions();
+      $suggestions = [];
 
-      $addresses = $client->suggest('address', $query, 10, [
-        'locations' => [
-          ['country' => 'Россия'],
-        ],
-      ]);
+      foreach ($searchQueries as $searchQuery) {
+        $options = $baseOptions;
 
-      if (empty($addresses)) {
-        $city = trim(str_ireplace('г. ', '', $this->getCity()));
+        // Для уличного запроса просим подсказать именно дома по улице.
+        if ($this->looksLikeStreetQuery($searchQuery)) {
+          $options['from_bound'] = ['value' => 'street'];
+          $options['to_bound'] = ['value' => 'house'];
+        }
 
-        if ($city !== '' && mb_stripos($query, $city) === false) {
-          $addresses = $client->suggest('address', "{$city}, {$query}", 10, [
-            'locations' => [
-              ['city' => $city],
-            ],
-          ]);
+        $addresses = $client->suggest('address', $searchQuery, 12, $options);
+
+        if (is_array($addresses) && !empty($addresses)) {
+          $suggestions = array_merge($suggestions, $addresses);
+        }
+
+        if (count($suggestions) >= 20) {
+          break;
         }
       }
 
-      $resolved = array_column($addresses, 'value');
+      $resolved = [];
+      foreach ($suggestions as $suggestion) {
+        if (!is_array($suggestion)) {
+          continue;
+        }
+
+        $addressValue = trim((string) ($suggestion['unrestricted_value'] ?? $suggestion['value'] ?? ''));
+        if ($addressValue !== '') {
+          $resolved[] = $addressValue;
+        }
+      }
 
       if (empty($resolved)) {
         $resolved = $this->resolveLocalAddressSuggestions($query);
+
+        $streetOnly = $this->stripHouseFromAddressQuery($query);
+        if (empty($resolved) && $streetOnly !== '' && $streetOnly !== $query) {
+          $resolved = $this->resolveLocalAddressSuggestions($streetOnly);
+        }
       }
 
-      // Позволяем выбрать введенный адрес даже при недоступности DaData.
-      if (!in_array($query, $resolved, true)) {
+      // Если внешние/локальные подсказки недоступны, оставляем введенное значение.
+      if (empty($resolved)) {
         $resolved[] = $query;
       }
 
-      $this->addresses = array_values(array_unique(array_filter($resolved)));
+      $this->addresses = array_values(array_unique(array_slice(array_filter($resolved), 0, 20)));
       // $result = [['wh' => '', 'wh_address' => '']];
       $result = [];
       foreach ($this->addresses as $key => $val) {
@@ -613,6 +633,121 @@ class Calculator extends Component
         ];
       }
       return collect($result);
+    }
+
+    protected function normalizeAddressQuery(string $query): string
+    {
+      $query = preg_replace('/\s+/u', ' ', $query) ?? $query;
+
+      return trim($query, " \t\n\r\0\x0B,");
+    }
+
+    protected function stripHouseFromAddressQuery(string $query): string
+    {
+      $withoutHouse = preg_replace('/(?:,|\s)+(?:(?:д|дом|корп|к|стр|строение)\.?\s*)?\d+[а-яa-z0-9\-\/]*\s*$/ui', '', $query);
+
+      if (!is_string($withoutHouse)) {
+        return $query;
+      }
+
+      return $this->normalizeAddressQuery($withoutHouse);
+    }
+
+    protected function resolveAddressCity(): string
+    {
+      return trim(str_ireplace('г. ', '', $this->getCity()));
+    }
+
+    protected function resolveAddressRegion(string $city): string
+    {
+      $cityNormalized = mb_strtolower($city);
+
+      return match (true) {
+        str_contains($cityNormalized, 'симферополь') => 'Республика Крым',
+        str_contains($cityNormalized, 'ростов') => 'Ростовская область',
+        str_contains($cityNormalized, 'москва') => 'Москва',
+        default => '',
+      };
+    }
+
+    protected function getDadataAddressOptions(): array
+    {
+      $city = $this->resolveAddressCity();
+      $region = $this->resolveAddressRegion($city);
+
+      $location = ['country' => 'Россия'];
+      $boostLocation = [];
+
+      if ($region !== '') {
+        $location['region'] = $region;
+        $boostLocation['region'] = $region;
+      }
+
+      if ($city !== '') {
+        $location['city'] = $city;
+        $boostLocation['city'] = $city;
+      }
+
+      $options = [
+        'locations' => [$location],
+      ];
+
+      if (!empty($boostLocation)) {
+        $options['locations_boost'] = [$boostLocation];
+      }
+
+      return $options;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function buildAddressSearchQueries(string $query): array
+    {
+      $city = $this->resolveAddressCity();
+      $region = $this->resolveAddressRegion($city);
+      $streetOnly = $this->stripHouseFromAddressQuery($query);
+
+      $queries = [$query];
+
+      if ($streetOnly !== '' && $streetOnly !== $query) {
+        $queries[] = $streetOnly;
+      }
+
+      if ($city !== '' && mb_stripos($query, $city) === false) {
+        $queries[] = "{$city}, {$query}";
+
+        if ($streetOnly !== '' && $streetOnly !== $query) {
+          $queries[] = "{$city}, {$streetOnly}";
+        }
+      }
+
+      if ($city !== '' && $region !== '' && mb_stripos($query, $region) === false) {
+        $queries[] = "{$region}, {$city}, {$query}";
+
+        if ($streetOnly !== '' && $streetOnly !== $query) {
+          $queries[] = "{$region}, {$city}, {$streetOnly}";
+        }
+      }
+
+      $result = [];
+      foreach ($queries as $item) {
+        $normalized = $this->normalizeAddressQuery($item);
+        if ($normalized === '') {
+          continue;
+        }
+
+        if (!in_array($normalized, $result, true)) {
+          $result[] = $normalized;
+        }
+      }
+
+      return $result;
+    }
+
+    protected function looksLikeStreetQuery(string $query): bool
+    {
+      return preg_match('/\p{L}/u', $query) === 1 && preg_match('/\d/u', $query) !== 1;
     }
 
     protected function resolveLocalAddressSuggestions(string $query): array
