@@ -177,9 +177,9 @@
     }
 
     .fi-resource-orders .fi-ta-table thead th {
-        position: sticky;
-        top: var(--fi-orders-topbar-offset);
-        z-index: 20;
+        position: static;
+        top: auto;
+        z-index: auto;
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
     }
 

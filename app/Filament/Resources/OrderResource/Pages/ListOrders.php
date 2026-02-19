@@ -18,6 +18,8 @@ class ListOrders extends ListRecords
 
     protected static string $view = 'filament.resources.order-resource.pages.list-orders';
 
+    protected ?string $maxContentWidth = 'full';
+
     protected $listeners = [
         'inlineEditCell' => 'handleInlineEditCell',
     ];
