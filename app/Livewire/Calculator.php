@@ -578,18 +578,23 @@ class Calculator extends Component
       $suggestions = [];
 
       foreach ($searchQueries as $searchQuery) {
-        $options = $baseOptions;
-
-        // Для уличного запроса просим подсказать именно дома по улице.
-        if ($this->looksLikeStreetQuery($searchQuery)) {
-          $options['from_bound'] = ['value' => 'street'];
-          $options['to_bound'] = ['value' => 'house'];
-        }
-
-        $addresses = $client->suggest('address', $searchQuery, 12, $options);
+        // 1) Базовый поиск (без жестких bound), чтобы не терять релевантные варианты.
+        $addresses = $client->suggest('address', $searchQuery, 12, $baseOptions);
 
         if (is_array($addresses) && !empty($addresses)) {
           $suggestions = array_merge($suggestions, $addresses);
+        }
+
+        // 2) Для уличного запроса дополнительно просим именно дома по улице.
+        if ($this->looksLikeStreetQuery($searchQuery)) {
+          $houseOptions = $baseOptions;
+          $houseOptions['from_bound'] = ['value' => 'street'];
+          $houseOptions['to_bound'] = ['value' => 'house'];
+
+          $houseAddresses = $client->suggest('address', $searchQuery, 12, $houseOptions);
+          if (is_array($houseAddresses) && !empty($houseAddresses)) {
+            $suggestions = array_merge($suggestions, $houseAddresses);
+          }
         }
 
         if (count($suggestions) >= 20) {
@@ -679,12 +684,10 @@ class Calculator extends Component
       $boostLocation = [];
 
       if ($region !== '') {
-        $location['region'] = $region;
         $boostLocation['region'] = $region;
       }
 
       if ($city !== '') {
-        $location['city'] = $city;
         $boostLocation['city'] = $city;
       }
 
