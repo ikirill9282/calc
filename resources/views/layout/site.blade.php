@@ -31,6 +31,26 @@
   <div class="col-span-1">
     <x-header></x-header>
 
+    <div class="px-2 sm:px-5 2xl:px-10 pt-3">
+      <div class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-100">
+        <p class="font-semibold">На сайте ведутся технические работы.</p>
+        <p class="mt-1">Если возникли сложности с оформлением заявки, можно оформить её по телефону.</p>
+        <div class="mt-2 text-sm leading-6">
+          <p><span class="font-semibold">Менеджер:</span> Любимова София</p>
+          <p>
+            <span class="font-semibold">Email:</span>
+            <a class="underline hover:no-underline" href="mailto:tk82wb24@gmail.com">tk82wb24@gmail.com</a>
+          </p>
+          <p>
+            <span class="font-semibold">Телефон:</span>
+            <a class="underline hover:no-underline" href="tel:+79785550055">+7 (978) 555-00-55</a>,
+            <a class="underline hover:no-underline" href="tel:+79785551920">+7 (978) 555-19-20</a>
+          </p>
+          <p>Или попробуйте оформить заявку чуть позже.</p>
+        </div>
+      </div>
+    </div>
+
     <main class="">
       @yield('content')
       
