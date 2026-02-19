@@ -1,0 +1,178 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@theme {
+  --color-primary-50: oklch(0.985 0 0);
+  --color-primary-100: oklch(0.967 0.001 286.375);
+  --color-primary-200: oklch(0.92 0.004 286.32);
+  --color-primary-300: oklch(0.871 0.006 286.286);
+  --color-primary-400: oklch(0.705 0.015 286.067);
+  --color-primary-500: oklch(0.552 0.016 285.938);
+  --color-primary-600: oklch(0.442 0.017 285.786);
+  --color-primary-700: oklch(0.37 0.013 285.805);
+  --color-primary-800: oklch(0.274 0.006 286.033);
+  --color-primary-900: oklch(0.21 0.006 285.885);
+  --color-primary-950: oklch(0.141 0.005 285.823);
+
+  /* --color-secondary-50:  var(--color-rose-50);
+  --color-secondary-100: var(--color-rose-100);
+  --color-secondary-200: var(--color-rose-200);
+  --color-secondary-300: var(--color-rose-300);
+  --color-secondary-400: var(--color-rose-400);
+  --color-secondary-500: var(--color-rose-500);
+  --color-secondary-600: var(--color-rose-600);
+  --color-secondary-700: var(--color-rose-700);
+  --color-secondary-800: var(--color-rose-800);
+  --color-secondary-900: var(--color-rose-900);
+  --color-secondary-950: var(--color-rose-950); 
+  --color-secondary-50:  var(--color-rose-50); */
+
+
+  --color-secondary-50:  #fdecea;
+  --color-secondary-100: #f9c9c5;
+  --color-secondary-200: #f5a39e;
+  --color-secondary-300: #f07d77;
+  --color-secondary-400: #ec574f;
+  --color-secondary-500: #f44336;
+  --color-secondary-600: #d73228;
+  --color-secondary-700: #bb271f;
+  --color-secondary-800: #9f1f1a;
+  --color-secondary-900: #841713;
+  --color-secondary-950: #6b100f;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark .air-datepicker {
+  background: var(--color-primary-900);
+  border-color: var(--color-primary-700);
+}
+
+.dark .air-datepicker-cell {
+  color: var(--color-primary-300);
+}
+
+.air-datepicker-cell.-focus- {
+  transition: 0.3s;
+  background: var(--color-secondary-600) !important;
+  color: var(--color-primary-50);
+}
+
+.air-datepicker-cell.-focus-.-current- {
+  transition: 0.3s;
+  background: var(--color-secondary-600) !important;
+  color: var(--color-primary-50) !important;
+}
+
+.air-datepicker-cell.-current- {
+  color: var(--color-secondary-500) !important;
+}
+
+.air-datepicker-cell.-selected- {
+  background: var(--color-secondary-600) !important;
+}
+
+.air-datepicker-cell.-selected-.-current- {
+  color: var(--color-primary-50) !important;
+}
+
+.dark .air-datepicker-cell.-year-.-other-decade-, .air-datepicker-cell.-day-.-other-month- {
+  color: var(--color-primary-400) !important;
+}
+
+.dark .air-datepicker-nav {
+  border-bottom-color: var(--color-primary-700) !important;
+}
+
+.air-datepicker-nav--action {
+  transition: 0.3s;
+}
+
+.air-datepicker-nav--title {
+  transition: 0.3s;
+}
+
+.air-datepicker-nav--action:hover {
+  background-color: var(--color-secondary-500) !important;
+  color: var(--color-primary-50) !important;
+}
+
+.air-datepicker-nav--title:hover {
+  background-color: var(--color-secondary-500) !important;
+  color: var(--color-primary-50) !important;
+}
+
+.air-datepicker-nav--action:hover path {
+  stroke: var(--color-primary-50) !important;
+}
+
+.air-datepicker-nav--title:hover i {
+  color: var(--color-primary-50) !important;
+}
+
+.dark .air-datepicker-cell.-disabled- {
+  color: var(--color-primary-600) !important;
+}
+
+/* Вертикальные линии между столбцами таблиц Filament */
+.fi-ta-table thead th,
+.fi-ta-table tbody td {
+  border-right: 1px solid rgba(148, 163, 184, 0.4);
+  /* padding: 0.35rem 0.5rem; */
+}
+
+.fi-ta-table thead th {
+  min-width: 0;
+}
+
+.fi-ta-table thead th > span {
+  flex-wrap: wrap;
+  row-gap: 0.15rem;
+}
+
+.fi-ta-table thead th .fi-ta-header-cell-label {
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.fi-ta-table thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 25;
+}
+
+.fi-ta-table tbody td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background-color: #fff;
+  box-shadow: 4px 0 6px -4px rgba(15, 23, 42, 0.2);
+}
+
+.dark .fi-ta-table tbody td:first-child {
+  background-color: rgba(30, 41, 59, 0.95);
+  box-shadow: 4px 0 6px -4px rgba(15, 23, 42, 0.5);
+}
+
+.fi-ta-text-item.cursor-pointer,
+.fi-ta-text-item .cursor-pointer {
+  cursor: pointer;
+}
+
+
+.fi-ta-table thead th:last-child,
+.fi-ta-table tbody td:last-child {
+  border-right: none;
+}
