@@ -1050,6 +1050,7 @@ class Calculator extends Component
           'distributor_center_delivery_date',
           'delivery_diff',
           'pick_diff',
+          'transit_days',
         ];
 
         if (SheetData::hasWeekdayConfigColumns()) {
@@ -1062,8 +1063,9 @@ class Calculator extends Component
           return null;
         }
 
+        $transitDays = SheetDataSchedule::transitDays($records);
         $shipmentWeekdays = SheetDataSchedule::shipmentWeekdays($records);
-        $shipmentDate = SheetDataSchedule::resolveShipmentDate(Carbon::parse($deliveryDate), $shipmentWeekdays);
+        $shipmentDate = SheetDataSchedule::resolveShipmentDate(Carbon::parse($deliveryDate), $shipmentWeekdays, $transitDays);
 
         return $shipmentDate?->format('Y-m-d H:i:s');
 

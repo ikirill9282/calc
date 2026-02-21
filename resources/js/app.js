@@ -136,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datepicker1 = new AirDatepicker("#datepicker", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 const response = {
                     disabled: true,
                     classes: "disabled-class",
@@ -145,6 +146,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 };
 
                 if (cellType === "day") {
+                    const cellDate = new Date(date);
+                    cellDate.setHours(0, 0, 0, 0);
+
+                    if (cellDate <= today) {
+                        return response;
+                    }
+
                     const year = date.getFullYear();
                     const month =
                         String(date.getMonth() + 1).length === 1
@@ -197,6 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 const response = {
                     disabled: true,
                     classes: "disabled-class",
@@ -206,6 +215,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 };
 
                 if (cellType === "day") {
+                    const cellDate = new Date(date);
+                    cellDate.setHours(0, 0, 0, 0);
+
+                    if (cellDate <= today) {
+                        return response;
+                    }
+
                     const year = date.getFullYear();
                     const month =
                         String(date.getMonth() + 1).length === 1
@@ -229,6 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datepicker3 = new AirDatepicker("#datepicker3", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 const response = {
                     disabled: true,
                     classes: "disabled-class",
@@ -238,6 +255,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 };
 
                 if (cellType === "day") {
+                    const cellDate = new Date(date);
+                    cellDate.setHours(0, 0, 0, 0);
+
+                    if (cellDate <= today) {
+                        return response;
+                    }
+
                     const year = date.getFullYear();
                     const month =
                         String(date.getMonth() + 1).length === 1

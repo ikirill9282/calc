@@ -59,6 +59,13 @@ class SheetDataResource extends Resource
                         Forms\Components\TextInput::make('distributor_address')
                             ->label('Адрес РЦ')
                             ->maxLength(500),
+                        Forms\Components\TextInput::make('transit_days')
+                            ->label('Дни в пути')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(60)
+                            ->suffix('дн.')
+                            ->helperText('Количество дней в пути от склада до РЦ'),
                     ])
                     ->columns(2),
 
@@ -164,6 +171,9 @@ class SheetDataResource extends Resource
                 Tables\Columns\TextInputColumn::make('distributor_address')
                     ->label('Адрес РЦ')
                     ->searchable(),
+                Tables\Columns\TextInputColumn::make('transit_days')
+                    ->label('Дни в пути')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('delivery_weekdays')
                     ->label('Доставка (дни)')
                     ->state(fn (SheetData $record): array => static::weekdayShortLabels(static::getRecordWeekdays($record)['delivery']))
@@ -333,12 +343,20 @@ class SheetDataResource extends Resource
                         return [
                             'delivery_weekdays' => $weekdays['delivery'],
                             'shipment_weekdays' => $weekdays['shipment'],
+                            'transit_days' => $record->transit_days,
                         ];
                     })
                     ->form([
                         Forms\Components\Placeholder::make('route_info')
                             ->label('Маршрут')
                             ->content(fn ($record) => "{$record->wh} → {$record->distributor} → {$record->distributor_center}"),
+                        Forms\Components\TextInput::make('transit_days')
+                            ->label('Дни в пути')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(60)
+                            ->suffix('дн.')
+                            ->helperText('Кол-во дней от отгрузки до выгрузки в РЦ. Например: выезд Вт + 9 дней = выгрузка Чт'),
                         Forms\Components\CheckboxList::make('shipment_weekdays')
                             ->label('Дни забора и отгрузки')
                             ->options(SheetDataSchedule::WEEKDAY_OPTIONS)
@@ -353,11 +371,14 @@ class SheetDataResource extends Resource
                     ->action(function ($record, array $data) {
                         $deliveryWeekdays = static::normalizeWeekdays($data['delivery_weekdays'] ?? []);
                         $shipmentWeekdays = static::normalizeWeekdays($data['shipment_weekdays'] ?? []);
+                        $transitDays = !empty($data['transit_days']) ? (int) $data['transit_days'] : null;
 
                         if (empty($deliveryWeekdays) || empty($shipmentWeekdays)) {
                             Notification::make()->title('Выберите хотя бы один день доставки и один день отгрузки')->warning()->send();
                             return;
                         }
+
+                        $record->transit_days = $transitDays;
 
                         $count = static::rebuildRouteScheduleForRecord(
                             $record,

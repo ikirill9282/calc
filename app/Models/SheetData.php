@@ -22,6 +22,7 @@ class SheetData extends Model
         'delivery_diff' => 'datetime',
         'pick_diff' => 'datetime',
         'delivery_weekend' => 'integer',
+        'transit_days' => 'integer',
         'pick_tariff_min' => 'decimal:2',
         'pick_tariff_vol' => 'decimal:2',
         'pick_tariff_pallete' => 'decimal:2',

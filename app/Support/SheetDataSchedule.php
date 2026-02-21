@@ -99,8 +99,12 @@ class SheetDataSchedule
         return empty($normalized) ? [0] : $normalized;
     }
 
-    public static function resolveShipmentDate(Carbon $deliveryDate, array $shipmentWeekdays): ?Carbon
+    public static function resolveShipmentDate(Carbon $deliveryDate, array $shipmentWeekdays, ?int $transitDays = null): ?Carbon
     {
+        if ($transitDays !== null && $transitDays > 0) {
+            return $deliveryDate->copy()->subDays($transitDays);
+        }
+
         if (empty($shipmentWeekdays)) {
             return null;
         }
@@ -126,13 +130,14 @@ class SheetDataSchedule
     ): array {
         $deliveryWeekdays = self::normalizeWeekdays($deliveryWeekdays);
         $shipmentWeekdays = self::normalizeWeekdays($shipmentWeekdays);
+        $transitDays = $template->transit_days;
 
         $rows = [];
         $current = $dateFrom->copy()->startOfDay();
 
         while ($current->lte($dateTo)) {
             if (in_array($current->dayOfWeek, $deliveryWeekdays, true)) {
-                $shipmentDate = self::resolveShipmentDate($current, $shipmentWeekdays);
+                $shipmentDate = self::resolveShipmentDate($current, $shipmentWeekdays, $transitDays);
 
                 if ($shipmentDate !== null) {
                     $rows[] = [
@@ -145,6 +150,7 @@ class SheetDataSchedule
                         'distributor_center_delivery_date' => $current->format('Y-m-d'),
                         'delivery_weekdays_config' => json_encode($deliveryWeekdays, JSON_UNESCAPED_UNICODE),
                         'shipment_weekdays_config' => json_encode($shipmentWeekdays, JSON_UNESCAPED_UNICODE),
+                        'transit_days' => $transitDays,
                         'delivery_diff' => $shipmentDate->format('Y-m-d H:i:s'),
                         'delivery_weekend' => $template->delivery_weekend,
                         'pick_diff' => $shipmentDate->format('Y-m-d H:i:s'),
@@ -164,6 +170,14 @@ class SheetDataSchedule
         }
 
         return $rows;
+    }
+
+    public static function transitDays(Collection $records): ?int
+    {
+        return $records
+            ->pluck('transit_days')
+            ->filter(fn ($val) => $val !== null && $val > 0)
+            ->first();
     }
 
     public static function normalizeWeekdays(array $weekdays): array
