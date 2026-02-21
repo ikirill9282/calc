@@ -1035,6 +1035,16 @@ class Calculator extends Component
 
         $routeQuery = $this->getRouteSheetDataQuery();
 
+        // Если у маршрута задано transit_days — дата отгрузки = дата доставки - transit_days
+        $transitDays = (clone $routeQuery)
+          ->whereNotNull('transit_days')
+          ->where('transit_days', '>', 0)
+          ->value('transit_days');
+
+        if ($transitDays) {
+          return Carbon::parse($deliveryDate)->subDays($transitDays)->format('Y-m-d H:i:s');
+        }
+
         $exactDate = (clone $routeQuery)
           ->where('distributor_center_delivery_date', $deliveryDate)
           ->select('delivery_diff')
@@ -1063,9 +1073,8 @@ class Calculator extends Component
           return null;
         }
 
-        $transitDays = SheetDataSchedule::transitDays($records);
         $shipmentWeekdays = SheetDataSchedule::shipmentWeekdays($records);
-        $shipmentDate = SheetDataSchedule::resolveShipmentDate(Carbon::parse($deliveryDate), $shipmentWeekdays, $transitDays);
+        $shipmentDate = SheetDataSchedule::resolveShipmentDate(Carbon::parse($deliveryDate), $shipmentWeekdays);
 
         return $shipmentDate?->format('Y-m-d H:i:s');
 
