@@ -318,7 +318,7 @@ class Agents extends Component
           $this->form['ogrn'] = $company['ogrn'];
           $this->form['address'] = $company['address'];
           $this->company = $company;
-          $this->getAddresses($company['address'] ?? null);
+          $this->getAddresses((string) ($company['address'] ?? ''));
           unset($this->dropdownOpen[$name]);
           unset($this->dropdownOpen['form.address']);
         }
