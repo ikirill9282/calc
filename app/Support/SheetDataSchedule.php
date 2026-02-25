@@ -101,6 +101,18 @@ class SheetDataSchedule
 
     public static function resolveShipmentDate(Carbon $deliveryDate, array $shipmentWeekdays, ?int $transitDays = null): ?Carbon
     {
+        if ($transitDays !== null && $transitDays > 0 && ! empty($shipmentWeekdays)) {
+            $shipmentDate = $deliveryDate->copy()->subDays($transitDays);
+            for ($attempt = 0; $attempt < 7; $attempt++) {
+                if (in_array($shipmentDate->dayOfWeek, $shipmentWeekdays, true)) {
+                    return $shipmentDate;
+                }
+                $shipmentDate->subDay();
+            }
+
+            return null;
+        }
+
         if ($transitDays !== null && $transitDays > 0) {
             return $deliveryDate->copy()->subDays($transitDays);
         }

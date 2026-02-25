@@ -1035,27 +1035,6 @@ class Calculator extends Component
 
         $routeQuery = $this->getRouteSheetDataQuery();
 
-        // Если у маршрута задано transit_days — дата отгрузки = дата доставки - transit_days
-        $transitDays = (clone $routeQuery)
-          ->whereNotNull('transit_days')
-          ->where('transit_days', '>', 0)
-          ->value('transit_days');
-
-        if ($transitDays) {
-          return Carbon::parse($deliveryDate)->subDays($transitDays)->format('Y-m-d H:i:s');
-        }
-
-        $exactDate = (clone $routeQuery)
-          ->where('distributor_center_delivery_date', $deliveryDate)
-          ->select('delivery_diff')
-          ->orderByDesc('delivery_diff')
-          ->first()
-          ?->delivery_diff;
-
-        if ($exactDate) {
-          return Carbon::parse($exactDate)->format('Y-m-d H:i:s');
-        }
-
         $recordsColumns = [
           'distributor_center_delivery_date',
           'delivery_diff',
@@ -1073,7 +1052,30 @@ class Calculator extends Component
           return null;
         }
 
+        $transitDays = SheetDataSchedule::transitDays($records);
         $shipmentWeekdays = SheetDataSchedule::shipmentWeekdays($records);
+
+        // transit_days + дни отгрузки → вычисляем дату отгрузки
+        if ($transitDays && ! empty($shipmentWeekdays)) {
+          $shipmentDate = SheetDataSchedule::resolveShipmentDate(
+            Carbon::parse($deliveryDate), $shipmentWeekdays, $transitDays
+          );
+          return $shipmentDate?->format('Y-m-d H:i:s');
+        }
+
+        // Точное совпадение даты доставки в БД
+        $exactDate = (clone $routeQuery)
+          ->where('distributor_center_delivery_date', $deliveryDate)
+          ->select('delivery_diff')
+          ->orderByDesc('delivery_diff')
+          ->first()
+          ?->delivery_diff;
+
+        if ($exactDate) {
+          return Carbon::parse($exactDate)->format('Y-m-d H:i:s');
+        }
+
+        // Fallback: ближайший день отгрузки по дням недели
         $shipmentDate = SheetDataSchedule::resolveShipmentDate(Carbon::parse($deliveryDate), $shipmentWeekdays);
 
         return $shipmentDate?->format('Y-m-d H:i:s');
