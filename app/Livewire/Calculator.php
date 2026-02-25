@@ -1134,7 +1134,8 @@ class Calculator extends Component
             continue;
           }
 
-          if ($this->getDeliveryDiff($date) !== null) {
+          $shipmentDate = $this->getDeliveryDiff($date);
+          if ($shipmentDate !== null && Carbon::parse($shipmentDate)->gte($today)) {
             $result[] = $date;
           }
 
