@@ -133,6 +133,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     Livewire.on("deliveryDates", (data) => {
+        if (datepicker1) {
+            datepicker1.destroy();
+            datepicker1 = null;
+        }
         datepicker1 = new AirDatepicker("#datepicker", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
@@ -182,6 +186,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     Livewire.on("deliveryPickDates", (data) => {
+        if (datepicker2) {
+            datepicker2.destroy();
+            datepicker2 = null;
+        }
         datepicker2 = new AirDatepicker("#datepicker2", {
             onSelect: ({ date, formattedDate, datepicker }) => {
                 const elem = $(datepicker.$el)
@@ -242,6 +250,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     Livewire.on("pickDates", (data) => {
+        if (datepicker3) {
+            datepicker3.destroy();
+            datepicker3 = null;
+        }
         datepicker3 = new AirDatepicker("#datepicker3", {
             onRenderCell: ({ date, cellType }) => {
                 const today = new Date();
