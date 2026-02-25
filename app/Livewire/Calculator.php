@@ -889,7 +889,7 @@ class Calculator extends Component
       };
     }
 
-    public function clearFocusedAndSetField(string $name, mixed $value):void
+    public function clearFocusedAndSetField(string $name, mixed $value = null):void
     {
       
       $this->fields['user_focused_dropdown'] = null;
@@ -921,7 +921,7 @@ class Calculator extends Component
       return $val;
     }
  
-    public function setField(string $name, mixed $value)
+    public function setField(string $name, mixed $value = null)
     {
       $key = str_ireplace('fields.', '', $name);
       Arr::set($this->fields, $key, $value);
