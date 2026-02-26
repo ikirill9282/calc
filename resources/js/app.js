@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const cellDate = new Date(date);
                     cellDate.setHours(0, 0, 0, 0);
 
-                    if (cellDate <= today) {
+                    if (cellDate < today) {
                         return response;
                     }
 
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const cellDate = new Date(date);
                     cellDate.setHours(0, 0, 0, 0);
 
-                    if (cellDate <= today) {
+                    if (cellDate < today) {
                         return response;
                     }
 
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const cellDate = new Date(date);
                     cellDate.setHours(0, 0, 0, 0);
 
-                    if (cellDate <= today) {
+                    if (cellDate < today) {
                         return response;
                     }
 
